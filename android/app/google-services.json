@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1054963004334-4edqufimgikqdnos65n0veh448ihrjir.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "kr.co.dwebss.takeit.android",
+            "certificate_hash": "7c45dacab71b3a256eb9b57d68a3a38a98161071"
+          }
+        },
+        {
           "client_id": "1054963004334-2dtvq3rdi93u85er7gnh12v9vt2j3jl3.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1054963004334-2dtvq3rdi93u85er7gnh12v9vt2j3jl3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

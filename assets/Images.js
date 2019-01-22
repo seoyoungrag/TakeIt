@@ -1,5 +1,7 @@
 const Images = {
 
+  loginLoadingBack: require("./img/login_loading_back.png"),
+  loginBack: require("./img/login_back.png"),
   HeaderBmi: require("./img/header_bmi.png"),
   HeaderWeight: require("./img/header_weight.png"),
   HeaderGoal: require("./img/header_goal.png"),
@@ -11,3 +13,5 @@ const Images = {
   FooterAlarmBtn: require("./img/footer_alarm_btn.png"),
   HeaderMenuBtn: require("./img/header_menu_btn.png")
 }
+
+export default Images;

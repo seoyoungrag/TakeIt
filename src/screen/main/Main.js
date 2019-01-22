@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 
-import {Dimensions,Platform, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {Alert, Dimensions,Platform, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import DrawerWrapped from "@drawer";
 import { connect } from "react-redux";
 import Container from '@container/Container';
+import firebase from "react-native-firebase";
 
 const { width, height } = Dimensions.get("window");
 
@@ -41,6 +42,31 @@ class Main extends Component {
         const content = (
           <Container>
             <View style={styles.container}>
+          <TouchableOpacity
+            onPress={() => { Alert.alert(
+                    "로그아웃",
+                    "정말 로그아웃 하시겠습니까?",
+                    [
+                      { text: "아니오", onPress: () => {}, style: "cancel" },
+                      {
+                        text: "네",
+                        onPress: () => {
+                          firebase
+                            .auth()
+                            .signOut()
+                            .then(() => this.props.closeDrawer())
+                            .then(() => this.props.navigation.navigate("Login"))
+                            .catch(error => {});
+                        }
+                      }
+                    ],
+                    { cancelable: false }
+                  )
+                ;
+            }}
+          >
+          <Text style={{fontSize:20, color:"red"}}>로그아웃 테스트</Text>
+          </TouchableOpacity>
               <Text style={styles.welcome}>Welcome to React Native!</Text>
               <Text style={styles.instructions}>To get started, edit App.js</Text>
               <Text style={styles.instructions}>{instructions}</Text>

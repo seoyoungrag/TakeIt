@@ -6,11 +6,25 @@ import React from 'react';
 import { createStackNavigator, createAppContainer } from "react-navigation";
 import { Text } from 'react-native';
 
+import Loading from "@screens/login/Loading";
+import Login from "@screens/login";
 import Main from "@screens/main";
 import Diary from "@screens/diary";
 
 const RootStack = createStackNavigator(
     {
+      Loading: {
+        screen:Loading,
+        navigationOptions:({navigation}) => ({
+          header: null
+        })
+      },
+      Login: {
+        screen:Login,
+        navigationOptions:({navigation}) => ({
+          header: null
+        })
+      },
       Main: {
         screen:Main,
         navigationOptions:({navigation}) => ({
@@ -26,7 +40,7 @@ const RootStack = createStackNavigator(
     },
     {
       headerMode: "none",
-      initialRouteName: "Main"
+      initialRouteName: "Loading"
     }
   );
   const AppNavigator = createAppContainer(RootStack);
