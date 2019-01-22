@@ -1,0 +1,61 @@
+{
+	"name": "react-native-drawer-menu",
+	"version": "0.2.5",
+	"scripts": {
+		"start": "react-native start",
+		"ios": "react-native run-ios",
+		"android": "react-native run-android",
+		"test": "jest",
+		"coverage": "cat ./coverage/lcov.info | coveralls",
+		"changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
+	},
+	"main": "Drawer/index.js",
+	"author": {
+		"name": "wytiny",
+		"url": "http://wytiny.com"
+	},
+	"maintainers": [
+		{
+			"name": "wytiny",
+			"email": "zjutiny@gmail.com"
+		}
+	],
+	"bugs": {
+		"url": "https://github.com/Tinysymphony/react-native-drawer-menu/issues"
+	},
+	"homepage": "https://github.com/Tinysymphony/react-native-drawer-menu#readme",
+	"peerDependencies": {
+		"prop-types": "^15.6.0",
+		"react": "^15.4.2",
+		"react-native": "^0.41.2"
+	},
+	"devDependencies": {
+		"babel-jest": "21.2.0",
+		"babel-preset-react-native": "4.0.0",
+		"coveralls": "^2.11.16",
+		"cz-conventional-changelog": "^1.2.0",
+		"enzyme": "^3.2.0",
+		"enzyme-adapter-react-16": "^1.1.0",
+		"istanbul": "^0.4.5",
+		"jest": "21.2.1",
+		"react": "^16.1.0",
+		"react-addons-test-utils": "^15.6.2",
+		"react-dom": "^16.2.0",
+		"react-native": "^0.50.0",
+		"react-test-renderer": "16.0.0"
+	},
+	"jest": {
+		"preset": "react-native",
+		"verbose": true,
+		"collectCoverage": true,
+		"moduleFileExtensions": [
+			"js"
+		]
+	},
+	"config": {
+		"commitizen": {
+			"path": "./node_modules/cz-conventional-changelog"
+		}
+	},
+	"license": "MIT"
+}

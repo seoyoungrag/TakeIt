@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1054963004334",
+    "firebase_url": "https://takeit-db2de.firebaseio.com",
+    "project_id": "takeit-db2de",
+    "storage_bucket": "takeit-db2de.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1054963004334:android:d7b121d326cc2f79",
+        "android_client_info": {
+          "package_name": "kr.co.dwebss.takeit.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1054963004334-2dtvq3rdi93u85er7gnh12v9vt2j3jl3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-j7DA001_0aE3_On6aoFP149WKg79dRE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
