@@ -17,6 +17,7 @@ import DrawerWrapped from "@drawer";
 
 import { connect } from "react-redux";
 import ActionCreator from "@redux-yrseo/actions";
+import { withNavigationFocus } from 'react-navigation';
 const { width, height } = Dimensions.get("window");
 
 function mapStateToProps(state) {
@@ -41,38 +42,36 @@ class Login extends React.Component {
     };
   }
   componentDidMount() {
-    // Add any configuration settings here:
     GoogleSignin.configure({
-      // Repleace with your webClientId generated from Firebase console
       webClientId:
         '1054963004334-2dtvq3rdi93u85er7gnh12v9vt2j3jl3.apps.googleusercontent.com',
     });
   }
-
+  googleFnc = async () => {
+    this.googleSignIn().then(this.googleLogin);
+  }
+  googleSignIn = async () => {
+    try {
+      GoogleSignin.hasPlayServices({
+        showPlayServicesUpdateDialog: true,
+      });
+      const userInfo = await GoogleSignin.signIn();
+      console.log('User Info --> ', userInfo);
+      this.setState({ userInfo: userInfo });
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        console.log('SIGN_IN_CANCELLED');
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        console.log('IN_PROGRESS');
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.log('PLAY_SERVICES_NOT_AVAILABLE');
+      } else {
+        console.log(error);
+      }
+    }
+  };
   googleLogin = async () => {
     try {
-      try {
-        GoogleSignin.hasPlayServices({
-          //Check if device has Google Play Services installed.
-          //Always resolves to true on iOS.
-          showPlayServicesUpdateDialog: true,
-        });
-        const userInfo = await GoogleSignin.signIn();
-        console.log('User Info --> ', userInfo);
-        this.setState({ userInfo: userInfo });
-      } catch (error) {
-        if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-          console.log('SIGN_IN_CANCELLED');
-        } else if (error.code === statusCodes.IN_PROGRESS) {
-          console.log('IN_PROGRESS');
-        } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-          console.log('PLAY_SERVICES_NOT_AVAILABLE');
-        } else {
-          console.log(error);
-        }
-        return false;
-      }
-
       // create a new firebase credential with the token
       const credential = firebase.auth.GoogleAuthProvider.credential(
         this.state.userInfo.idToken,
@@ -85,7 +84,7 @@ class Login extends React.Component {
 
       console.info(JSON.stringify(currentUser.user.toJSON()));
       currentUser
-      ? this.props.navigation.navigate("Loading")
+      ? this.props.navigation.navigate('Loading')
       : alert("로그인이 실패하였습니다.");
     } catch (e) {
       console.error(e);
@@ -135,7 +134,23 @@ class Login extends React.Component {
     }
     
   };
+  retry = async () =>{
+    try {
+      const isSignedIn = await GoogleSignin.isSignedIn();
+      console.log(isSignedIn);
+      if(isSignedIn){
+        await GoogleSignin.revokeAccess();
+        await GoogleSignin.signOut();
+        this.setState({ userInfo: null }); 
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
   render() {
+    if(this.props.isFocused){
+      this.retry();
+    }
     const content = (
       <ImageBackground
         source={Images.loginBack}
@@ -198,11 +213,12 @@ class Login extends React.Component {
             title="구글계정으로 로그인하기"
             button
             type="google-plus-official"
-            onPress={this.googleLogin}
-            onLongPress={this.googleLogin}
+            onPress={this.googleFnc}
+            onLongPress={this.googleFnc}
             style={{borderRadius: 0,padding: 20}}
           />
-          <Text style={{paddingTop:40, paddingLeft: 20, paddingRight:20, color:"silver", textAlign:"center"}}>이 앱을 통한 어떠한 사진 및 동영상도{"\n"}당신의 허락 없이 타인에게 공개되지 않습니다.</Text>
+          <Text style={{paddingTop:40, paddingLeft: 20, paddingRight:20, color:"white", textAlign:"center"}}>이 앱을 통한 어떠한 사진 및 동영상도{"\n"}당신의 허락 없이 타인에게 공개되지 않습니다.</Text>
+          
         </View>
       </View>
       </ImageBackground>
@@ -231,4 +247,4 @@ const styles = StyleSheet.create({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Login);
+  )(withNavigationFocus(Login));

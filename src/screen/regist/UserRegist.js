@@ -22,6 +22,7 @@ import {
   COLOR,
   ThemeProvider,
   Checkbox,
+  Toolbar,
   Button
 } from "react-native-material-ui";
 
@@ -102,11 +103,11 @@ class UserRegist extends Component {
           : "F",
         personHeight:
         this.props.USER_INFO.userHeight != undefined
-          ? this.props.USER_INFO.userHeight
+          ? String(this.props.USER_INFO.userHeight)
           : "",
         personWeight:
         this.props.USER_INFO.userWeight != undefined
-          ? this.props.USER_INFO.userWeight
+          ? String(this.props.USER_INFO.userWeight)
           : ""
     };
   }
@@ -205,13 +206,13 @@ class UserRegist extends Component {
   }
 
   componentWillUnmount() {
-    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+    //BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
   }
   handleBackButton() {
     return true;
   }
   componentDidMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
+    //BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
     const COM = this;
     this.userNm.focus();
   }
@@ -224,27 +225,33 @@ class UserRegist extends Component {
         style={[styles.container]}
         source={Images.loginLoadingBack} //화면 배경 이미지
       >
-      <View style={{position:"absolute",top:0,left:0,width:width,height:height,backgroundColor:'rgba(0,0,0,0.9)'}}/>
+      <View style={{position:"absolute",top:0,left:0,width:width,height:height,backgroundColor:'rgba(0,0,0,0.9)',zIndex:0}}/>
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           scrollDisabled
           style={{ width: "100%" }}
         >
-          <View style={{ flex: 20 }} />
+          <View style={{ flex: 0 }} />
 
           <View
             style={{
               flex: 65,
               marginVertical: width * 0.0625,
               margin: width * 0.0625,
-              justifyContent: "center",
               alignItems: "center"
             }}
           >
+          <Toolbar
+              leftElement="arrow-back"
+              onLeftElementPress={()=>{this.props.navigation.navigate('Login')}}
+              centerElement={""}
+              style={{
+                  container:{backgroundColor:"rgba(0,0,0,0)",zIndex:1,marginLeft:-(width * 0.0625) ,padding:0}}}
+          />
             <View
               style={{
                 width: "100%",
-                justifyContent: "center",
+                alignSelf:"flex-start",
                 alignItems: "center"
                 /*backgroundColor: "rgba(255,255,255,.9)",
                 borderWidth: 1,
@@ -254,7 +261,6 @@ class UserRegist extends Component {
               <Text
                 style={{
                   width: "100%",
-                  alignSelf: "flex-start",
                   color: "rgba(255,255,255,1)",
                   fontFamily: "NotoSans-Regular",
                   borderBottomWidth: 1,
@@ -426,7 +432,7 @@ class UserRegist extends Component {
             </View>
           </View>
 
-          <View style={{ flex: 15 }} />
+          <View style={{ flex: 0 }} />
         </ScrollView>
       </ImageBackground>
     );

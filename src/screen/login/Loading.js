@@ -6,7 +6,8 @@ import {
   StyleSheet,
   ImageBackground,
   Alert,
-  Linking
+  Linking,
+  PixelRatio
 } from "react-native";
 
 import Images from "@assets/Images";
@@ -18,6 +19,7 @@ import ActionCreator from "@redux-yrseo/actions";
 import cFetch from "@common/network/CustomFetch";
 import APIS from "@common/network/APIS";
 import VersionCheck from "react-native-version-check";
+import { withNavigationFocus } from 'react-navigation';
 
 function mapStateToProps(state) {
   return {
@@ -41,6 +43,10 @@ const res = data => {
     console.log(`${key}: ${data[key]}`);
   }
 };
+var FONT_BACK_LABEL   = 16;
+if (PixelRatio.get() <= 2) {
+  FONT_BACK_LABEL = 12;
+}
 class Loading extends React.Component {
   constructor(props) {
     super(props);
@@ -245,7 +251,7 @@ class Loading extends React.Component {
                   console.log("for update token");
                   console.log(userInfo);
                   PROPS.setUserInfo(userInfo);
-                  if (res.userNm == null || res.userPhone == null) {
+                  if (res.userNm == null || res.userSex == null|| res.userEmail == null|| res.userHeight == null|| res.userWeight == null) {
                     PROPS.navigation.navigate("Regist", {
                       callBack: () => {
                         console.log("occured callback to Login in Loading.js");
@@ -323,6 +329,9 @@ class Loading extends React.Component {
     console.log("authProc in Loading.js end");
   }
   render() {
+    if(this.props.isFocused){
+      this.authProc();
+    }
     return (
       <ImageBackground
         source={Images.loginLoadingBack}
@@ -339,7 +348,9 @@ class Loading extends React.Component {
           elevation: 0
         }}
       >
-        <Text style={{ color: "black" }}>사용자 정보를 확인중입니다.</Text>
+        <Text style={{ color: "black", fontSize:FONT_BACK_LABEL, 
+                  fontFamily: "NotoSans-Regular",margin:10}}>사용자 정보를 확인중입니다.</Text>
+        {/*<Text>{this.props.isFocused ? 'Focused' : 'Not focused'}</Text>*/}
         <ActivityIndicator color="black" size="large" />
       </View>
       </ImageBackground>
@@ -357,4 +368,4 @@ const styles = StyleSheet.create({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Loading);
+)(withNavigationFocus(Loading));
