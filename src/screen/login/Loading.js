@@ -6,7 +6,7 @@ import {
   StyleSheet,
   ImageBackground,
   Alert,
-  BackHandler
+  Linking
 } from "react-native";
 
 import Images from "@assets/Images";
@@ -22,11 +22,7 @@ import VersionCheck from "react-native-version-check";
 function mapStateToProps(state) {
   return {
     USER_INFO: state.REDUCER_USER.user,
-    EXERCISE_RANGE: state.REDUCER_EXERCISE.exerciseRange,
-    EXERCISE_GOAL: state.REDUCER_EXERCISE.exerciseGoalCd,
-    EXERCISE_DAY: state.REDUCER_EXERCISE.exerciseDay,
-    CODE: state.REDUCER_CODE.code,
-    CODE_CATEGORY: state.REDUCER_CODE.codeCategory
+    CODE: state.REDUCER_CODE.code
   };
 }
 
@@ -35,27 +31,9 @@ function mapDispatchToProps(dispatch) {
     setUserInfo: user => {
       dispatch(ActionCreator.setUserInfo(user));
     },
-    setUserContinuousExerciseDays: data => {
-      dispatch(ActionCreator.setUserContinuousExerciseDays(data));
-    },
-    setUserBmiPer: data => {
-      dispatch(ActionCreator.setUserBmiPer(data));
-    },
-    setTodayExerciseList: data => {
-      dispatch(ActionCreator.setTodayExerciseList(data));
-    },
     setCode: data => {
       dispatch(ActionCreator.setCode(data));
     },
-    setCodeCategory: data => {
-      dispatch(ActionCreator.setCodeCategory(data));
-    },
-    setExerciseInfo: data => {
-      dispatch(ActionCreator.setExerciseInfo(data));
-    },
-    setExerciseGoal: data => {
-      dispatch(ActionCreator.setExerciseGoal(data));
-    }
   };
 }
 const res = data => {
@@ -67,15 +45,10 @@ class Loading extends React.Component {
   constructor(props) {
     super(props);
     this.authProc = this.authProc.bind(this);
-    this._exitApp = this._exitApp.bind(this);
+    this.exitApp = this.exitApp.bind(this);
     this.checkPushToken = this.checkPushToken.bind(this);
-    this.getCodeCategory = this.getCodeCategory.bind(this);
     this.getCode = this.getCode.bind(this);
-    this.getUserByEmail = this.getUserByEmail.bind(this);
-    this.getUserExerciseCourse = this.getUserExerciseCourse.bind(this);
-    this.getUserStatistics = this.getUserStatistics.bind(this);
-    this.catchErr = this.catchErr.bind(this);
-    this.putUserInfo = this.putUserInfo.bind(this);
+    /*this.catchErr = this.catchErr.bind(this);*/
   }
   componentDidMount() {
     if (__DEV__) {
@@ -90,7 +63,7 @@ class Loading extends React.Component {
       });
     }
   }
-  _exitApp() {
+  exitApp() {
     // BackHandler.exitApp();
   }
   async versionCheck() {
@@ -101,7 +74,7 @@ class Loading extends React.Component {
       [
         {
           text: "아니오",
-          onPress: () => this._exitApp(),
+          onPress: () => this.exitApp(),
           style: "cancel"
         },
         {
@@ -114,6 +87,7 @@ class Loading extends React.Component {
       { cancelable: false }
     );
   }
+  
   catchErr(e) {
     let message = "에러가 발생했습니다.";
     if (e && (e.code || e.type || e.status || e.message || e.name)) {
@@ -140,11 +114,13 @@ class Loading extends React.Component {
     }
     //return Promise.reject(e);
   }
+  
   checkPushToken() {
     return new Promise(function(resolve, reject) {
       const messaging = firebase.messaging();
       let pushToken = "";
       messaging.hasPermission().then(enabled => {
+        console.log("push perm check start");
         if (enabled) {
           messaging
             .getToken()
@@ -169,8 +145,8 @@ class Loading extends React.Component {
                 .then(token => {
                   console.log("requested permission, WHAT TOKEN: ", token);
                   if (token) {
-                    return token;
                     console.log("user has permissions: ", token);
+                    return token;
                   } else {
                     console.log("no token yet");
                   }
@@ -190,28 +166,8 @@ class Loading extends React.Component {
     });
   }
 
-  getCodeCategory() {
-    return new Promise(function(resolve, reject) {
-      cFetch(
-        APIS.GET_CODE_CATEGORY,
-        [],
-        {},
-        {
-          responseProc: function(res) {
-            resolve(res);
-          },
-          responseNotFound: function(res) {
-            reject(res);
-          },
-          responseError: function(e) {
-            reject(e);
-          }
-        }
-      );
-    });
-  }
-
   getCode() {
+    const PROPS = this.props;
     return new Promise(function(resolve, reject) {
       cFetch(
         APIS.GET_CODE,
@@ -219,96 +175,14 @@ class Loading extends React.Component {
         {},
         {
           responseProc: function(res) {
-            resolve(res);
-          },
-          responseNotFound: function(res) {
-            reject(res);
-          },
-          responseError: function(e) {
-            reject(e);
+            PROPS.setCode(res.list ? res.list : res);
           }
         }
       );
+      resolve();
     });
   }
 
-  getUserByEmail(user) {
-    return new Promise(function(resolve, reject) {
-      cFetch(
-        APIS.GET_USER_BY_EMAIL,
-        [user.email],
-        {},
-        {
-          responseProc: function(res) {
-            resolve(res);
-          },
-          responseNotFound: function(res) {
-            reject({ notReg: true });
-          },
-          responseError: function(e) {
-            reject(e);
-          }
-        }
-      );
-    });
-  }
-  getUserExerciseCourse(userId) {
-    return new Promise(function(resolve, reject) {
-      cFetch(
-        APIS.GET_USER_EXERCISE_COURSE,
-        [userId, moment(new Date()).format("YYYYMMDD")],
-        {},
-        {
-          responseProc: function(res) {
-            resolve(res);
-          },
-          responseNotFound: function(res) {
-            reject(res);
-          },
-          responseError: function(e) {
-            reject(e);
-          }
-        }
-      );
-    });
-  }
-
-  getUserStatistics(userId) {
-    return new Promise(function(resolve, reject) {
-      cFetch(
-        APIS.GET_USER_STATISTICS,
-        [userId],
-        {},
-        {
-          responseProc: function(res) {
-            resolve(res);
-          },
-          responseNotFound: function(res) {
-            reject(res);
-          },
-          responseError: function(e) {
-            reject(e);
-          }
-        }
-      );
-    });
-  }
-  putUserInfo(userInfo) {
-    return new Promise(function(resolve, reject) {
-      var body = JSON.stringify(userInfo);
-      cFetch(APIS.PUT_USER_BY_EMAIL, [userInfo.id], body, {
-        responseProc: function(res) {
-          resolve(res);
-        },
-        responseNotFound: function(res) {
-          reject(res);
-        },
-        responseError: function(e) {
-          reject(e);
-        }
-      });
-    });
-  }
   authProc() {
     console.log("authProc in Loading.js start");
     const COM = this;
@@ -338,6 +212,7 @@ class Loading extends React.Component {
         } else {
           userInfo.userEmailFacebook = SNSEmailOrUid;
         }
+        userInfo.userEmail = SNSEmailOrUid;
         userInfo.id = SNSEmailOrUid; //기본은 email, 전화번호로 로그인한 경우에는 providerData의 uid가 입력된다.
         console.log(
           " user.email: " + user.email,
@@ -354,15 +229,7 @@ class Loading extends React.Component {
             userInfo.pushToken = token;
             pushToken = token;
           })
-          //.then(this.getCode)
-          .then(()=>{
-            PROPS.navigation.navigate("Main", {
-              callBack: () => {
-                COM.authProc();
-              }
-            });
-          })
-          /*
+          .then(this.getCode)
           .then(
             cFetch(
               APIS.GET_USER_BY_EMAIL,
@@ -379,9 +246,6 @@ class Loading extends React.Component {
                   console.log(userInfo);
                   PROPS.setUserInfo(userInfo);
                   if (res.userNm == null || res.userPhone == null) {
-                    // console.log(
-                    //   "--from Loading.ljs, SNSEmailOrUid found but data is null, go to regsit"
-                    // );
                     PROPS.navigation.navigate("Regist", {
                       callBack: () => {
                         console.log("occured callback to Login in Loading.js");
@@ -395,7 +259,7 @@ class Loading extends React.Component {
                     });
                   } else {
                     var body = JSON.stringify(userInfo);
-                    cFetch(APIS.PUT_USER_BY_PHONE, [userInfo.userPhone], body, {
+                    cFetch(APIS.PUT_USER_BY_EMAIL, [userInfo.userEmail], body, {
                       responseProc: function(res) {
                         console.log(
                           "pushToken saved in loading.js start- put method response:"
@@ -430,9 +294,6 @@ class Loading extends React.Component {
                 },
                 responseNotFound: function(res) {
                   console.log("occured 404 getUser by email in Loading.js");
-                  // console.log(
-                  //   "--From loading.js, SNSEmailOrUid not found, goto regist"
-                  // );
                   PROPS.setUserInfo(userInfo);
                   PROPS.navigation.navigate("Regist", {
                     userStep: "regist",
@@ -450,7 +311,6 @@ class Loading extends React.Component {
               }
             )
           )
-          */
           .then();
       } else {
         PROPS.navigation.navigate("Login", {

@@ -145,6 +145,7 @@ class Login extends React.Component {
         style={[
           styles.rowContainer,
           {
+            width:"100%",
             borderWidth: 0,
             backgroundColor: "rgba(255,255,255,0)",
             borderRadius: 10,
@@ -173,7 +174,7 @@ class Login extends React.Component {
               fontFamily: "NotoSans-Regular",
               fontWeight: "bold",
               textAlign: "left",
-              paddingBottom: 10,
+              paddingBottom: 30,
               fontSize: 16,
               textShadowColor: "rgba(0,0,0,0.1)",
               textShadowRadius: 10
@@ -189,7 +190,7 @@ class Login extends React.Component {
             type="facebook"
             onPress={this.facebookLogin}
             onLongPress={this.facebookLogin}
-            style={{borderRadius: 10,padding: 20}}
+            style={{borderRadius: 0,padding: 20}}
           />
         </View>
         <View style={styles.button}>
@@ -199,20 +200,14 @@ class Login extends React.Component {
             type="google-plus-official"
             onPress={this.googleLogin}
             onLongPress={this.googleLogin}
-            style={{borderRadius: 10,padding: 20}}
+            style={{borderRadius: 0,padding: 20}}
           />
+          <Text style={{paddingTop:40, paddingLeft: 20, paddingRight:20, color:"silver", textAlign:"center"}}>이 앱을 통한 어떠한 사진 및 동영상도{"\n"}당신의 허락 없이 타인에게 공개되지 않습니다.</Text>
         </View>
       </View>
       </ImageBackground>
     );
-    return (
-      <DrawerWrapped
-        rightDisabled={true}
-        navigation={this.props.navigation}
-        content={content}
-        parentWidth={width}
-      />
-    );
+    return content;
   }
 }
 const styles = StyleSheet.create({
@@ -229,6 +224,7 @@ const styles = StyleSheet.create({
   button: {
     marginHorizontal: 8
     // margin: 10
+    ,paddingTop:10
   }
 });
 

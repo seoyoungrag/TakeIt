@@ -39,11 +39,13 @@ class Diary extends React.Component {
         
         const content = (
           <Container toolbarTitle="음식상세??" toolbarDisplay={true} navigation={this.props.navigation}>
+
             <View style={styles.container}>
-              <Text style={styles.welcome}>Welcome to React Native!</Text>
+              <Text style={styles.welcome}>Welcome to React Nativasdasdadadasdadse!</Text>
               <Text style={styles.instructions}>To get started, edit App.js</Text>
               <Text style={styles.instructions}>{instructions}</Text>
             </View>
+
           </Container>
           );
           return (

@@ -17,9 +17,11 @@ YellowBox.ignoreWarnings([
     "Debugger and device times have drifted by more than 60s. Please correct this by running adb shell \"date `date +%m%d%H%M%Y.%S`\" on your debugger machine.",
     "Remote debugger is in a background tab which may cause apps to perform slowly. Fix this by foregrounding the tab (or opening it in a separate window).",
     "{}",
-    "{message: \"Parse Error. Your app's play store page doesn't seem to have latest app version info.\", text: \"<!DOCTYPE html><html><head><meta http-equiv=\"conte…yle=\"clear:both\"></div></div></div></body></html>\"}"
+    "{message: \"Parse Error. Your app's play store page doesn't seem to have latest app version info.\", text: \"<!DOCTYPE html><html><head><meta http-equiv=\"conte…yle=\"clear:both\"></div></div></div></body></html>\"}",
+    "Possible Unhandled Promise Rejection"
   ]);
 
 AppRegistry.registerComponent(appName, () => App);
 AppRegistry.registerHeadlessTask(
   "RNFirebaseBackgroundMessage",() => BgMessaging)
+  

@@ -10,6 +10,7 @@ import Loading from "@screens/login/Loading";
 import Login from "@screens/login";
 import Main from "@screens/main";
 import Diary from "@screens/diary";
+import UserRegist from"@screens/regist";
 
 const RootStack = createStackNavigator(
     {
@@ -21,6 +22,12 @@ const RootStack = createStackNavigator(
       },
       Login: {
         screen:Login,
+        navigationOptions:({navigation}) => ({
+          header: null
+        })
+      },
+      Regist: {
+        screen:UserRegist,
         navigationOptions:({navigation}) => ({
           header: null
         })
