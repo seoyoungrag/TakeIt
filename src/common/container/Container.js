@@ -1,24 +1,19 @@
-import {Animated,  View, StyleSheet } from 'react-native';
+import {Animated,  View, StyleSheet, Image } from 'react-native';
 import React, { Component } from 'react';
 import { PropTypes } from 'prop-types';
 
 import {
-    ActionButton,
-    Avatar,
-    ListItem,
-    Toolbar,
-    BottomNavigation,
-    Icon,
-    Button, COLOR
+    Toolbar
   } from 'react-native-material-ui';
+  import Footer from "@footer";
 
 const propTypes = {
     children: PropTypes.node.isRequired,
 };
-const styles = StyleSheet.create({
+let styles = StyleSheet.create({
     container: {
         flex: 1,
-    },
+    }
 });
 
 class Container extends Component {
@@ -34,7 +29,8 @@ class Container extends Component {
     render() {
         const toolbarTitle = this.props.toolbarTitle;
         const toolbarDisplay = this.props.toolbarDisplay;
-        const navigation = this.props.navigation
+        const navigation = this.props.navigation;
+        const footer = <Footer navigation={this.props.navigation}/>;
         return (
             <View style={styles.container}>
             {toolbarDisplay ? (
@@ -45,42 +41,7 @@ class Container extends Component {
                 />
             ):null}
                 {this.props.children}
-                <BottomNavigation
-                    active={this.state.active}
-                    hidden={false}
-                    style={{ container: { position: 'absolute', bottom: 0, left: 0, right: 0 } }}
-                >
-                    <BottomNavigation.Action
-                        key="HOME"
-                        icon={<Icon name="home" />}
-                        label="HOME"
-                        onPress={() => this.setState({ active: 'HOME' })}
-                    />
-                    <BottomNavigation.Action
-                        key="PHOTO"
-                        icon="photo"
-                        label="PHOTO"
-                        onPress={() => this.setState({ active: 'PHOTO' })}
-                    />
-                    <BottomNavigation.Action
-                        key="INBODY"
-                        icon="photo"
-                        label="INBODY"
-                        onPress={() => this.setState({ active: 'INBODY' })}
-                    />
-                    <BottomNavigation.Action
-                        key="DIARY"
-                        icon="book"
-                        label="DIARY"
-                        onPress={() => this.setState({ active: 'DIARY' })}
-                    />
-                    <BottomNavigation.Action
-                        key="GRAPH"
-                        icon="book"
-                        label="GRAPH"
-                        onPress={() => this.setState({ active: 'GRAPH' })}
-                    />
-                </BottomNavigation>
+                {footer}
             </View>
         );
     }
