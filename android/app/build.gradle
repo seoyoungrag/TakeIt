@@ -156,7 +156,7 @@ dependencies {
 
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-gesture-handler')
-    
+
     /**
     * react-native-fbsdk 관련 추가
     */

@@ -1,5 +1,4 @@
 const Images = {
-
   loginLoadingBack: require("./img/login_loading_back.png"),
   loginBack: require("./img/login_back.png"),
   HeaderBmi: require("./img/header_bmi.png"),
@@ -12,6 +11,7 @@ const Images = {
   FooterSelfieBtn: require("./img/footer_selfie_btn.png"),
   FooterAlarmBtn: require("./img/footer_alarm_btn.png"),
   HeaderMenuBtn: require("./img/header_menu_btn.png"),
+  CalendarBtn: require('./img/calendar.png'),
 
   Footer_background: require("./img/footer/footer__0000s_0005_bg.png"),
 
