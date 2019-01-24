@@ -1,13 +1,12 @@
-//const HOST = "http://13.125.161.158:8080/fitDiary";
-//const HOST = "http://192.168.0.3:8080/fitDiary";
-//const HOST = "http://14.63.106.109:48080/fitdiaryAppBackend";
-const HOST = "http://172.30.1.36:8080";
+// const HOST = 'http://192.168.0.11:8080';
+const HOST = 'http://192.168.0.8:8080';
+
 const headers = new Headers({
-  "x-requested-with": "XMLHttpRequest",
-  accept: "application/json; charset=utf-8",
-  "Content-Type": "application/json; charset=utf-8",
-  mode: "same-origin",
-  credentials: "same-origin"
+  'x-requested-with': 'XMLHttpRequest',
+  accept: 'application/json; charset=utf-8',
+  'Content-Type': 'application/json; charset=utf-8',
+  mode: 'same-origin',
+  credentials: 'same-origin',
 });
 
 const timeoutms = 30000;
@@ -15,9 +14,9 @@ function timeout(ms, promise) {
   return new Promise(function(resolve, reject) {
     setTimeout(function() {
       reject({
-        type: "requestTimeout",
-        status: "timeout",
-        message: "서버 요청 시간을 " + timeoutms / 1000 + "초를 초과했습니다."
+        type: 'requestTimeout',
+        status: 'timeout',
+        message: '서버 요청 시간을 ' + timeoutms / 1000 + '초를 초과했습니다.',
       });
     }, ms);
     promise.then(resolve, reject);
@@ -34,15 +33,15 @@ const cFetch = (API, params, body, fncs) => {
   let url = API.url;
   let method = API.method;
   for (var i in params) {
-    url += "/" + params[i];
+    url += '/' + params[i];
   }
-  console.log(method + " " + HOST + url + " " + JSON.stringify(body));
+  console.log(method + ' ' + HOST + url + ' ' + JSON.stringify(body));
   timeout(
     timeoutms,
     fetch(`${HOST}` + url, {
       method: method,
       headers: headers,
-      body: method != "GET" && body != undefined ? body : undefined
+      body: method != 'GET' && body != undefined ? body : undefined,
     })
       //response의 ok가 true이고, status가 200인지 체크
       .then(res => {
@@ -52,9 +51,9 @@ const cFetch = (API, params, body, fncs) => {
             //throw Error(e); //throw Error대신 throw Object
             if (fncs.responseNotFound == undefined) {
               throw {
-                type: "responseCheckError",
+                type: 'responseCheckError',
                 status: res.status,
-                message: res.statusText
+                message: res.statusText,
               };
             } else {
               fncs.responseNotFound(res);
@@ -88,9 +87,9 @@ const cFetch = (API, params, body, fncs) => {
               fncs.responseNotFound(res);
             } else {
               throw {
-                type: "responseProcError",
+                type: 'responseProcError',
                 status: res.code,
-                message: res.message
+                message: res.message,
               };
             }
           }
@@ -103,11 +102,11 @@ const cFetch = (API, params, body, fncs) => {
       .catch(e => {
         if (fncs.responseError == undefined) {
           // console.log(e);
-          let message = "에러가 발생했습니다.";
-          message += e.type ? "\nTYPE: " + e.type : "";
-          message += e.status ? "\nCODE: " + e.status : "";
-          message += e.message ? "\nMESSAGE: " + e.message : "";
-          message += e.name ? "\nNAME: " + e.name : "";
+          let message = '에러가 발생했습니다.';
+          message += e.type ? '\nTYPE: ' + e.type : '';
+          message += e.status ? '\nCODE: ' + e.status : '';
+          message += e.message ? '\nMESSAGE: ' + e.message : '';
+          message += e.name ? '\nNAME: ' + e.name : '';
           alert(message);
         } else {
           return fncs.responseError(e);

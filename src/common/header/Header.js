@@ -1,54 +1,49 @@
-import React from "react";
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity
-} from "react-native";
-import Images from "@assets/Images";
-import { connect } from "react-redux";
-import ActionCreator from "@redux-yrseo/actions";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import React from 'react';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
+import Images from '@assets/Images';
+import { connect } from 'react-redux';
+import ActionCreator from '@redux-yrseo/actions';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 let styles = {
   headerMenuIconContainer: {
-    alignItems: "flex-end",
-    paddingRight: 10
+    alignItems: 'flex-end',
+    paddingRight: 10,
   },
   headerMenuIcon: {
     width: 15,
-    resizeMode: "contain"
+    resizeMode: 'contain',
   },
   headerFirstIconContainer: {
     paddingLeft: 10,
-    alignItems: "flex-end"
+    alignItems: 'flex-end',
   },
   headerSecondTextContainer: {
-    paddingLeft: 10
+    paddingLeft: 10,
   },
   headerThirdDelimeterContainer: {
     paddingLeft: 10,
-    alignItems: "flex-start"
+    alignItems: 'flex-start',
   },
   headerFirstIcon: {
     width: 15,
-    resizeMode: "contain"
+    resizeMode: 'contain',
   },
   headerSecondText: {
     fontSize: 10,
-    color: "black",
-    fontFamily: "NotoSans-Regular"
+    color: 'black',
+    fontFamily: 'NotoSans-Regular',
   },
   headerThirdDelimeter: {
     width: 1,
-    resizeMode: "contain"
-  }
+    resizeMode: 'contain',
+  },
 };
 
 function mapStateToProps(state) {
   return {
     USER_INFO: state.REDUCER_USER.user,
-    EXERCISE_GOAL: state.REDUCER_EXERCISE.exerciseGoalCd
+    EXERCISE_GOAL: state.REDUCER_EXERCISE.exerciseGoalCd,
   };
 }
 
@@ -56,7 +51,7 @@ function mapDispatchToProps(dispatch) {
   return {
     setUserInfo: user => {
       dispatch(ActionCreator.setUserInfo(user));
-    }
+    },
   };
 }
 class Header extends React.Component {
@@ -81,8 +76,7 @@ class Header extends React.Component {
             backgroundColor="#fcfcff"
             borderBottomColor="#e1e1e4"
             borderBottomWidth={1}
-            flex={1}
-          >
+            flex={1}>
             <TouchableOpacity
               onPress={() => {
                 if (state.params && state.params.callBack) {
@@ -91,8 +85,7 @@ class Header extends React.Component {
                   goBack(params.go_back_key);
                 }
               }}
-              style={styles.headerFirstIconContainer}
-            >
+              style={styles.headerFirstIconContainer}>
               <MaterialIcons
                 name="arrow-back"
                 color="#000000"
@@ -113,8 +106,7 @@ class Header extends React.Component {
             backgroundColor="#fcfcff"
             borderBottomColor="#e1e1e4"
             borderBottomWidth={1}
-            flex={1}
-          >
+            flex={1}>
             <View style={styles.headerFirstIconContainer}>
               <Image
                 style={styles.headerFirstIcon}
@@ -124,8 +116,8 @@ class Header extends React.Component {
             <View style={styles.headerSecondTextContainer}>
               <Text style={styles.headerSecondText}>
                 {USER_INFO != undefined && USER_INFO.userWeight
-                  ? USER_INFO.userWeight + "kg"
-                  : ""}
+                  ? USER_INFO.userWeight + 'kg'
+                  : ''}
               </Text>
             </View>
             <View style={styles.headerThirdDelimeterContainer}>
@@ -146,8 +138,8 @@ class Header extends React.Component {
                       USER_INFO.userWeight /
                       (((USER_INFO.userHeight / 100) * USER_INFO.userHeight) /
                         100)
-                    ).toFixed(1) + "bmi"
-                  : ""}
+                    ).toFixed(1) + 'bmi'
+                  : ''}
               </Text>
             </View>
             <View style={styles.headerThirdDelimeterContainer}>
@@ -175,8 +167,8 @@ class Header extends React.Component {
                           o.code == USER_INFO.userGymList[0].userExerciseCd
                         );
                       })[0].codeNm
-                    : ""
-                  : ""}
+                    : ''
+                  : ''}
               </Text>
             </View>
             <View style={styles.headerThirdDelimeterContainer}>
@@ -190,8 +182,7 @@ class Header extends React.Component {
               <View style={styles.headerMenuIconContainer}>
                 <TouchableOpacity
                   style={styles.btn2}
-                  onPress={this.props.hamburgerBtnClicked}
-                >
+                  onPress={this.props.hamburgerBtnClicked}>
                   <Image
                     style={styles.headerMenuIcon}
                     source={Images.HeaderMenuBtn}
