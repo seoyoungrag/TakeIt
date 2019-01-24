@@ -32,12 +32,12 @@ export default class Footer extends React.Component {
         bottom={0}
         width={width}
         borderTopColor="#e7e7ea"
-        borderTopWidth={0.5}
+        borderTopWidth={1}
         backgroundColor="#ffffff"
         flexDirection="row"
         alignItems="center"
         justifyContent="center"
-        elevation={30}
+        elevation={100}
       >
       <TouchableOpacity
         underlayColor="rgba(0,0,0,.1)"

@@ -4,10 +4,8 @@ import {Alert, Dimensions,Platform, StyleSheet, Text, View, TouchableOpacity, Pi
 import DrawerWrapped from "@drawer";
 import { connect } from "react-redux";
 import Container from '@container/Container';
-import firebase from "react-native-firebase";
 import FastImage from 'react-native-fast-image'
 import { SectionGrid, FlatGrid } from 'react-native-super-grid';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 const {width, height} = Dimensions.get("window");
 
@@ -54,7 +52,7 @@ class Main extends Component {
         ];
         const statues = [
           { name: '탄수화물', guage: '0.1', value: '92g' },
-          { name: '지방', guage: '0.9', value: '24g' },
+          { name: '지방', guage: '0.85', value: '24g' },
           { name: '단백질', guage: '0.6', value: '92g'},
           { name: '당', guage: '0.3', value: '52g'}
         ];
@@ -82,15 +80,13 @@ class Main extends Component {
                     flexDirection: "row",
                     justifyContent: "center",
                   }}>
-                  <View flex={1}>
+                  <View width={height*0.15} height="100%" paddingLeft={10}>
                   {YourImage}
                   </View>
-                  <View flex={2} flexDirection="column">
-                    <View flex={3} style={{padding:10, paddingBottom:0}} flexDirection="row">
-                      <View alignSelf="flex-end">
-                        <Text style={styles.profileUserEmail}>{this.props.USER_INFO.userEmail}</Text>
-                        <Text style={styles.profileWiseSaying}>{WiseSaying}</Text>
-                      </View>
+                  <View flex={width-height*0.15} height="100%">
+                    <View flex={3} style={{padding:10, paddingBottom:0}}>
+                      <Text style={styles.profileUserEmail}>{this.props.USER_INFO.userEmail}</Text>
+                      <Text style={styles.profileWiseSaying}>{WiseSaying}</Text>
                     </View>
                     <View flex={2} flexDirection="row" style={{padding:10, paddingTop:20}}>
                       <View flex={2} style={{backgroundColor:'rgb(72,207,173)', paddingLeft:10, justifyContent:"center"}}><Text style={{color:"white"}}>today 1835 kcal</Text></View>
@@ -107,12 +103,18 @@ class Main extends Component {
                   style={styles.gridView}
                   renderItem={({ item, section, index }) => (
                     <View style={[styles.statusContainer, { /* backgroundColor: 'rgba(255,0,0,'+item.guage+')'*/}]}>  
-                      <Text style={[styles.itemName,{color:"black"}]}>{item.name}&nbsp;
-                        <Text style={[styles.itemCode,{color:"rgba(0,0,0,"+item.guage+")",alignContent:'flex-end'}]}>{item.value}
-                        </Text>
-                      </Text> 
+                      <View flexDirection="row" width={width/2-width*0.1}>
+                        <View style={{flex:1, alignItems:"flex-start"}}>
+                          <Text style={[styles.itemName,{color:"black"}]}>{item.name}</Text> 
+                        </View>
+                        <View style={{flex:1, alignItems:"flex-end"}}>
+                          <Text style={[styles.itemCode,{color:"rgba(0,0,0,"+item.guage+")"}]}>{item.value}
+                          </Text>
+                        </View>
+                      </View>
                       <ProgressBarAnimated
                         width={width/2-width*0.1}
+                        height={height*0.005}
                         value={100*item.guage}
                         backgroundColor={"rgba(255,0,0,"+item.guage+")"}
                         borderColor={"rgba(255,0,0,1)"}
@@ -207,15 +209,20 @@ const styles = StyleSheet.create({
       paddingBottom:10
     },
      avatarTempImage: {
-      height: "100%",
+      height: height*0.14,
+      width: height*0.14,
+      borderRadius: height*0.2
     },
     statusView:{
-      height: height*0.10
+      height: height*0.10,
+      backgroundColor: "#FAFAFA"
     },
     foodList: {
+      backgroundColor:"#F4F2F3",
       height: height*0.62
     },profileUserEmail: {
-      fontSize: FONT_BACK_LABEL*1.2
+      fontSize: FONT_BACK_LABEL*1.2,
+      color:"rgba(0,0,0,1)"
     }, profileWiseSaying: {
       fontSize: FONT_BACK_LABEL*0.8
     },
@@ -248,6 +255,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       color: 'black',
       padding: 10,
+      paddingBottom: 0
     }
   });
   
