@@ -2,7 +2,20 @@ import diaryTypes from "./Types_Diary";
 import userTypes from "./Types_User";
 import exerciseTypes from "./Types_Exercise";
 import codeTypes from "./Types_Code";
+import constants from "./Types_Constants";
 
+export function setIsFromLoading(data) {
+  return {
+    type: constants.IS_FROM_LOADING,
+    payload: data
+  };
+}
+export function setIsFromLogin(data) {
+  return {
+    type: constants.IS_FROM_LOGIN,
+    payload: data
+  };
+}
 export function setCode(date) {
   return {
     type: codeTypes.SET_CODE,

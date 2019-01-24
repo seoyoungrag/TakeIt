@@ -20,6 +20,7 @@ import {
 } from 'react-native-material-ui';
 
 import Images from '@assets/Images';
+import Footer from "@footer";
 
 const propTypes = {
   children: PropTypes.node.isRequired,
@@ -64,43 +65,7 @@ class Container extends Component {
           />
         ) : null}
         {this.props.children}
-        <BottomNavigation
-          active={this.state.active}
-          hidden={false}
-          style={{
-            container: { position: 'absolute', bottom: 0, left: 0, right: 0 },
-          }}>
-          <BottomNavigation.Action
-            key="HOME"
-            icon={<Icon name="home" />}
-            label="HOME"
-            onPress={() => this.setState({ active: 'HOME' })}
-          />
-          <BottomNavigation.Action
-            key="PHOTO"
-            icon="photo"
-            label="PHOTO"
-            onPress={() => this.setState({ active: 'PHOTO' })}
-          />
-          <BottomNavigation.Action
-            key="INBODY"
-            icon="photo"
-            label="INBODY"
-            onPress={() => this.setState({ active: 'INBODY' })}
-          />
-          <BottomNavigation.Action
-            key="DIARY"
-            icon="book"
-            label="DIARY"
-            onPress={() => this.setState({ active: 'DIARY' })}
-          />
-          <BottomNavigation.Action
-            key="GRAPH"
-            icon="book"
-            label="GRAPH"
-            onPress={() => this.setState({ active: 'GRAPH' })}
-          />
-        </BottomNavigation>
+        {footer}
       </View>
     );
   }

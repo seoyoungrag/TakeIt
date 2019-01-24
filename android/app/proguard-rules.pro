@@ -18,3 +18,5 @@
 
 -keep class io.invertase.firebase.** { *; }
 -dontwarn io.invertase.firebase.**
+-keep public class com.dylanvann.fastimage.* {*;}
+-keep public class com.dylanvann.fastimage.** {*;}

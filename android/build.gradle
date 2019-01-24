@@ -6,7 +6,7 @@ buildscript {
         minSdkVersion = 16
         compileSdkVersion = 27
         targetSdkVersion = 26
-        supportLibVersion = "27.1.1"
+        supportLibVersion = "23.0.1" //27.1.1 to 23.0.1 by yrseo
         googlePlayServicesAuthVersion = "15.0.1" // <--- add react-natvie-google-siginin yrseo
     }
     repositories {

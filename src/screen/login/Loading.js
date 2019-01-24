@@ -6,7 +6,8 @@ import {
   StyleSheet,
   ImageBackground,
   Alert,
-  Linking
+  Linking,
+  PixelRatio
 } from "react-native";
 
 import Images from "@assets/Images";
@@ -18,11 +19,14 @@ import ActionCreator from "@redux-yrseo/actions";
 import cFetch from "@common/network/CustomFetch";
 import APIS from "@common/network/APIS";
 import VersionCheck from "react-native-version-check";
+import { withNavigationFocus } from 'react-navigation';
 
 function mapStateToProps(state) {
   return {
+    IS_FROM_LOGIN: state.REDUCER_CONSTANTS.isFromLogin,
     USER_INFO: state.REDUCER_USER.user,
-    CODE: state.REDUCER_CODE.code
+    CODE: state.REDUCER_CODE.code,
+    IS_FROM_LOADING: state.REDUCER_CONSTANTS.isFromLoading
   };
 }
 
@@ -34,13 +38,18 @@ function mapDispatchToProps(dispatch) {
     setCode: data => {
       dispatch(ActionCreator.setCode(data));
     },
+    setIsFromLogin: data => {
+      dispatch(ActionCreator.setIsFromLogin(data));
+    },
+    setIsFromLoading: data => {
+      dispatch(ActionCreator.setIsFromLoading(data));
+    }
   };
 }
-const res = data => {
-  for (let key in data) {
-    console.log(`${key}: ${data[key]}`);
-  }
-};
+var FONT_BACK_LABEL   = 16;
+if (PixelRatio.get() <= 2) {
+  FONT_BACK_LABEL = 12;
+}
 class Loading extends React.Component {
   constructor(props) {
     super(props);
@@ -48,7 +57,6 @@ class Loading extends React.Component {
     this.exitApp = this.exitApp.bind(this);
     this.checkPushToken = this.checkPushToken.bind(this);
     this.getCode = this.getCode.bind(this);
-    /*this.catchErr = this.catchErr.bind(this);*/
   }
   componentDidMount() {
     if (__DEV__) {
@@ -88,241 +96,167 @@ class Loading extends React.Component {
     );
   }
   
-  catchErr(e) {
-    let message = "에러가 발생했습니다.";
-    if (e && (e.code || e.type || e.status || e.message || e.name)) {
-      message += e.code ? "\nCODE: " + e.code : "";
-      message += e.type ? "\nTYPE: " + e.type : "";
-      message += e.status ? "\nCODE: " + e.status : "";
-      message += e.message
-        ? "\nMESSAGE: " +
-          (e.code && e.code == "404" ? "페이지를 찾을 수 없습니다." : e.message)
-        : "";
-      message += e.name ? "\nNAME: " + e.name : "";
-    } else if (e.notEnough) {
-      message = "등록되지 않은 정보가 있습니다.";
-    } else if (e.notReg) {
-      message = "처음 방문 하셨군요.";
-    } else {
-      message += "\n 정의되지 않은 오류입니다.";
-      message += "\n" + JSON.stringify(e);
-    }
-    console.log(JSON.stringify(e));
-    if (e.message && e.message.indexOf("Network") > -1) {
-    } else {
-      alert(message);
-    }
-    //return Promise.reject(e);
-  }
-  
-  checkPushToken() {
-    return new Promise(function(resolve, reject) {
-      const messaging = firebase.messaging();
-      let pushToken = "";
-      messaging.hasPermission().then(enabled => {
-        console.log("push perm check start");
+  checkPushToken = async () => {
+      const enabled = await firebase.messaging().hasPermission();
+        console.log("loading.js: push perm check start");
         if (enabled) {
-          messaging
-            .getToken()
-            .then(token => {
-              if (token) {
-                console.log("user has permissions: ", token);
-                resolve(token);
-              } else {
-                console.log("no token yet");
-              }
-            })
-            .catch(error =>
-              console.log("have permission, but failed to get token:", error)
-            );
+          try{
+            const token = await firebase.messaging().getToken()
+            if (token) {
+              console.log("loading.js: user has permissions: ", token);
+              return token;
+            } else {
+              console.log("loading.js: no token yet");
+            }
+          }catch(error){
+          console.log("loading.js: have permission, but failed to get token:", error)
+          };
         } else {
-          console.log("user doesnt have permission");
-          messaging
-            .requestPermission()
-            .then(() => {
-              messaging
-                .getToken()
-                .then(token => {
-                  console.log("requested permission, WHAT TOKEN: ", token);
-                  if (token) {
-                    console.log("user has permissions: ", token);
-                    return token;
-                  } else {
-                    console.log("no token yet");
-                  }
-                })
-                .catch(error =>
-                  console.log(
-                    "have permission, but failed to get token:",
-                    error
-                  )
-                );
-            })
-            .catch(error => {
-              console.log("User has rejected permissions: ", error);
-            });
+          console.log("loading.js: user doesnt have permission");
+          await firebase.messaging().requestPermission();
+          const token = await firebase.messaging().getToken();
+          console.log("loading.js: requested permission, WHAT TOKEN: ", token);
+          if (token) {
+            console.log("loading.js: user has permissions: ", token);
+            return token;
+          } else {
+            console.log("loading.js: no token yet");
+          }
+        }
+    }
+
+  getCode () {
+    const PROPS = this.props;
+    cFetch(
+      APIS.GET_CODE,
+      [],
+      {},
+      {
+        responseProc: async (res) => {
+          PROPS.setCode(res.list ? res.list : res);
+        }
+      }
+    );
+  }
+
+  authProc = async () => {
+    console.log("loading.js: authProc in Loading.js start");
+    console.log("loading.js: isFocused");
+    console.log(this.props.isFocused);
+    if(this.props.isFocused){
+      const PROPS = this.props;
+      let userInfo = PROPS.USER_INFO;
+      console.log("Loading.js: "+JSON.stringify(userInfo));
+      let providerId = "";
+      let SNSEmailOrUid = "";
+      let pushToken = "";
+
+      await firebase.auth().onAuthStateChanged(user => {
+        console.log("loading.js: firebase auth check start"+Date.now()); //원래 여러번 호출된다고 한다. https://stackoverflow.com/questions/37673616/firebase-android-onauthstatechanged-called-twice
+        if (user) {
+          //providerID를 가져온다. 페이스북이냐 구글이냐
+          if (user && user.providerData && user.providerData.length > 0) {
+            providerId = user.providerData[0].providerId;
+          }
+          //email이 없는 경우 uid를 가져온다.. 처음부터 uid를 가져올걸 그랬나
+          SNSEmailOrUid = user.email
+            ? user.email
+            : user.providerData[0].email
+              ? user.providerData[0].email
+              : user.providerData[0].uid;
+          //구글이냐 페이스북이냐에 따라
+          if (providerId.indexOf("google.com") > -1) {
+            userInfo.userEmailGmail = SNSEmailOrUid;
+          } else {
+            userInfo.userEmailFacebook = SNSEmailOrUid;
+          }
+          userInfo.userEmail = SNSEmailOrUid;
+          userInfo.id = SNSEmailOrUid; //기본은 email, 전화번호로 로그인한 경우에는 providerData의 uid가 입력된다.
+          console.log("loading.js: firebase auth check end");
+        } else {
+          PROPS.setIsFromLogin(false);
+          //PROPS.setIsFromLoading(true);
+          PROPS.navigation.navigate("Login");
         }
       });
-    });
-  }
+      var token = await this.checkPushToken();
+      console.log("loading.js: pushToken: " + token);
+      console.log("loading.js: push perm check end");
+      userInfo.pushToken = token;
+      pushToken = token;
 
-  getCode() {
-    const PROPS = this.props;
-    return new Promise(function(resolve, reject) {
-      cFetch(
-        APIS.GET_CODE,
-        [],
+      await this.getCode();
+
+      await cFetch(
+        APIS.GET_USER_BY_EMAIL,
+        [SNSEmailOrUid],
         {},
         {
-          responseProc: function(res) {
-            PROPS.setCode(res.list ? res.list : res);
-          }
-        }
-      );
-      resolve();
-    });
-  }
-
-  authProc() {
-    console.log("authProc in Loading.js start");
-    const COM = this;
-    const PROPS = this.props;
-    let userInfo = {};
-    let providerId = "";
-    let SNSEmailOrUid = "";
-    let pushToken = "";
-
-    firebase.auth().onAuthStateChanged(user => {
-      console.log("firebase auth check start");
-      if (user) {
-        // console.log(user);
-        //providerID를 가져온다. 페이스북이냐 구글이냐
-        if (user && user.providerData && user.providerData.length > 0) {
-          providerId = user.providerData[0].providerId;
-        }
-        //email이 없는 경우 uid를 가져온다.. 처음부터 uid를 가져올걸 그랬나
-        SNSEmailOrUid = user.email
-          ? user.email
-          : user.providerData[0].email
-            ? user.providerData[0].email
-            : user.providerData[0].uid;
-        //구글이냐 페이스북이냐에 따라
-        if (providerId.indexOf("google.com") > -1) {
-          userInfo.userEmailGmail = SNSEmailOrUid;
-        } else {
-          userInfo.userEmailFacebook = SNSEmailOrUid;
-        }
-        userInfo.userEmail = SNSEmailOrUid;
-        userInfo.id = SNSEmailOrUid; //기본은 email, 전화번호로 로그인한 경우에는 providerData의 uid가 입력된다.
-        console.log(
-          " user.email: " + user.email,
-          " user.providerData[0].email id: " + user.providerData[0].email,
-          " user.providerData[0].uid id: " + user.providerData[0].uid,
-          " using for id: " + SNSEmailOrUid
-        );
-        console.log("firebase auth check end");
-        Promise.resolve()
-          .then(this.checkPushToken)
-          .then(token => {
-            console.log("pushToken: " + token);
-            console.log("push perm check end");
-            userInfo.pushToken = token;
-            pushToken = token;
-          })
-          .then(this.getCode)
-          .then(
-            cFetch(
-              APIS.GET_USER_BY_EMAIL,
-              [SNSEmailOrUid],
-              {},
-              {
+          responseProc: async (res) =>  {
+            userInfo = Object.assign(
+              JSON.parse(JSON.stringify(userInfo)),
+              res
+            );
+            userInfo.pushToken = pushToken;
+            console.log("loading.js: for update token AFTER GET_USER_BY_EMAIL");
+            console.log("loading.js: userInfo AFTER GET_USER_BY_EMAIL: "+JSON.stringify(userInfo));
+            if (res.userNm == null){ // 이름은 필수 값, 한번도 이름 저장 안한 사람은 로그인부터 해서 이름값 가져오도록 한다.
+              PROPS.setIsFromLogin(false);
+              //PROPS.setIsFromLoading(true);
+              PROPS.navigation.navigate("Login");
+            }else if(res.userSex == null|| res.userEmail == null|| res.userHeight == null|| res.userWeight == null) {
+              PROPS.setIsFromLogin(false);
+              PROPS.navigation.navigate("Regist");
+            } else {
+              var body = JSON.stringify(userInfo);
+              cFetch(APIS.PUT_USER_BY_EMAIL, [userInfo.userEmail], body, {
                 responseProc: function(res) {
-                  userInfo = Object.assign(
-                    JSON.parse(JSON.stringify(userInfo)),
-                    res
+                  console.log(
+                    "loading.js: pushToken saved in loading.js start- put method response:"
                   );
-                  userInfo.pushToken = pushToken;
-                  console.log("for update token");
-                  console.log(userInfo);
-                  PROPS.setUserInfo(userInfo);
-                  if (res.userNm == null || res.userPhone == null) {
-                    PROPS.navigation.navigate("Regist", {
-                      callBack: () => {
-                        console.log("occured callback to Login in Loading.js");
-                        PROPS.navigation.navigate("Login", {
-                          callBack: () => {
-                            return false;
-                          }
-                        });
-                      },
-                      refreshFnc: COM.authProc
-                    });
-                  } else {
-                    var body = JSON.stringify(userInfo);
-                    cFetch(APIS.PUT_USER_BY_EMAIL, [userInfo.userEmail], body, {
-                      responseProc: function(res) {
-                        console.log(
-                          "pushToken saved in loading.js start- put method response:"
-                        );
-                        console.log(res);
-                        console.log("-pushToken saved in loading.js end");
-                      },
-                      //입력된 회원정보가 없음.
-                      responseNotFound: function(res) {
-                        console.log(
-                          "failed pushToken saved in loading.js start- put method response:"
-                        );
-                        console.log(res);
-                        console.log(
-                          "-failed pushToken saved in loading.js end"
-                        );
-                      }
-                    });
-                    if (
-                      COM.props.navigation.state.params &&
-                      COM.props.navigation.state.params.refreshFnc
-                    ) {
-                      COM.props.navigation.state.params.refreshFnc();
-                    }
-                    console.log("go Main in Loading.js");
-                    PROPS.navigation.navigate("Main", {
-                      callBack: () => {
-                        COM.authProc();
-                      }
-                    });
-                  }
+                  console.log(res);
+                  PROPS.setUserInfo(res);
+                  console.log("loading.js: -pushToken saved in loading.js end");
                 },
+                //입력된 회원정보가 없음.
                 responseNotFound: function(res) {
-                  console.log("occured 404 getUser by email in Loading.js");
-                  PROPS.setUserInfo(userInfo);
-                  PROPS.navigation.navigate("Regist", {
-                    userStep: "regist",
-                    callBack: () => {
-                      console.log("occured callback to Login in Loading.js");
-                      PROPS.navigation.navigate("Login", {
-                        callBack: () => {
-                          return false;
-                        }
-                      });
-                    },
-                    refreshFnc: COM.authProc
-                  });
+                  console.log(
+                    "loading.js: failed pushToken saved in loading.js start- put method response:"
+                  );
+                  console.log(res);
+                  console.log(
+                    "loading.js: -failed pushToken saved in loading.js end"
+                  );
                 }
-              }
-            )
-          )
-          .then();
-      } else {
-        PROPS.navigation.navigate("Login", {
-          callBack: () => {
-            return false;
+              });
+              console.log("loading.js: go Main in Loading.js");
+              PROPS.setIsFromLogin(false);
+              PROPS.navigation.navigate("Main");
+            }
+          },
+          responseNotFound: function(res) {
+            console.log("loading.js: occured 404 getUser by email in Loading.js");
+            console.log("loading.js: userInfo AFTER GET_USER_BY_EMAIL: "+JSON.stringify(userInfo));
+            PROPS.setUserInfo(userInfo);
+            if (userInfo.userNm == null){ // 이름은 필수 값, 한번도 이름 저장 안한 사람은 로그인부터 해서 이름값 가져오도록 한다.
+              PROPS.setIsFromLogin(false);
+              //PROPS.setIsFromLoading(true);
+              PROPS.navigation.navigate("Login");
+            }else if(userInfo.userSex == null|| userInfo.userEmail == null|| userInfo.userHeight == null|| userInfo.userWeight == null) {
+              PROPS.setIsFromLogin(false);
+              PROPS.navigation.navigate("Regist");
+            }
           }
-        });
-      }
-    });
-    console.log("authProc in Loading.js end");
+        }
+      )
+    }
+    console.log("loading.js: authProc in Loading.js end");
   }
   render() {
+    if(this.props.isFocused&&this.props.IS_FROM_LOGIN){
+      //this.props.setIsFromLogin(false); //state 트랜지션 중엔 update할 수 없다. 
+      this.authProc();
+    }
     return (
       <ImageBackground
         source={Images.loginLoadingBack}
@@ -339,7 +273,10 @@ class Loading extends React.Component {
           elevation: 0
         }}
       >
-        <Text style={{ color: "black" }}>사용자 정보를 확인중입니다.</Text>
+        <Text style={{ color: "black", fontSize:FONT_BACK_LABEL, 
+                  fontFamily: "NotoSans-Regular",margin:10}}>사용자 정보를 확인중입니다.</Text>
+        <Text>{this.props.isFocused ? 'Focused' : 'Not focused'}</Text>
+        <Text>{this.props.IS_FROM_LOGIN ? 'formLogin' : 'Not fromLogin'}</Text>
         <ActivityIndicator color="black" size="large" />
       </View>
       </ImageBackground>
@@ -357,4 +294,4 @@ const styles = StyleSheet.create({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Loading);
+)(withNavigationFocus(Loading));

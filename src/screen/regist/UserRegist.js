@@ -1,40 +1,31 @@
 import React, { Component } from "react";
 import {
-  Alert,
-  AppRegistry,
   ScrollView,
   View,
   Text,
-  TouchableHighlight,
   TouchableOpacity,
   Dimensions,
-  TextInput,
   ImageBackground,
-  Slider,
-  Picker,
-  BackHandler,
-  StyleSheet,
   PixelRatio
 } from "react-native";
 import Images from "@assets/Images";
 import { TextField } from "react-native-material-textfield";
 import {
-  COLOR,
-  ThemeProvider,
-  Checkbox,
+  Toolbar,
   Button
 } from "react-native-material-ui";
 
-import DrawerWrapped from "@drawer";
 import { connect } from "react-redux";
 import ActionCreator from "@redux-yrseo/actions";
 
 import cFetch from "@common/network/CustomFetch";
 import APIS from "@common/network/APIS";
+import { GoogleSignin,statusCodes } from "react-native-google-signin";
 
 function mapStateToProps(state) {
   return {
-    USER_INFO: state.REDUCER_USER.user
+    USER_INFO: state.REDUCER_USER.user,
+    CODE: state.REDUCER_CODE.code
   };
 }
 function validateEmail(email) {
@@ -49,16 +40,10 @@ function mapDispatchToProps(dispatch) {
     setCode: data => {
       dispatch(ActionCreator.setCode(data));
     },
-    setCodeCategory: data => {
-      dispatch(ActionCreator.setCodeCategory(data));
+    setIsFromLogin: data => {
+      dispatch(ActionCreator.setIsFromLogin(data));
     }
   };
-}
-function isEmpty(obj) {
-  for (var key in obj) {
-    if (obj.hasOwnProperty(key)) return false;
-  }
-  return true;
 }
 const { width, height } = Dimensions.get("window");
 
@@ -102,11 +87,11 @@ class UserRegist extends Component {
           : "F",
         personHeight:
         this.props.USER_INFO.userHeight != undefined
-          ? this.props.USER_INFO.userHeight
+          ? String(this.props.USER_INFO.userHeight)
           : "",
         personWeight:
         this.props.USER_INFO.userWeight != undefined
-          ? this.props.USER_INFO.userWeight
+          ? String(this.props.USER_INFO.userWeight)
           : ""
     };
   }
@@ -159,11 +144,11 @@ class UserRegist extends Component {
     });
 
     this.setState({ errors });
-    console.log("save btn pressed in userRegist.js start");
+    console.log("UserRegist: save btn pressed in userRegist.js start");
     var data = this.props.USER_INFO;
-    console.log("before Data in userRgeist.js start--");
+    console.log("UserRegist: before Data in userRgeist.js start--");
     console.log(JSON.stringify(data));
-    console.log("before Data in userRgeist.js end --");
+    console.log("UserRegist: before Data in userRgeist.js end --");
     data.userNm = this.state.userNm;
     data.userSex = this.state.personSex;
     data.userHeight = this.state.personHeight;
@@ -178,15 +163,9 @@ class UserRegist extends Component {
     } else {
       cFetch(APIS.PUT_USER_BY_EMAIL, [this.props.USER_INFO.userEmail], body, {
         responseProc: function(res) {
+          console.log("UserRegist.js :"+ JSON.stringify(res));
           PROPS.setUserInfo(res);
-          console.log(PROPS.navigation.state.params);
-          if (
-            PROPS.navigation.state.params &&
-            PROPS.navigation.state.params.refreshFnc
-          ) {
-            console.log("refreshFnc in PushSetup.js");
-            PROPS.navigation.state.params.refreshFnc();
-          }
+          PROPS.setIsFromLogin(true);
           PROPS.navigation.navigate("Loading");
         },
         //입력된 회원정보가 없음.
@@ -197,7 +176,7 @@ class UserRegist extends Component {
         }
       });
     }
-    console.log("save btn pressed in userRegist.js end");
+    console.log("UserRegist: save btn pressed in userRegist.js end");
   }
 
   updateRef(name, ref) {
@@ -205,18 +184,20 @@ class UserRegist extends Component {
   }
 
   componentWillUnmount() {
-    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+    //BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
   }
   handleBackButton() {
     return true;
   }
   componentDidMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
+    //BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
     const COM = this;
     this.userNm.focus();
   }
 
   render() {
+    console.log("UserRegist: userRegist");
+    console.log("UserRegist: "+JSON.stringify(this.props.USER_INFO));
     let { errors = {}, ...data } = this.state;
     
     const content = (
@@ -224,27 +205,47 @@ class UserRegist extends Component {
         style={[styles.container]}
         source={Images.loginLoadingBack} //화면 배경 이미지
       >
-      <View style={{position:"absolute",top:0,left:0,width:width,height:height,backgroundColor:'rgba(0,0,0,0.9)'}}/>
+      <View style={{position:"absolute",top:0,left:0,width:width,height:height,backgroundColor:'rgba(0,0,0,0.9)',zIndex:0}}/>
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           scrollDisabled
           style={{ width: "100%" }}
         >
-          <View style={{ flex: 20 }} />
+          <View style={{ flex: 0 }} />
 
           <View
             style={{
               flex: 65,
               marginVertical: width * 0.0625,
               margin: width * 0.0625,
-              justifyContent: "center",
               alignItems: "center"
             }}
           >
+          <Toolbar
+              leftElement="arrow-back"
+              onLeftElementPress={async ()=>{
+                  try {
+                    const isSignedIn = await GoogleSignin.isSignedIn();
+                    if(isSignedIn){
+                      await GoogleSignin.revokeAccess();
+                      await GoogleSignin.signOut();
+                    }
+                  } catch (error) {
+                    if (error.code === statusCodes.SIGN_IN_REQUIRED) {
+                      console.log('SIGN_IN_REQUIRED');
+                    } else {
+                      console.log(error);
+                    }
+                  }
+                this.props.navigation.navigate('Login')}}
+              centerElement={""}
+              style={{
+                  container:{backgroundColor:"rgba(0,0,0,0)",zIndex:1,marginLeft:-(width * 0.0625) ,padding:0}}}
+          />
             <View
               style={{
                 width: "100%",
-                justifyContent: "center",
+                alignSelf:"flex-start",
                 alignItems: "center"
                 /*backgroundColor: "rgba(255,255,255,.9)",
                 borderWidth: 1,
@@ -254,7 +255,6 @@ class UserRegist extends Component {
               <Text
                 style={{
                   width: "100%",
-                  alignSelf: "flex-start",
                   color: "rgba(255,255,255,1)",
                   fontFamily: "NotoSans-Regular",
                   borderBottomWidth: 1,
@@ -426,7 +426,7 @@ class UserRegist extends Component {
             </View>
           </View>
 
-          <View style={{ flex: 15 }} />
+          <View style={{ flex: 0 }} />
         </ScrollView>
       </ImageBackground>
     );

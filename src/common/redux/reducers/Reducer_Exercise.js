@@ -173,22 +173,27 @@ const wiseSaying = [
   {
     idx: 1,
     text:
-      "The road is open 24hours a day. Go run!\n길은 24시간 열려있다. 나가서 뛰어라"
+      "길은 24시간 열려있다. 나가서 뛰어라"
   },
   {
     idx: 2,
     text:
-      "Sweat like a pg, To look like a fox\n여우처럼 보이려면, 돼지처럼 땀 흘려라"
+      "여우처럼 보이려면, 돼지처럼 땀 흘려라"
   },
   {
     idx: 3,
     text:
-      "Break me down to build me up\n원하는 몸을 만들기 위해 지금의 몸을 부수자"
+      "원하는 몸을 만들기 위해 지금의 몸을 부수자"
   },
   {
     idx: 4,
     text:
-      "Victory belongs to the most perservering\n승리는 가장 끈기있는 자에게 돌아간다"
+      "승리는 가장 끈기있는 자에게 돌아간다"
+  },
+  {
+    idx: 5,
+    text:
+      "맛있게 먹으면 0칼로리"
   }
 ];
 const continousExerciseDays = null;
