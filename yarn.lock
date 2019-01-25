@@ -5331,6 +5331,13 @@ react-native-popup-dialog@^0.16.6:
     prop-types "^15.6.0"
     react-native-root-siblings "^3.1.7"
 
+react-native-progress-bar-animated@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-progress-bar-animated/-/react-native-progress-bar-animated-1.0.6.tgz#18de003ababb8222c84299ef2f20d0eab549dc19"
+  integrity sha512-UPAAwxtBVV+sPwhgVd78SA7QybPshV5CydaV0GJyM+eZ89ikkZQSasAUAgIQwVVCW1Tj6XNrgizimXM9JdczeA==
+  dependencies:
+    prop-types "^15.6.0"
+
 react-native-root-siblings@^3.1.7:
   version "3.1.7"
   resolved "https://registry.yarnpkg.com/react-native-root-siblings/-/react-native-root-siblings-3.1.7.tgz#9af7cf7495311db9fbe929201a3234ed114cfe77"
@@ -5338,12 +5345,6 @@ react-native-root-siblings@^3.1.7:
   dependencies:
     prop-types "^15.6.2"
     static-container "^1.0.0"
-react-native-progress-bar-animated@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/react-native-progress-bar-animated/-/react-native-progress-bar-animated-1.0.6.tgz#18de003ababb8222c84299ef2f20d0eab549dc19"
-  integrity sha512-UPAAwxtBVV+sPwhgVd78SA7QybPshV5CydaV0GJyM+eZ89ikkZQSasAUAgIQwVVCW1Tj6XNrgizimXM9JdczeA==
-  dependencies:
-    prop-types "^15.6.0"
 
 react-native-safe-area-view@^0.11.0:
   version "0.11.0"

@@ -13,6 +13,7 @@ import reducers from '@redux-yrseo/reducers';
 const UIManager = NativeModules.UIManager;
 
 const uiTheme = {
+  fontFamily:"NotoSans-Regular",
   palette: {
     primaryColor: COLOR.white,
     secondaryColor: COLOR.white,

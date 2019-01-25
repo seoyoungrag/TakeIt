@@ -47,6 +47,7 @@ class Container extends Component {
     const toolbarTitle = this.props.toolbarTitle;
     const toolbarDisplay = this.props.toolbarDisplay;
     const navigation = this.props.navigation;
+    const footer = <Footer navigation={this.props.navigation}/>;
     const calendarBtn = (
       <TouchableHighlight onPress={this.props.openCalendar}>
         <Image style={{ width: 25, height: 25 }} source={Images.CalendarBtn} />

@@ -3,10 +3,10 @@ package kr.co.dwebss.takeit.android;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.oblador.vectoricons.VectorIconsPackage;
+import co.apptailor.googlesignin.RNGoogleSigninPackage;
 import com.dylanvann.fastimage.FastImageViewPackage;
 import io.xogus.reactnative.versioncheck.RNVersionCheckPackage;
-import co.apptailor.googlesignin.RNGoogleSigninPackage;
-import com.oblador.vectoricons.VectorIconsPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage; // <-- firebase auth 관련 추가

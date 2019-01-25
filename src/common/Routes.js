@@ -48,7 +48,7 @@ const RootStack = createStackNavigator(
   {
     headerMode: 'none',
     //최초에 라우트 되는  screen
-    initialRouteName: 'Diary',
+    initialRouteName: 'Loading',
   }
 );
 const AppNavigator = createAppContainer(RootStack);
