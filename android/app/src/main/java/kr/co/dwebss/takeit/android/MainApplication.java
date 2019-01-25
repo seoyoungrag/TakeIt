@@ -3,6 +3,7 @@ package kr.co.dwebss.takeit.android;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
 import com.dylanvann.fastimage.FastImageViewPackage;
@@ -11,6 +12,7 @@ import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage; // <-- firebase auth 관련 추가
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage; // <-- firebase message 관련 추가
+import io.invertase.firebase.storage.RNFirebaseStoragePackage; // <-- firebase storage 관련 추가
 
 
 import com.facebook.react.ReactNativeHost;
@@ -53,6 +55,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new PickerPackage(),
             new FastImageViewPackage(),
             new RNVersionCheckPackage(),
             new RNGoogleSigninPackage(),
@@ -61,6 +64,7 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFirebasePackage(), // <-- firebase auth 관련 추가
             new RNFirebaseAuthPackage(),
             new RNFirebaseMessagingPackage(), // <-- firebase message 관련 추가
+            new RNFirebaseStoragePackage(), // <-- firebase storage 관련 추가
             new FBSDKPackage(mCallbackManager)
       );
     }

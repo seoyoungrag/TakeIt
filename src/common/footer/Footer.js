@@ -52,8 +52,6 @@ class Footer extends React.Component {
   render() {
     return (
       <View
-        position="absolute"
-        bottom={0}
         width={width}
         borderTopColor="#e7e7ea"
         borderTopWidth={0.5}
@@ -62,6 +60,7 @@ class Footer extends React.Component {
         alignItems="center"
         justifyContent="center"
         elavation={10}
+        flex={1}
       >
       <TouchableOpacity
         underlayColor="rgba(0,0,0,.1)"
@@ -82,8 +81,8 @@ class Footer extends React.Component {
         underlayColor="rgba(0,0,0,.1)"
         onPress={() => {
           this.props.setActiveFooterBtn("PHOTO")
-          this.props.navigation.navigate("Main")
-          this.setState({activeButton:"PHOTO"})}}
+          this.props.navigation.navigate("TakePhotoFood")
+          }}
       >
         <View style={styles.footerIconContainer}>
           <Image style={styles.footerIcon} source={this.state.activeButton=='PHOTO' ? Images.Footer_img_btn_active_home:Images.Footer_img_btn_photo} />
@@ -95,7 +94,6 @@ class Footer extends React.Component {
         onPress={() => {
           this.props.setActiveFooterBtn("INBODY")
           this.props.navigation.navigate("Main")
-          this.setState({activeButton:"INBODY"})
         }}
       >
         <View style={styles.footerIconContainer}>
@@ -108,7 +106,6 @@ class Footer extends React.Component {
         onPress={() => {
           this.props.setActiveFooterBtn("DIARY")
           this.props.navigation.navigate("Diary")
-          this.setState({activeButton:"DIARY"})
         }}
       >
         <View style={styles.footerIconContainer}>
@@ -121,7 +118,6 @@ class Footer extends React.Component {
         onPress={() => {
           this.props.setActiveFooterBtn("GRAPH")
           this.props.navigation.navigate("Main")
-          this.setState({activeButton:"GRAPH"})
           }}
       >
         <View style={styles.footerIconContainer}>

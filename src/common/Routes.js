@@ -10,6 +10,7 @@ import Loading from '@screens/login/Loading';
 import Login from '@screens/login';
 import Main from '@screens/main';
 import Diary from '@screens/diary';
+import TakePhotoFood from '@screens/takePic';
 import UserRegist from '@screens/regist';
 
 const RootStack = createStackNavigator(
@@ -44,6 +45,12 @@ const RootStack = createStackNavigator(
         header: <Text style={{ fontSize: 100 }}>DIARY</Text>,
       }),
     },
+    TakePhotoFood: {
+      screen: TakePhotoFood,
+      navigationOptions: ({ navigation }) => ({
+        header: <Text style={{ fontSize: 100 }}>TAKE A PIC</Text>,
+      }),
+    }
   },
   {
     headerMode: 'none',
