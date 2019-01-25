@@ -106,7 +106,13 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
+        vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
     }
+    dexOptions {
+      jumboMode true
+      javaMaxHeapSize "4g"
+    } 
     signingConfigs {
         debug{
                 storeFile file(MYAPP_DEBUG_STORE_FILE)
@@ -151,6 +157,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-image-crop-picker')
     compile project(':react-native-fast-image')
     compile project(':react-native-version-check')
 
@@ -169,12 +176,14 @@ dependencies {
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
     // add Firebase dependencies by yrseo
+    implementation "com.google.firebase:firebase-storage:16.0.5"
     implementation "com.google.android.gms:play-services-base:16.0.1"
     implementation 'com.google.firebase:firebase-core:16.0.6'
     implementation(project(":react-native-google-signin"))
     implementation "com.google.firebase:firebase-auth:16.1.0"
     implementation "com.google.firebase:firebase-messaging:17.3.4"
     implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
+    compile 'com.android.support:multidex:1.0.0'
 
 }
 

@@ -1,15 +1,21 @@
 import React, {Component} from 'react';
 
-import {Alert, Dimensions,Platform, StyleSheet, Text, View, TouchableOpacity, PixelRatio} from 'react-native';
+import {Dimensions, StyleSheet, Text, View, PixelRatio} from 'react-native';
 import DrawerWrapped from "@drawer";
 import { connect } from "react-redux";
 import Container from '@container/Container';
 import FastImage from 'react-native-fast-image'
 import { SectionGrid, FlatGrid } from 'react-native-super-grid';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+
+<<<<<<< HEAD
+
+=======
 const {width, height} = Dimensions.get("window");
-
-
+  
+>>>>>>> 5c2135b4a90baf8afa8eabac6b91de589e8138ed
 function mapStateToProps(state) {
   return {
     USER_INFO: state.REDUCER_USER.user,
@@ -41,16 +47,16 @@ class Main extends Component {
     }
     render() {
         const items = [
-          { id: 'TURQUOISE', dt: "07:22", url: 'https://patch.com/img/cdn20/users/790386/20180525/063909/styles/T800x600/public/processed_images/shutterstock_337714676-1527287683-3245.jpg?width=720' },
-          { id: 'EMERALD', dt: "08:26", url: 'http://www.brcn.go.kr/prog/tour_restaurant/tour/sub04_03/restaurantImage_down.do?rstrntCode=157' },
-          { id: 'PETER RIVER', dt: "09:52", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D2.jpg' },
-          { id: 'AMETHYST', dt: "10:11", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D3.jpg' },
-          { id: 'WET ASPHALT', dt: "12:45", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D4.jpg' },
-          { id: 'GREEN SEA', dt: "14:31", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D8.jpg' },
-          { id: 'NEPHRITIS', dt: "15:32", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC2.jpg' },
-          { id: 'BELIZE HOLE', dt: "16:43", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC6.jpg' },
-          { id: 'WISTERIA', dt: "17:23", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC4.jpg' },
-          { id: 'MIDNIGHT BLUE', dt: "18:42", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC3.jpg' }
+          { id: 'TURQUOISE', dt: "07:22 AM, 2019 January 1", url: 'https://patch.com/img/cdn20/users/790386/20180525/063909/styles/T800x600/public/processed_images/shutterstock_337714676-1527287683-3245.jpg?width=720' },
+          { id: 'EMERALD', dt: "08:26 AM, 2019 January 1", url: 'http://www.brcn.go.kr/prog/tour_restaurant/tour/sub04_03/restaurantImage_down.do?rstrntCode=157' },
+          { id: 'PETER RIVER', dt: "09:52 AM, 2019 January 1", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D2.jpg' },
+          { id: 'AMETHYST', dt: "10:11 AM, 2019 January 1", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D3.jpg' },
+          { id: 'WET ASPHALT', dt: "12:45 PM, 2019 January 1", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D4.jpg' },
+          { id: 'GREEN SEA', dt: "14:31 PM, 2019 January 1", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D8.jpg' },
+          { id: 'NEPHRITIS', dt: "15:32 PM, 2019 January 1", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC2.jpg' },
+          { id: 'BELIZE HOLE', dt: "16:43 PM, 2019 January 1", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC6.jpg' },
+          { id: 'WISTERIA', dt: "17:23 PM, 2019 January 1", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC4.jpg' },
+          { id: 'MIDNIGHT BLUE', dt: "18:42 PM, 2019 January 1", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC3.jpg' }
         ];
         const statues = [
           { name: '탄수화물', guage: '0.1', value: '92g' },
@@ -135,14 +141,24 @@ class Main extends Component {
                   spacing={5}
                   sections={[
                     {
-                      title: 'Today - 2019.01.21',
+                      title: '2019.01.21',
                       data: items.slice(0, 6),
                     }
                   ]}
                   style={styles.gridView}
                   renderItem={({ item, section, index }) => (
                     <View style={styles.itemContainer}>
-                      <View style={{position:"absolute", height:"100%",width:"100%",zIndex:1,alignItems:"center",justifyContent:"center"}}><Text style={{color:"white",fontSize:FONT_BACK_LABEL*2,fontWeight:"600"}}>{item.dt}</Text></View>
+                      <View style={{position:"absolute", height:"100%",width:"100%",zIndex:1,alignItems:"center",justifyContent:"center"}}>
+                        <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0},textAlign:"center",textAlignVertical:"center"}}>
+                        <Ionicons
+                          name="ios-clock"
+                          color="#ffffff"
+                          size={FONT_BACK_LABEL*1.2}
+                          borderWidth={0}/>
+                          &nbsp;
+                        {item.dt}
+                        </Text>
+                      </View>
                     <FastImage
                       style={[styles.itemContainer,{zIndex:0}]}
                       source={{
@@ -154,7 +170,7 @@ class Main extends Component {
                     </View>
                   )}
                   renderSectionHeader={({ section }) => (
-                    <Text style={styles.sectionHeader}>{section.title}</Text>
+                    <Text style={styles.sectionHeader}><Ionicons name="ios-today" color="#000000" size={FONT_BACK_LABEL}/>&nbsp;{section.title}</Text>
                   )}
                 />
               </View>
@@ -254,9 +270,11 @@ const styles = StyleSheet.create({
     },
     sectionHeader: {
       flex: 1,
+      textAlignVertical:"bottom",
       fontSize: FONT_BACK_LABEL,
       fontWeight: '600',
       alignItems: 'center',
+      justifyContent:'flex-end',
       color: 'black',
       padding: 10,
       paddingBottom: 0

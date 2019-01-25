@@ -1,50 +1,35 @@
 import {
   Animated,
   View,
-  StyleSheet,
   Image,
   TouchableHighlight,
+  Dimensions
 } from 'react-native';
 import React, { Component } from 'react';
 import { PropTypes } from 'prop-types';
 
 import {
-  ActionButton,
-  Avatar,
-  ListItem,
-  Toolbar,
-  BottomNavigation,
-  Icon,
-  Button,
-  COLOR,
+  Toolbar
 } from 'react-native-material-ui';
 
 import Images from '@assets/Images';
 import Footer from "@footer";
 
+const {width, height} = Dimensions.get("window");
+
 const propTypes = {
   children: PropTypes.node.isRequired,
 };
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 class Container extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selected: [],
-      searchText: '',
-      active: 'home',
-      moveAnimated: new Animated.Value(0),
       title: this.props.title,
     };
   }
 
   render() {
-    const toolbarTitle = this.props.toolbarTitle;
     const toolbarDisplay = this.props.toolbarDisplay;
     const navigation = this.props.navigation;
     const footer = <Footer navigation={this.props.navigation}/>;
@@ -55,18 +40,22 @@ class Container extends Component {
     );
 
     return (
-      <View style={styles.container}>
-        {toolbarDisplay ? (
-          <Toolbar
-            leftElement="arrow-back"
-            onLeftElementPress={() => navigation.goBack()}
-            rightElement={calendarBtn}
-            //onRightElementPress={this.props.openCalendar}
-            centerElement={this.state.title}
-          />
-        ) : null}
-        {this.props.children}
-        {footer}
+      <View style={{flex:1}}>
+        <View style={{flex:86}}>
+          {toolbarDisplay ? (
+            <Toolbar
+              leftElement="arrow-back"
+              onLeftElementPress={() => navigation.goBack()}
+              rightElement={calendarBtn}
+              //onRightElementPress={this.props.openCalendar}
+              centerElement={this.state.title}
+            />
+          ) : null}
+          {this.props.children}
+        </View>
+          <View style ={{flex:13}}>
+          {footer}
+          </View>
       </View>
     );
   }
