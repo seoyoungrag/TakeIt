@@ -4,6 +4,12 @@ import exerciseTypes from "./Types_Exercise";
 import codeTypes from "./Types_Code";
 import constants from "./Types_Constants";
 
+export function setActiveFooterBtn(data) {
+  return {
+    type: constants.SET_ACTIVE_FOOTER_BTN,
+    payload: data
+  };
+}
 export function setIsFromLoading(data) {
   return {
     type: constants.IS_FROM_LOADING,

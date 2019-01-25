@@ -4,28 +4,28 @@ import {Alert, Dimensions,Platform, StyleSheet, Text, View, TouchableOpacity, Pi
 import DrawerWrapped from "@drawer";
 import { connect } from "react-redux";
 import Container from '@container/Container';
-import firebase from "react-native-firebase";
 import FastImage from 'react-native-fast-image'
 import { SectionGrid, FlatGrid } from 'react-native-super-grid';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 const {width, height} = Dimensions.get("window");
 
 
-  function mapStateToProps(state) {
-    return {
-      USER_INFO: state.REDUCER_USER.user,
-      WISE_SAYING: state.REDUCER_EXERCISE.wiseSaying
-    };
-  }
+function mapStateToProps(state) {
+  return {
+    USER_INFO: state.REDUCER_USER.user,
+    WISE_SAYING: state.REDUCER_EXERCISE.wiseSaying
+  };
+}
 
-  function mapDispatchToProps(dispatch) {
-    return {};
-  }
-  var FONT_BACK_LABEL   = 16;
-  if (PixelRatio.get() <= 2) {
-    FONT_BACK_LABEL = 12;
-  }
+function mapDispatchToProps(dispatch) {
+  return {};
+}
+
+var FONT_BACK_LABEL   = 16;
+if (PixelRatio.get() <= 2) {
+  FONT_BACK_LABEL = 12;
+}
+
 class Main extends Component {
     constructor(props){
         super(props);
@@ -41,20 +41,20 @@ class Main extends Component {
     }
     render() {
         const items = [
-          { id: 'TURQUOISE', url: 'https://patch.com/img/cdn20/users/790386/20180525/063909/styles/T800x600/public/processed_images/shutterstock_337714676-1527287683-3245.jpg?width=720' },
-          { id: 'EMERALD', url: 'http://www.brcn.go.kr/prog/tour_restaurant/tour/sub04_03/restaurantImage_down.do?rstrntCode=157' },
-          { id: 'PETER RIVER', url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D2.jpg' },
-          { id: 'AMETHYST', url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D3.jpg' },
-          { id: 'WET ASPHALT', url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D4.jpg' },
-          { id: 'GREEN SEA', url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D8.jpg' },
-          { id: 'NEPHRITIS', url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC2.jpg' },
-          { id: 'BELIZE HOLE', url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC6.jpg' },
-          { id: 'WISTERIA', url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC4.jpg' },
-          { id: 'MIDNIGHT BLUE', url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC3.jpg' }
+          { id: 'TURQUOISE', dt: "07:22", url: 'https://patch.com/img/cdn20/users/790386/20180525/063909/styles/T800x600/public/processed_images/shutterstock_337714676-1527287683-3245.jpg?width=720' },
+          { id: 'EMERALD', dt: "08:26", url: 'http://www.brcn.go.kr/prog/tour_restaurant/tour/sub04_03/restaurantImage_down.do?rstrntCode=157' },
+          { id: 'PETER RIVER', dt: "09:52", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D2.jpg' },
+          { id: 'AMETHYST', dt: "10:11", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D3.jpg' },
+          { id: 'WET ASPHALT', dt: "12:45", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D4.jpg' },
+          { id: 'GREEN SEA', dt: "14:31", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D8.jpg' },
+          { id: 'NEPHRITIS', dt: "15:32", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC2.jpg' },
+          { id: 'BELIZE HOLE', dt: "16:43", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC6.jpg' },
+          { id: 'WISTERIA', dt: "17:23", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC4.jpg' },
+          { id: 'MIDNIGHT BLUE', dt: "18:42", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC3.jpg' }
         ];
         const statues = [
           { name: '탄수화물', guage: '0.1', value: '92g' },
-          { name: '지방', guage: '0.9', value: '24g' },
+          { name: '지방', guage: '0.85', value: '24g' },
           { name: '단백질', guage: '0.6', value: '92g'},
           { name: '당', guage: '0.3', value: '52g'}
         ];
@@ -73,7 +73,7 @@ class Main extends Component {
         />
         ):null;
         const content = (
-          <Container>
+          <Container navigation={this.props.navigation}>
             <View style={styles.container}>
               <View
                 style={styles.headerView}>
@@ -82,15 +82,13 @@ class Main extends Component {
                     flexDirection: "row",
                     justifyContent: "center",
                   }}>
-                  <View flex={1}>
+                  <View width={height*0.15} height="100%" paddingLeft={10}>
                   {YourImage}
                   </View>
-                  <View flex={2} flexDirection="column">
-                    <View flex={3} style={{padding:10, paddingBottom:0}} flexDirection="row">
-                      <View alignSelf="flex-end">
-                        <Text style={styles.profileUserEmail}>{this.props.USER_INFO.userEmail}</Text>
-                        <Text style={styles.profileWiseSaying}>{WiseSaying}</Text>
-                      </View>
+                  <View flex={width-height*0.15} height="100%">
+                    <View flex={3} style={{padding:10, paddingBottom:0}}>
+                      <Text style={styles.profileUserEmail}>{this.props.USER_INFO.userEmail}</Text>
+                      <Text style={styles.profileWiseSaying}>{WiseSaying}</Text>
                     </View>
                     <View flex={2} flexDirection="row" style={{padding:10, paddingTop:20}}>
                       <View flex={2} style={{backgroundColor:'rgb(72,207,173)', paddingLeft:10, justifyContent:"center"}}><Text style={{color:"white"}}>today 1835 kcal</Text></View>
@@ -107,15 +105,21 @@ class Main extends Component {
                   style={styles.gridView}
                   renderItem={({ item, section, index }) => (
                     <View style={[styles.statusContainer, { /* backgroundColor: 'rgba(255,0,0,'+item.guage+')'*/}]}>
-                      <Text style={[styles.itemName,{color:"black"}]}>{item.name}&nbsp;
-                        <Text style={[styles.itemCode,{color:"rgba(0,0,0,"+item.guage+")",alignContent:'flex-end'}]}>{item.value}
-                        </Text>
-                      </Text>
+                      <View flexDirection="row" width={width/2-width*0.1}>
+                        <View style={{flex:1, alignItems:"flex-start"}}>
+                          <Text style={[styles.itemName,{color:"black"}]}>{item.name}</Text>
+                        </View>
+                        <View style={{flex:1, alignItems:"flex-end"}}>
+                          <Text style={[styles.itemCode,{color:"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",1)"}]}>{item.value}
+                          </Text>
+                        </View>
+                      </View>
                       <ProgressBarAnimated
                         width={width/2-width*0.1}
+                        height={height*0.005}
                         value={100*item.guage}
-                        backgroundColor={"rgba(255,0,0,"+item.guage+")"}
-                        borderColor={"rgba(255,0,0,1)"}
+                        backgroundColor={"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",1)"}
+                        borderColor={"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",1)"}
                       />
                     </View>
                   )}
@@ -137,14 +141,17 @@ class Main extends Component {
                   ]}
                   style={styles.gridView}
                   renderItem={({ item, section, index }) => (
+                    <View style={styles.itemContainer}>
+                      <View style={{position:"absolute", height:"100%",width:"100%",zIndex:1,alignItems:"center",justifyContent:"center"}}><Text style={{color:"white",fontSize:FONT_BACK_LABEL*2,fontWeight:"600"}}>{item.dt}</Text></View>
                     <FastImage
-                      style={styles.itemContainer}
+                      style={[styles.itemContainer,{zIndex:0}]}
                       source={{
                         uri: item.url,
                         priority: FastImage.priority.normal,
                       }}
                       resizeMode={FastImage.resizeMode.cover}
                     />
+                    </View>
                   )}
                   renderSectionHeader={({ section }) => (
                     <Text style={styles.sectionHeader}>{section.title}</Text>
@@ -207,15 +214,20 @@ const styles = StyleSheet.create({
       paddingBottom:10
     },
      avatarTempImage: {
-      height: "100%",
+      height: height*0.14,
+      width: height*0.14,
+      borderRadius: height*0.2
     },
     statusView:{
-      height: height*0.10
+      height: height*0.10,
+      backgroundColor: "#FAFAFA"
     },
     foodList: {
-      height: height*0.62
+      backgroundColor:"#F4F2F3",
+      height: height*0.57
     },profileUserEmail: {
-      fontSize: FONT_BACK_LABEL*1.2
+      fontSize: FONT_BACK_LABEL*1.2,
+      color:"rgba(0,0,0,1)"
     }, profileWiseSaying: {
       fontSize: FONT_BACK_LABEL*0.8
     },
@@ -223,7 +235,6 @@ const styles = StyleSheet.create({
       flex: 1,
     },
     itemContainer: {
-      justifyContent: 'flex-end',
       height: width/2,
     },
     statusContainer: {
@@ -248,6 +259,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       color: 'black',
       padding: 10,
+      paddingBottom: 0
     }
   });
 
