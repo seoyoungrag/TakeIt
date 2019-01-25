@@ -11,14 +11,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 const {width, height} = Dimensions.get("window");
 
-  
+
   function mapStateToProps(state) {
     return {
       USER_INFO: state.REDUCER_USER.user,
       WISE_SAYING: state.REDUCER_EXERCISE.wiseSaying
     };
   }
-  
+
   function mapDispatchToProps(dispatch) {
     return {};
   }
@@ -106,11 +106,11 @@ class Main extends Component {
                   items={statues}
                   style={styles.gridView}
                   renderItem={({ item, section, index }) => (
-                    <View style={[styles.statusContainer, { /* backgroundColor: 'rgba(255,0,0,'+item.guage+')'*/}]}>  
+                    <View style={[styles.statusContainer, { /* backgroundColor: 'rgba(255,0,0,'+item.guage+')'*/}]}>
                       <Text style={[styles.itemName,{color:"black"}]}>{item.name}&nbsp;
                         <Text style={[styles.itemCode,{color:"rgba(0,0,0,"+item.guage+")",alignContent:'flex-end'}]}>{item.value}
                         </Text>
-                      </Text> 
+                      </Text>
                       <ProgressBarAnimated
                         width={width/2-width*0.1}
                         value={100*item.guage}
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
       padding: 10,
     }
   });
-  
+
 export default connect(
   mapStateToProps,
   mapDispatchToProps
