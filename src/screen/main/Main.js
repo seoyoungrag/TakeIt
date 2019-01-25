@@ -10,12 +10,9 @@ import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
-<<<<<<< HEAD
 
-=======
 const {width, height} = Dimensions.get("window");
-  
->>>>>>> 5c2135b4a90baf8afa8eabac6b91de589e8138ed
+
 function mapStateToProps(state) {
   return {
     USER_INFO: state.REDUCER_USER.user,
