@@ -24,6 +24,7 @@ import Calendar from 'react-native-calendario';
 import FastImage from 'react-native-fast-image'
 import { SectionGrid, FlatGrid } from 'react-native-super-grid';
 import Moment from 'moment/min/moment-with-locales';
+import { black } from 'ansi-colors';
 Moment.locale('ko');
 
 const { width, height } = Dimensions.get('window');
@@ -35,7 +36,83 @@ const result = {
     {
       registD: 1547391600000,
       userId: 32,
-      kilocalorie: 200,
+      kilocalorie: 1000,
+      photoArr: [
+        {
+          photoId: 12,
+          firebaseStoragePath:
+            '/food_diary/32/2018-10-14/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
+          firebaseDownloadUrl:
+            'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg?alt=media&token=d8fb27cc-e0b7-4ecc-99a4-a2179589edb8',
+          deviceLocalFilePath:
+            'file:///storage/emulated/0/Pictures/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
+        },
+        {
+          photoId: 13,
+          firebaseStoragePath:
+            '/food_diary/32/2018-10-14/image-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg',
+          firebaseDownloadUrl:
+            'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg?alt=media&token=11f35c9c-dcf4-45fd-be32-7851615ec102',
+          deviceLocalFilePath:
+            'file:///storage/emulated/0/Pictures/image-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg',
+        },
+        {
+          photoId: 12,
+          firebaseStoragePath:
+            '/food_diary/32/2018-10-14/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
+          firebaseDownloadUrl:
+            'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg?alt=media&token=d8fb27cc-e0b7-4ecc-99a4-a2179589edb8',
+          deviceLocalFilePath:
+            'file:///storage/emulated/0/Pictures/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
+        },
+        {
+          photoId: 0,
+          firebaseStoragePath:
+            '/food_diary/32/2018-10-14/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
+          firebaseDownloadUrl:
+            'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg?alt=media&token=d8fb27cc-e0b7-4ecc-99a4-a2179589edb8',
+          deviceLocalFilePath:
+            'file:///storage/emulated/0/Pictures/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
+        },
+      ],
+    },{
+      registD: 1547391600000,
+      userId: 32,
+      kilocalorie: 2000,
+      photoArr: [
+        {
+          photoId: 12,
+          firebaseStoragePath:
+            '/food_diary/32/2018-10-14/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
+          firebaseDownloadUrl:
+            'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg?alt=media&token=d8fb27cc-e0b7-4ecc-99a4-a2179589edb8',
+          deviceLocalFilePath:
+            'file:///storage/emulated/0/Pictures/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
+        },
+        {
+          photoId: 13,
+          firebaseStoragePath:
+            '/food_diary/32/2018-10-14/image-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg',
+          firebaseDownloadUrl:
+            'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg?alt=media&token=11f35c9c-dcf4-45fd-be32-7851615ec102',
+          deviceLocalFilePath:
+            'file:///storage/emulated/0/Pictures/image-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg',
+        },
+        {
+          photoId: 12,
+          firebaseStoragePath:
+            '/food_diary/32/2018-10-14/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
+          firebaseDownloadUrl:
+            'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg?alt=media&token=d8fb27cc-e0b7-4ecc-99a4-a2179589edb8',
+          deviceLocalFilePath:
+            'file:///storage/emulated/0/Pictures/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
+        },
+      ],
+    },
+    {
+      registD: 1547391600000,
+      userId: 32,
+      kilocalorie: 3000,
       photoArr: [
         {
           photoId: 12,
@@ -60,7 +137,7 @@ const result = {
     {
       userId: 32,
       registD: 1547650800000,
-      kilocalorie: 140,
+      kilocalorie: 4000,
       photoArr: [
         {
           photoId: 12,
@@ -70,15 +147,6 @@ const result = {
             'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg?alt=media&token=d8fb27cc-e0b7-4ecc-99a4-a2179589edb8',
           deviceLocalFilePath:
             'file:///storage/emulated/0/Pictures/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
-        },
-        {
-          photoId: 13,
-          firebaseStoragePath:
-            '/food_diary/32/2018-10-14/image-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg',
-          firebaseDownloadUrl:
-            'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg?alt=media&token=11f35c9c-dcf4-45fd-be32-7851615ec102',
-          deviceLocalFilePath:
-            'file:///storage/emulated/0/Pictures/image-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg',
         },
       ],
     },
@@ -113,7 +181,7 @@ class Diary extends React.Component {
       selectedDate: this.props.endDateForDiary,
       visible: false,
       range: [],
-      dummyResult : result,
+      resultData : result.data,
     };
     this.confirmDate = this.confirmDate.bind(this);
     this.openCalendar = this.openCalendar.bind(this);
@@ -240,25 +308,34 @@ class Diary extends React.Component {
     this.state.range = range;
   }
   componentDidMount() {
-    console.log(result.data);
-
-
-    console.log(result.data[0].photoArr);
-    // this.getFoodPhotoList();
-    console.log(  Moment(1316116057189).format('dddd'));
-
-
-    console.log(       this.state.dummyResult.data[0].photoArr    ); //set your locale (eg: fr)
+    this.setState ({'resultData':result.data});
   }
   componentWillReceiveProps() {}
   componentWillUnmount() {}
 
   render() {
     const self = this;
-    console.log('render');
-    console.log(result.data[0].photoArr);
+    console.log('render22');
+    console.log(this.state.resultData);
 
 
+
+    this.state.resultData.map((info) => {
+      console.log('info');
+      console.log(info);
+
+      });
+
+      const resultView =
+      this.state.resultData.map((info) => {
+        return (
+        <View>
+        <Text>
+        {JSON.stringify(info)}
+        </Text>
+        </View>
+        )
+        });
     let selectDateTouchableWidth = (width * 2) / 5;
     const USER_INFO = this.props.USER_INFO;
 
@@ -359,73 +436,69 @@ class Diary extends React.Component {
         </View>
         <View style={[styles.parent]}>
         <ScrollView showsVerticalScrollIndicator={false}>
-
-              <View style={[styles.child]}>
+              {this.state.resultData.length > 0 ?  this.state.resultData.map(data => {
+                return (
+                  <View style={[styles.child]}>
                   <View style={[styles.leftInfo]}>
                   <Text style={styles.day}>
-                    {Moment(this.state.dummyResult.data[0].registD).format('DD') }
+                    {Moment(data.registD).format('DD') }
                   </Text>
                   <Text style={styles.dayko}>
-                    {Moment(this.state.dummyResult.data[0].registD).format('ddd') }
+                    {Moment(data.registD).format('ddd') }
                   </Text>
                   <Text style={styles.kcal}>
-                    {this.state.dummyResult.data[0].kilocalorie} kcal
+                    {data.kilocalorie} kcal
                   </Text>
                   </View>
               <View style={[styles.rightPhoto]}>
                 <SectionGrid
-                itemDimension={width/5}
+                itemDimension={width/3}
                 fixed
                 spacing={2}
                 sections={[
                   {
                     title: 'Today - 2019.01.21',
-                    data: result.data[0].photoArr.slice(0, 3),
-                  }
+                    data: data.photoArr.slice(0, 4),
+                  },
                 ]}
                 style={styles.gridView}
                 renderItem={({ item, section, index }) => (
-                    <Image
-                    source={{uri:item.firebaseDownloadUrl}}
-                    style={{ height: 300,width:300, resizeMode: 'contain' }}
-                  />
-                )}
+                  <View>
+                  {item.firebaseDownloadUrl!=null &&
+                  <FastImage
+                  style=
+                  { (data.photoArr.length==1) ? styles.imageStyle1:
+                    (data.photoArr.length==2) ? styles.imageStyle2:
+                    (data.photoArr.length==3) ? styles.imageStyle3:
+                    styles.imageStyle4 }
+                    source={{
+                      uri: item.firebaseDownloadUrl,
+                      priority: FastImage.priority.low,
+                    }}
+                    resizeMode={FastImage.resizeMode.stretch}
+                  />}
+                  </View>
+                  )}
                 // renderSectionHeader={({ section }) => (
                 //   <Text style={styles.sectionHeader}>{section.title}</Text>
                 // )}
               />
               </View>
             </View>
-
-            <View style={[styles.child]}>
-            <View style={{width:'100%',height:'100%',backgroundColor:'#FF0000'}}>
-            </View>
-            </View>
-            <View style={[styles.child]}>
-              <Text style={styles.instructions}>
-                To get started, edit App.js
-                {result.data.length}
-              </Text>
-
-              <Image
-              source={{uri:'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg?alt=media&token=11f35c9c-dcf4-45fd-be32-7851615ec102'}}
-              style={{ height: 300,width:300, resizeMode: 'contain' }}
-            />
-            </View>
-            <View style={[styles.child]}>
-              <Text style={styles.instructions}>
-                To get started, edit App.js
-                {result.data.length}
-              </Text>
-            </View>
-
-
+                )
+                }):
+                <View style={[styles.child]}>
+                  <Text style={styles.instructions}>
+                    음식 사진을 올려주세요~
+                  </Text>
+                </View>
+              }
 
             </ScrollView>
         </View>
       </Container>
     );
-    return (
+    return  (
       <DrawerWrapped
         rightDisabled={true}
         navigation={this.props.navigation}
@@ -447,15 +520,14 @@ const styles = StyleSheet.create({
     flex : 1,
   },
   child: {
+
     width: width*0.95,
     height: height*0.3,
-    margin: '3%',
-    padding:0,
-    // backgroundColor: '#333333',
-     // alignItems:'center',
+    margin: height*0.01,
+    backgroundColor: '#ffffff',
+    alignItems:'center',
     justifyContent: 'center',
-    //ios shoadow
-    flexDirection: 'row',
+     flexDirection: 'row',
     //섀도우 android
     elevation: 2,
   },
@@ -472,7 +544,7 @@ const styles = StyleSheet.create({
   leftInfo: {
     justifyContent: 'center',
     width: width*0.25,
-    backgroundColor: '#F5FCFF',
+    // backgroundColor: '#F5FCFF',
     height: height*0.3,
   },
   rightPhoto: {
@@ -483,7 +555,8 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     // justifyContent: 'flex-end',
-    // height: height*0.1,
+    width: width*0.70*0.5,
+    height: height*0.3*0.5,
   },
   day: {
     fontSize: 25,
@@ -500,8 +573,31 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   gridView: {
-    flex: 1,
+    // flex: 1,
+    // backgroundColor: '#7F7F7F',
   },
+  imageStyle4: {
+    // justifyContent: 'flex-end',
+    width: width*0.70*0.5,
+    height: height*0.3*0.5,
+  },
+  imageStyle3: {
+    // justifyContent: 'flex-end',
+    width: width*0.70*0.5,
+    height: height*0.3*0.5,
+  },
+  imageStyle2: {
+    // justifyContent: 'flex-end',
+    width: width*0.70*0.5,
+    height: height*0.3,
+  },
+  imageStyle1: {
+    // justifyContent: 'flex-end',
+    width: width*0.70,
+    height: height*0.3,
+  },
+
+
 });
 
 export default connect(
