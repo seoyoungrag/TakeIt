@@ -20,6 +20,10 @@ const APIS = {
   POST_USER_FOOD: {
     url: "/photo/food",
     method: "POST"
+  },
+  GET_USER_FOOD: {
+    url: "/photo/food/user",
+    method: "GET"
   }
 };
 

@@ -209,7 +209,7 @@ class Loading extends React.Component {
               PROPS.navigation.navigate("Regist");
             } else {
               var body = JSON.stringify(userInfo);
-              cFetch(APIS.PUT_USER_BY_EMAIL, [userInfo.userEmail], body, {
+              await cFetch(APIS.PUT_USER_BY_EMAIL, [userInfo.userEmail], body, {
                 responseProc: function(res) {
                   console.log(
                     "loading.js: pushToken saved in loading.js start- put method response:"

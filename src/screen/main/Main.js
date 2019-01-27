@@ -9,8 +9,10 @@ import { SectionGrid, FlatGrid } from 'react-native-super-grid';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Octicons from 'react-native-vector-icons/Octicons';
+import cFetch from "@common/network/CustomFetch";
+import APIS from "@common/network/APIS";
 
-
+import Moment from "moment";
 
 const {width, height} = Dimensions.get("window");
 
@@ -33,9 +35,12 @@ if (PixelRatio.get() <= 2) {
 class Main extends Component {
     constructor(props){
         super(props);
+        this.state = {
+          photos : []
+        }
     }
     componentDidMount(){
-
+      this.getFoodDiary();
     }
     componentWillReceiveProps(){
 
@@ -43,19 +48,67 @@ class Main extends Component {
     componentWillUnmount(){
 
     }
+
+
+    getFoodDiary= () => {
+      
+      PROPS = this.props;
+
+      COM = this;
+      cFetch(
+        APIS.GET_USER_FOOD,
+        [
+          PROPS.USER_INFO.userId,
+          "date",
+          Moment(new Date()).format("YYYY-MM-DD")
+        ],
+        {},
+        {
+          responseProc: function(res) {
+            console.log(res);
+            COM.setState({
+              photos:
+                res.length > 0
+                  ? res
+                  : [
+                      {
+                        firebaseDownloadUrl:
+                          "https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-6deb2ab9-8334-42c4-b38f-d889db792e42847907521.jpg?alt=media&token=f85d5f15-0cfb-4abe-ae19-9fd0501422b4",
+                        registTime: 1539516118000,
+                        userFoodDetail: [
+                          {
+                            amountDish: 1,
+                            food: {
+                              carbohydrate: 2.9,
+                              cholesterol: 24.51,
+                              fat: 5.2,
+                              foodId: 4907,
+                              foodNm: "촬영한 사진이 없네요.",
+                              foodType: "기타",
+                              kilocalorie: 122,
+                              protein: 15.78,
+                              saturatedFattyAcid: 0.87,
+                              servingSize: 100,
+                              sodium: 42,
+                              sugar: 0,
+                              transFattyAcids: 0
+                            }
+                          }
+                        ]
+                      }
+                    ]
+            });
+          },
+          responseNotFound: function(res) {
+            //console.log(JSON.stringify(res));
+          },
+          responseError: function(e) {
+            //console.log(JSON.stringify(res));
+          }
+        }
+      );
+    }
     render() {
-        const items = [
-          { id: 'TURQUOISE', dt: "07:22 AM, 2019 January 1", url: 'https://patch.com/img/cdn20/users/790386/20180525/063909/styles/T800x600/public/processed_images/shutterstock_337714676-1527287683-3245.jpg?width=720' },
-          { id: 'EMERALD', dt: "08:26 AM, 2019 January 1", url: 'http://www.brcn.go.kr/prog/tour_restaurant/tour/sub04_03/restaurantImage_down.do?rstrntCode=157' },
-          { id: 'PETER RIVER', dt: "09:52 AM, 2019 January 1", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D2.jpg' },
-          { id: 'AMETHYST', dt: "10:11 AM, 2019 January 1", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D3.jpg' },
-          { id: 'WET ASPHALT', dt: "12:45 PM, 2019 January 1", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D4.jpg' },
-          { id: 'GREEN SEA', dt: "14:31 PM, 2019 January 1", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D8.jpg' },
-          { id: 'NEPHRITIS', dt: "15:32 PM, 2019 January 1", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC2.jpg' },
-          { id: 'BELIZE HOLE', dt: "16:43 PM, 2019 January 1", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC6.jpg' },
-          { id: 'WISTERIA', dt: "17:23 PM, 2019 January 1", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC4.jpg' },
-          { id: 'MIDNIGHT BLUE', dt: "18:42 PM, 2019 January 1", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC3.jpg' }
-        ];
         const statues = [
           { name: '탄수화물', guage: '0.1', value: '92g' },
           { name: '지방', guage: '0.85', value: '24g' },
@@ -139,8 +192,8 @@ class Main extends Component {
                   spacing={5}
                   sections={[
                     {
-                      title: '2019.01.21',
-                      data: items.slice(0, 6),
+                      title: Moment(new Date()).format("YYYY-MM-DD"),
+                      data: this.state.photos,
                     }
                   ]}
                   style={styles.gridView}
@@ -154,13 +207,13 @@ class Main extends Component {
                           size={FONT_BACK_LABEL*1.2}
                           borderWidth={0}/>
                           &nbsp;
-                        {item.dt}
+                        {item.registTime}
                         </Text>
                       </View>
                     <FastImage
                       style={[styles.itemContainer,{zIndex:0}]}
                       source={{
-                        uri: item.url,
+                        uri: item.firebaseDownloadUrl,
                         priority: FastImage.priority.normal,
                       }}
                       resizeMode={FastImage.resizeMode.cover}
