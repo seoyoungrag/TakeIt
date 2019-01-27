@@ -36,89 +36,68 @@ class Main extends Component {
     constructor(props){
         super(props);
         this.state = {
-          photos : []
+          photos : [],
+          intakeStatuses: [],
+          isEmptyPhotos : false,
+          calorie: {}
         }
+    }
+    componentWillMount(){
     }
     componentDidMount(){
       this.getFoodDiary();
+      this.getMainIntakestatus();
     }
     componentWillReceiveProps(){
 
     }
     componentWillUnmount(){
-
     }
 
 
-    getFoodDiary= () => {
-      
+    getMainIntakestatus = () => {
       PROPS = this.props;
-
       COM = this;
       cFetch(
-        APIS.GET_USER_FOOD,
-        [
-          PROPS.USER_INFO.userId,
-          "date",
-          Moment(new Date()).format("YYYY-MM-DD")
-        ],
-        {},
+        APIS.GET_MAIN_INTAKESTATUS, [ PROPS.USER_INFO.userId ], {},
         {
           responseProc: function(res) {
-            console.log(res);
+            console.log("Main.js(getMainIntakestatus): "+JSON.stringify(res));
+            COM.setState({
+              intakeStatuses: res.intakeStats,
+              calorie: res.calorie
+            });
+          }
+        }
+      );
+    }
+
+    getFoodDiary= () => {
+      PROPS = this.props;
+      COM = this;
+      cFetch(
+        APIS.GET_USER_FOOD, [ PROPS.USER_INFO.userId, "date", Moment(new Date()).format("YYYY-MM-DD") ], {},
+        {
+          responseProc: function(res) {
+            console.log("Main.js(getFOodDiary): "+JSON.stringify(res));
             COM.setState({
               photos:
                 res.length > 0
                   ? res
                   : [
                       {
-                        firebaseDownloadUrl:
-                          "https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-6deb2ab9-8334-42c4-b38f-d889db792e42847907521.jpg?alt=media&token=f85d5f15-0cfb-4abe-ae19-9fd0501422b4",
-                        registTime: 1539516118000,
-                        userFoodDetail: [
-                          {
-                            amountDish: 1,
-                            food: {
-                              carbohydrate: 2.9,
-                              cholesterol: 24.51,
-                              fat: 5.2,
-                              foodId: 4907,
-                              foodNm: "촬영한 사진이 없네요.",
-                              foodType: "기타",
-                              kilocalorie: 122,
-                              protein: 15.78,
-                              saturatedFattyAcid: 0.87,
-                              servingSize: 100,
-                              sodium: 42,
-                              sugar: 0,
-                              transFattyAcids: 0
-                            }
-                          }
-                        ]
+                        firebaseDownloadUrl:"https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-6deb2ab9-8334-42c4-b38f-d889db792e42847907521.jpg?alt=media&token=f85d5f15-0cfb-4abe-ae19-9fd0501422b4",
+                        registTime: "촬영한 사진이 없네요."
                       }
-                    ]
+                    ],
+              isEmptyPhotos: true
             });
-          },
-          responseNotFound: function(res) {
-            //console.log(JSON.stringify(res));
-          },
-          responseError: function(e) {
-            //console.log(JSON.stringify(res));
           }
         }
       );
     }
     render() {
-        const statues = [
-          { name: '탄수화물', guage: '0.1', value: '92g' },
-          { name: '지방', guage: '0.85', value: '24g' },
-          { name: '단백질', guage: '0.6', value: '92g'},
-          { name: '당', guage: '0.3', value: '52g'}
-        ];
-
-        const WiseSaying = this.props.WISE_SAYING[
-          Math.floor(Math.random() * this.props.WISE_SAYING.length)
-        ].text;
+        const WiseSaying = this.props.WISE_SAYING[ Math.floor(Math.random() * this.props.WISE_SAYING.length) ].text;
         const YourImage = this.props.USER_INFO.userSnsPhoto ?(
         <FastImage
           style={styles.avatarTempImage}
@@ -148,8 +127,8 @@ class Main extends Component {
                       <Text style={styles.profileWiseSaying}>{WiseSaying}</Text>
                     </View>
                     <View flex={2} flexDirection="row" style={{padding:10, paddingTop:20}}>
-                      <View flex={2} style={{backgroundColor:'rgb(72,207,173)', paddingLeft:10, justifyContent:"center"}}><Text style={{color:"white"}}>today 1835 kcal</Text></View>
-                      <View flex={1} style={{backgroundColor:'rgb(255,206,84)', paddingRight:10, justifyContent:"center", height:"70%",alignSelf:"flex-end",alignItems:"flex-end"}}><Text style={{color:"white"}}>+526</Text></View>
+                      <View flex={2} style={{backgroundColor:'rgb(72,207,173)', paddingLeft:10, justifyContent:"center"}}><Text style={{color:"white"}}>today {this.state.calorie.stat} kcal</Text></View>
+                      <View flex={1} style={{backgroundColor:'rgb(255,206,84)', paddingRight:10, justifyContent:"center", height:"70%",alignSelf:"flex-end",alignItems:"flex-end"}}><Text style={{color:"white"}}>+{this.state.calorie.guage}</Text></View>
                     </View>
                   </View>
                 </View>
@@ -158,7 +137,7 @@ class Main extends Component {
                   itemDimension={width/2.1}
                   fixed
                   spacing={0}
-                  items={statues}
+                  items={this.state.intakeStatuses}
                   style={styles.gridView}
                   renderItem={({ item, section, index }) => (
                     <View style={[styles.statusContainer, { /* backgroundColor: 'rgba(255,0,0,'+item.guage+')'*/}]}>
@@ -167,7 +146,7 @@ class Main extends Component {
                           <Text style={[styles.itemName,{color:"black"}]}>{item.name}</Text>
                         </View>
                         <View style={{flex:1, alignItems:"flex-end"}}>
-                          <Text style={[styles.itemCode,{color:"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",1)"}]}>{item.value}
+                          <Text style={[styles.itemCode,{color:"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",1)"}]}>{item.stat}g
                           </Text>
                         </View>
                       </View>
@@ -187,7 +166,7 @@ class Main extends Component {
               </View>
               <View style={styles.foodList}>
                 <SectionGrid
-                  itemDimension={width/2.1}
+                  itemDimension={width/2.1 *(this.state.intakeStatuses? 2:1)}
                   fixed
                   spacing={5}
                   sections={[
@@ -198,7 +177,7 @@ class Main extends Component {
                   ]}
                   style={styles.gridView}
                   renderItem={({ item, section, index }) => (
-                    <View style={styles.itemContainer}>
+                    <View style={{height:width/2*(this.state.intakeStatuses? 2:1)}}>
                       <View style={{position:"absolute", height:"100%",width:"100%",zIndex:1,alignItems:"center",justifyContent:"center"}}>
                         <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0},textAlign:"center",textAlignVertical:"center"}}>
                         <Ionicons
@@ -211,7 +190,7 @@ class Main extends Component {
                         </Text>
                       </View>
                     <FastImage
-                      style={[styles.itemContainer,{zIndex:0}]}
+                      style={{height:width/2*(this.state.intakeStatuses? 2:1)}}
                       source={{
                         uri: item.firebaseDownloadUrl,
                         priority: FastImage.priority.normal,
@@ -300,9 +279,6 @@ const styles = StyleSheet.create({
     },
     gridView: {
       flex: 1,
-    },
-    itemContainer: {
-      height: width/2,
     },
     statusContainer: {
       justifyContent: 'center',

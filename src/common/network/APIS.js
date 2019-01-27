@@ -24,6 +24,10 @@ const APIS = {
   GET_USER_FOOD: {
     url: "/photo/food/user",
     method: "GET"
+  },
+  GET_MAIN_INTAKESTATUS: {
+    url: "/main/intakeStatus",
+    method: "GET"
   }
 };
 
