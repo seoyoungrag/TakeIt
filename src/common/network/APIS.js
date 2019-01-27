@@ -18,7 +18,7 @@ const APIS = {
     method: 'PUT',
   },
   POST_USER_FOOD: {
-    uri: "/userFood",
+    url: "/photo/food",
     method: "POST"
   }
 };

@@ -8,6 +8,7 @@ import FastImage from 'react-native-fast-image'
 import { SectionGrid, FlatGrid } from 'react-native-super-grid';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Octicons from 'react-native-vector-icons/Octicons';
 
 
 const {width, height} = Dimensions.get("window");
@@ -166,7 +167,7 @@ class Main extends Component {
                     </View>
                   )}
                   renderSectionHeader={({ section }) => (
-                    <Text style={styles.sectionHeader}><Ionicons name="ios-today" color="#000000" size={FONT_BACK_LABEL}/>&nbsp;{section.title}</Text>
+                    <Text style={styles.sectionHeader}><Octicons name="calendar" color="#000000" size={FONT_BACK_LABEL}/>&nbsp;&nbsp;{section.title}</Text>
                   )}
                 />
               </View>

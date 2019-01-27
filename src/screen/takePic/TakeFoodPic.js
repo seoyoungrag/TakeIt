@@ -19,8 +19,29 @@ import firebase from "react-native-firebase";
 import Container from '@container/Container';
 import cFetch from "@common/network/CustomFetch";
 import APIS from "@common/network/APIS";
+import { PermissionsAndroid } from 'react-native';
 
-const {height} = Dimensions.get("window");
+async function requestCameraPermission() {
+  try {
+    const check = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+    if(!check){
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          'title': 'GPS 권한 필요',
+          'message': '사진의 위치 정보 제공을 위해 필요합니다. '
+        }
+      )
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log("You can use the ACCESS_FINE_LOCATION")
+      } else {
+        console.log("ACCESS_FINE_LOCATION permission denied")
+      }
+    }
+  } catch (err) {
+    console.warn(err)
+  }
+}
 
 function mapStateToProps(state) {
   return {
@@ -35,12 +56,35 @@ class TakeFoodPic extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      latitude: null,
+      longitude: null,
+      error: null,
       image: null,
       images: null
     };
     this.checkResult = this.checkResult.bind(this);
   }
-  componentDidMount() {}
+  componentDidMount= async() => {
+    await requestCameraPermission();
+    console.log("TakeFoodPic.js: componentDidMount");
+    this.watchId = await navigator.geolocation.watchPosition(
+      (position) => {
+        console.log("TakeFoodPic.js: "+JSON.stringify(position));
+        this.setState({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          error: null,
+        });
+      },
+      (error) => console.log("TakeFoodPic.js: "+JSON.stringify(error))
+    );
+    console.log("TakeFoodPic.js: this.state-"+JSON.stringify(this.state));
+    console.log("TakeFoodPic.js: watchId-"+this.watchId);
+  }
+  componentWillUnmount() {
+    navigator.geolocation.clearWatch(this.watchId);
+  }
+  
   checkResult() {
     fetch(`${API}/films/`)
       .then(res2 => res2.json())
@@ -62,6 +106,7 @@ class TakeFoodPic extends Component {
         "사각형안에 결과지가 모두 포함되도록 이미지를 확대/축소해주세요."
     })
       .then(image => {
+        console.log(image)
         firebase
           .storage()
           .ref(
@@ -83,6 +128,8 @@ class TakeFoodPic extends Component {
               data.firebaseStoragePath = uploadedFile.ref;
               data.firebaseDownloadUrl = uploadedFile.downloadURL;
               data.deviceLocalFilePath = image.path;
+              data.xCoordinate = this.state.latitude
+              data.yCoordinate = this.state.longitude;
               var body = JSON.stringify(data);
               cFetch(APIS.POST_USER_FOOD, [], body, {
                 responseProc: function(res) {
@@ -129,13 +176,12 @@ class TakeFoodPic extends Component {
         <View
           style={{
             flex: 1,
-            flexDirection: "column",
-            backgroundColor: "blue",
+            flexDirection: "column"
           }}
         >
-          <View style={{ flex: 1, backgroundColor:'red', alignContent:"center" }}>
+          <View style={{ flex: 1, alignContent:"center" }}>
             <View style={{flex:2}}>
-              <ScrollView style={{backgroundColor:"green"}}>
+              <ScrollView>
                 {this.state.image ? this.renderAsset(this.state.image) : null}
                 {this.state.images
                   ? this.state.images.map(i => (
