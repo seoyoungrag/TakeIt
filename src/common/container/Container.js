@@ -39,6 +39,8 @@ class Container extends Component {
       </TouchableHighlight>
     );
 
+    const titleNm = this.props.title;
+
     return (
       <View style={{flex:1}}>
         <View style={{flex:86}}>
@@ -48,7 +50,7 @@ class Container extends Component {
               onLeftElementPress={() => navigation.goBack()}
               rightElement={calendarBtn}
               //onRightElementPress={this.props.openCalendar}
-              centerElement={this.state.title}
+              centerElement={titleNm}
             />
           ) : null}
           {this.props.children}
