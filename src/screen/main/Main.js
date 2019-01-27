@@ -11,8 +11,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Octicons from 'react-native-vector-icons/Octicons';
 
 
+
 const {width, height} = Dimensions.get("window");
-  
+
 function mapStateToProps(state) {
   return {
     USER_INFO: state.REDUCER_USER.user,
@@ -107,10 +108,10 @@ class Main extends Component {
                   items={statues}
                   style={styles.gridView}
                   renderItem={({ item, section, index }) => (
-                    <View style={[styles.statusContainer, { /* backgroundColor: 'rgba(255,0,0,'+item.guage+')'*/}]}>  
+                    <View style={[styles.statusContainer, { /* backgroundColor: 'rgba(255,0,0,'+item.guage+')'*/}]}>
                       <View flexDirection="row" width={width/2-width*0.1}>
                         <View style={{flex:1, alignItems:"flex-start"}}>
-                          <Text style={[styles.itemName,{color:"black"}]}>{item.name}</Text> 
+                          <Text style={[styles.itemName,{color:"black"}]}>{item.name}</Text>
                         </View>
                         <View style={{flex:1, alignItems:"flex-end"}}>
                           <Text style={[styles.itemCode,{color:"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",1)"}]}>{item.value}
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
       paddingBottom: 0
     }
   });
-  
+
 export default connect(
   mapStateToProps,
   mapDispatchToProps
