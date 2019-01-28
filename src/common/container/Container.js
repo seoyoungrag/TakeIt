@@ -1,9 +1,7 @@
 import {
-  Animated,
   View,
   Image,
-  TouchableHighlight,
-  Dimensions
+  TouchableHighlight
 } from 'react-native';
 import React, { Component } from 'react';
 import { PropTypes } from 'prop-types';
@@ -14,8 +12,6 @@ import {
 
 import Images from '@assets/Images';
 import Footer from "@footer";
-
-const {width, height} = Dimensions.get("window");
 
 const propTypes = {
   children: PropTypes.node.isRequired,

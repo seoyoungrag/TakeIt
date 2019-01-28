@@ -3,12 +3,18 @@ import types from "../actions/Types_Constants";
 const isFromLogin = false;
 const isFromLoading = false;
 const activeFooterBtn = "HOME";
+const forceRefreshMain = false;
 
 export default (
   state = {
-    isFromLogin, isFromLoading, activeFooterBtn:"HOME"
+    isFromLogin, isFromLoading, activeFooterBtn:"HOME", forceRefreshMain
   }, action) => {
   switch (action.type) {
+    case types.FORCE_REFRESH_MAIN:
+      return {
+        ...state,
+        forceRefreshMain: action.payload
+      };
     case types.SET_ACTIVE_FOOTER_BTN:
       return {
         ...state,

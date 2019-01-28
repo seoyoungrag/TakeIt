@@ -11,6 +11,7 @@ import Login from '@screens/login';
 import Main from '@screens/main';
 import Diary from '@screens/diary';
 import TakePhotoFood from '@screens/takePic';
+import TakePhotoInbody from '@screens/takePic/TakeInbodyPic';
 import UserRegist from '@screens/regist';
 import Food from '@screens/food';
 
@@ -48,6 +49,12 @@ const RootStack = createStackNavigator(
     },
     TakePhotoFood: {
       screen: TakePhotoFood,
+      navigationOptions: ({ navigation }) => ({
+        header: <Text style={{ fontSize: 100 }}>TAKE A PIC</Text>,
+      }),
+    },
+    TakePhotoInbody: {
+      screen: TakePhotoInbody,
       navigationOptions: ({ navigation }) => ({
         header: <Text style={{ fontSize: 100 }}>TAKE A PIC</Text>,
       }),

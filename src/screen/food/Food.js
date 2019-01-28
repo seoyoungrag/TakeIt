@@ -1,29 +1,26 @@
 import React, { Component } from "react";
 
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  Dimensions
+  Dimensions, View,
+  Text,PixelRatio
 } from "react-native";
 
-import Moment from "moment";
-
 import { connect } from "react-redux";
-import ImagePicker from "react-native-image-crop-picker";
-
-import firebase from "react-native-firebase";
 
 import Container from '@container/Container';
-import cFetch from "@common/network/CustomFetch";
-import APIS from "@common/network/APIS";
-import { PermissionsAndroid } from 'react-native';
+import FastImage from 'react-native-fast-image';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-async function requestCameraPermission() {
+import Table from './Table'
+
+
+var FONT_BACK_LABEL   = 16;
+if (PixelRatio.get() <= 2) {
+  FONT_BACK_LABEL = 12;
 }
 
+const {width, height} = Dimensions.get("window");
 function mapStateToProps(state) {
   return {
     USER_INFO: state.REDUCER_USER.user
@@ -36,6 +33,9 @@ function mapDispatchToProps(dispatch) {
 class TakeFoodPic extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      food: this.props.navigation.getParam('food', {})
+    }
   }
   componentDidMount= async() => {
   }
@@ -44,9 +44,47 @@ class TakeFoodPic extends Component {
   }
 
   render() {
+    const columns = [
+      {
+        title: <MaterialCommunityIcons
+        name="food"
+        color="#000000"
+        size={FONT_BACK_LABEL*2}
+        borderWidth={0}/>,
+        dataIndex: 'foodNm',
+        isFirst: true
+      },
+      {
+        title: '칼로리',
+        dataIndex: 'kilocalorie',
+        lastTxt: 'kcal'
+      },
+      {
+        title: '단백질',
+        dataIndex: 'protein',
+        lastTxt: 'g'
+      },
+      {
+        title: '지방',
+        dataIndex: 'fat',
+        lastTxt: 'g'
+      },
+      {
+        title: '탄수화물',
+        dataIndex: 'carbohydrate',
+        lastTxt: 'g'
+      },
+      {
+        title: '당',
+        dataIndex: 'sugar',
+        lastTxt: 'g'
+      }
+    ];
+    
+    console.log(this.state.food);
     const content = (
       <Container
-        title="서울시 강남구 신사동"
+        title={this.state.food.address}
         toolbarDisplay={true}
         navigation={this.props.navigation}>
         <View
@@ -57,8 +95,28 @@ class TakeFoodPic extends Component {
         >
           <View style={{ flex: 1, alignContent:"center" }}>
             <View style={{flex:2}}>
-            </View>
-            <View style={{flex:1}}>
+              <View style={{position:"absolute", height:"100%",width:"100%",zIndex:1,alignItems:"center",justifyContent:"center"}}>
+                <Text style={{color:"white",fontSize:FONT_BACK_LABEL*2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0},textAlign:"center",textAlignVertical:"center"}}>
+                <Ionicons
+                  name="ios-clock"
+                  color="#ffffff"
+                  size={FONT_BACK_LABEL*2}
+                  borderWidth={0}/>
+                  &nbsp;
+                {this.state.food.registTime}
+                </Text>
+              </View>
+              <FastImage
+                          style={{height:"100%",width:"100%"}}
+                          source={{
+                            uri: this.state.food.firebaseDownloadUrl,
+                            priority: FastImage.priority.normal,
+                          }}
+                          resizeMode={FastImage.resizeMode.cover}
+                        />
+              </View>
+            <View style={{flex:1,padding:width*0.05, justifyContent:"center", alignItems:"center"}}>
+              <Table height={height/3-height*0.105} columns={columns} columnWidth={width*0.145} dataSource={this.state.food.foodAnalysisInfo} />
             </View>
           </View>
         </View>

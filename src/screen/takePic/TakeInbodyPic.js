@@ -1,20 +1,13 @@
-import React, { Component } from "react";
-
+import React, { Component } from 'react';
 import { Alert,ImageBackground, PixelRatio, Dimensions, StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
-
-import Moment from "moment";
-
+import { RNCamera } from 'react-native-camera';
 import { connect } from "react-redux";
-
-import firebase from "react-native-firebase";
-
 import Container from '@container/Container';
+import firebase from "react-native-firebase";
 import cFetch from "@common/network/CustomFetch";
 import APIS from "@common/network/APIS";
 import Images from "@assets/Images";
-
-import { PermissionsAndroid } from 'react-native';
-import { RNCamera } from 'react-native-camera';
+import Moment from "moment";
 import Spinner from 'react-native-loading-spinner-overlay';
 
 const {width, height} = Dimensions.get("window");
@@ -35,28 +28,6 @@ const PendingView = () => (
     <Text>Waiting</Text>
   </View>
 );
-async function requestCameraPermission() {
-  try {
-    const check = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-    if(!check){
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          'title': 'GPS 권한 필요',
-          'message': '사진의 위치 정보 제공을 위해 필요합니다. '
-        }
-      )
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log("You can use the ACCESS_FINE_LOCATION")
-      } else {
-        console.log("ACCESS_FINE_LOCATION permission denied")
-      }
-    }
-  } catch (err) {
-    console.warn(err)
-  }
-}
-
 function mapStateToProps(state) {
   return {
     USER_INFO: state.REDUCER_USER.user
@@ -70,34 +41,11 @@ class TakeFoodPic extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      latitude: null,
-      longitude: null,
-      error: null,
       image: null,
       spinnerVisible: false
     };
   }
-  componentDidMount= async() => {
-    await requestCameraPermission();
-    console.log("TakeFoodPic.js: componentDidMount");
-    this.watchId = await navigator.geolocation.watchPosition(
-      (position) => {
-        console.log("TakeFoodPic.js: "+JSON.stringify(position));
-        this.setState({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          error: null,
-        });
-      },
-      (error) => console.log("TakeFoodPic.js: "+JSON.stringify(error))
-    );
-    console.log("TakeFoodPic.js: this.state-"+JSON.stringify(this.state));
-    console.log("TakeFoodPic.js: watchId-"+this.watchId);
-  }
-  componentWillUnmount() {
-    navigator.geolocation.clearWatch(this.watchId);
-  }
-  
+
   renderImage(image) {
     return (
       <View
@@ -117,7 +65,6 @@ class TakeFoodPic extends Component {
       </View>
     );
   }
-
   renderAsset(image) {
     return this.renderImage(image);
   }
@@ -136,11 +83,10 @@ class TakeFoodPic extends Component {
       </ImageBackground>
     );
   }
-
   render() {
     const content = (
       <Container
-        title="찍고 먹기!"
+        title="인바디 사진 찍기!"
         toolbarDisplay={true}
         navigation={this.props.navigation}>
         <View
@@ -166,7 +112,7 @@ class TakeFoodPic extends Component {
                 return (
                   <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
                     <TouchableOpacity onPress={() => this.takePicture(camera)} style={styles.capture}>
-                      <Text style={{ fontSize: 14 }}> 찍고 먹기! </Text>
+                      <Text style={{ fontSize: 14 }}> 인바디 찍기! </Text>
                     </TouchableOpacity>
                   </View>
                 );
@@ -182,7 +128,7 @@ class TakeFoodPic extends Component {
       </Container>);
     return content;
   }
-  
+
   savePicture(){
     Alert.alert(
       '사진을 저장합니다.',
@@ -202,7 +148,7 @@ class TakeFoodPic extends Component {
             console.log("TakeInbodyPic.js: "+JSON.stringify(image));
             firebase
               .storage()
-              .ref("/food_diary/" + PROPS.USER_INFO.userId + "/" + Moment(dateTime).format("YYYY-MM-DD") + "/" + image.uri.substr(image.uri.lastIndexOf("/") + 1) )
+              .ref("/inbody/" + PROPS.USER_INFO.userId + "/" + Moment(dateTime).format("YYYY-MM-DD") + "/" + image.uri.substr(image.uri.lastIndexOf("/") + 1) )
               .putFile(image.uri)
               .then(uploadedFile => {
                 console.log(uploadedFile);
@@ -215,7 +161,7 @@ class TakeFoodPic extends Component {
                   data.firebaseDownloadUrl = uploadedFile.downloadURL;
                   data.deviceLocalFilePath = image.uri;
                   var body = JSON.stringify(data);
-                  cFetch(APIS.POST_USER_FOOD, [], body, {
+                  cFetch(APIS.POST_USER_INBODY, [], body, {
                     responseProc: function(res) {
                       Alert.alert('사진을 저장했습니다.');
                       COM.setState({

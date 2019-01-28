@@ -9,6 +9,8 @@ import Images from "@assets/Images";
 import { connect } from "react-redux";
 import ActionCreator from "@redux-yrseo/actions";
 import { withNavigationFocus } from 'react-navigation';
+import {BoxShadow} from 'react-native-shadow'
+import { COLOR } from 'react-native-material-ui';
 const { height, width } = Dimensions.get("window");
 let styles = {
   footerIcon: {
@@ -27,6 +29,7 @@ let styles = {
 function mapStateToProps(state) {
   return {
     ACTIVE_BTN : state.REDUCER_CONSTANTS.activeFooterBtn,
+    FORCE_REFRESH_MAIN : state.REDUCER_CONSTANTS.forceRefreshMain
   };
 }
 
@@ -35,6 +38,9 @@ function mapDispatchToProps(dispatch) {
     setActiveFooterBtn: activeFooterBtn => {
       dispatch(ActionCreator.setActiveFooterBtn(activeFooterBtn));
     },
+    forceRefreshMain: isForce => {
+      dispatch(ActionCreator.forceRefreshMain(isForce));
+    }
   };
 }
 class Footer extends React.Component {
@@ -50,21 +56,34 @@ class Footer extends React.Component {
     }
   }
   render() {
+    const shadowOpt = {
+      width:width,
+      height:height*0.13,
+      color:COLOR.pink500,
+      border:2,
+      radius:3,
+      opacity:0.1,
+      x:0,
+      y:-3
+    }
     return (
+      <BoxShadow setting={shadowOpt}>
       <View
         width={width}
-        borderTopColor="#e7e7ea"
-        borderTopWidth={0.5}
+        /*borderTopColor="#e7e7ea"
+        borderTopWidth={0.5}*/
         backgroundColor="#ffffff"
         flexDirection="row"
         alignItems="center"
         justifyContent="center"
-        elavation={10}
         flex={1}
       >
       <TouchableOpacity
         underlayColor="rgba(0,0,0,.1)"
         onPress={() => {
+          if(this.props.ACTIVE_BTN!="HOME"){
+            this.props.forceRefreshMain(true);
+          } 
           this.props.setActiveFooterBtn("HOME")
           this.props.navigation.navigate("Main")
         }}
@@ -93,7 +112,7 @@ class Footer extends React.Component {
         underlayColor="rgba(0,0,0,.1)"
         onPress={() => {
           this.props.setActiveFooterBtn("INBODY")
-          this.props.navigation.navigate("Main")
+          this.props.navigation.navigate("TakePhotoInbody")
         }}
       >
         <View style={styles.footerIconContainer}>
@@ -127,6 +146,7 @@ class Footer extends React.Component {
       </TouchableOpacity>
       
       </View>
+      </BoxShadow>
     );
   }
 }

@@ -1,30 +1,42 @@
 import React, {Component} from 'react';
 
-import {Dimensions, StyleSheet, Text, View, PixelRatio} from 'react-native';
+import {Dimensions, StyleSheet, Text, View, PixelRatio, TouchableHighlight} from 'react-native';
 import DrawerWrapped from "@drawer";
 import { connect } from "react-redux";
+import ActionCreator from "@redux-yrseo/actions";
 import Container from '@container/Container';
 import FastImage from 'react-native-fast-image'
 import { SectionGrid, FlatGrid } from 'react-native-super-grid';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Octicons from 'react-native-vector-icons/Octicons';
+import {BoxShadow} from 'react-native-shadow'
+import { COLOR } from 'react-native-material-ui';
+
 import cFetch from "@common/network/CustomFetch";
 import APIS from "@common/network/APIS";
 
 import Moment from "moment";
+
+import { withNavigationFocus } from 'react-navigation';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const {width, height} = Dimensions.get("window");
 
 function mapStateToProps(state) {
   return {
     USER_INFO: state.REDUCER_USER.user,
-    WISE_SAYING: state.REDUCER_EXERCISE.wiseSaying
+    WISE_SAYING: state.REDUCER_EXERCISE.wiseSaying,
+    FORCE_REFRESH_MAIN : state.REDUCER_CONSTANTS.forceRefreshMain
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return {};
+  return {
+    forceRefreshMain: isForce => {
+      dispatch(ActionCreator.forceRefreshMain(isForce));
+    }
+  };
 }
 
 var FONT_BACK_LABEL   = 16;
@@ -39,33 +51,30 @@ class Main extends Component {
           photos : [],
           intakeStatuses: [],
           isEmptyPhotos : false,
-          calorie: {}
+          calorie: {},
+          spinnerVisible: false
         }
-    }
-    componentWillMount(){
     }
     componentDidMount(){
       this.getFoodDiary();
       this.getMainIntakestatus();
     }
-    componentWillReceiveProps(){
-
-    }
-    componentWillUnmount(){
-    }
-
 
     getMainIntakestatus = () => {
       PROPS = this.props;
       COM = this;
+      COM.setState({
+        spinnerVisible:true
+      })
       cFetch(
-        APIS.GET_MAIN_INTAKESTATUS, [ PROPS.USER_INFO.userId ], {},
+        APIS.GET_MAIN_INTAKESTATUS, [ PROPS.USER_INFO.userId, "date", Moment(new Date()).format("YYYY-MM-DD") ], {},
         {
           responseProc: function(res) {
             console.log("Main.js(getMainIntakestatus): "+JSON.stringify(res));
             COM.setState({
               intakeStatuses: res.intakeStats,
-              calorie: res.calorie
+              calorie: res.calorie,
+              spinnerVisible: false
             });
           }
         }
@@ -75,6 +84,9 @@ class Main extends Component {
     getFoodDiary= () => {
       PROPS = this.props;
       COM = this;
+      COM.setState({
+        spinnerVisible:true
+      })
       cFetch(
         APIS.GET_USER_FOOD, [ PROPS.USER_INFO.userId, "date", Moment(new Date()).format("YYYY-MM-DD") ], {},
         {
@@ -90,37 +102,69 @@ class Main extends Component {
                         registTime: "촬영한 사진이 없네요."
                       }
                     ],
-              isEmptyPhotos: true
+              isEmptyPhotos: !res.length > 0 ,
+              spinnerVisible: false
             });
           }
         }
       );
     }
     render() {
+      if(this.props.isFocused&&this.props.FORCE_REFRESH_MAIN){
+        this.props.forceRefreshMain(false);
+        this.getFoodDiary();
+        this.getMainIntakestatus();
+      }
         const WiseSaying = this.props.WISE_SAYING[ Math.floor(Math.random() * this.props.WISE_SAYING.length) ].text;
+        const profileShadowOpt = {
+          width: height*0.14,
+          height: height*0.14,
+          color:COLOR.pink500,
+          border:2,
+          radius:height*0.07,
+          opacity:0.2,
+          x:1,
+          y:1
+        }
         const YourImage = this.props.USER_INFO.userSnsPhoto ?(
-        <FastImage
-          style={styles.avatarTempImage}
-          source={{
-            uri: this.props.USER_INFO.userSnsPhoto,
-            priority: FastImage.priority.normal,
-          }}
-          resizeMode={FastImage.resizeMode.center}
-        />
+          <BoxShadow setting={profileShadowOpt}>
+            <FastImage
+              style={styles.avatarTempImage}
+              source={{
+                uri: this.props.USER_INFO.userSnsPhoto,
+                priority: FastImage.priority.normal,
+              }}
+              resizeMode={FastImage.resizeMode.center}
+            />
+          </BoxShadow>
         ):null;
+        const shadowOpt = {
+          width:width/2.1 *(this.state.isEmptyPhotos? 2:1),
+          height:width/2 *(this.state.isEmptyPhotos? 2:1),
+          color:COLOR.pink500,
+          border:2,
+          radius:0,
+          opacity:0.1,
+          x:3,
+          y:3
+        }
         const content = (
           <Container navigation={this.props.navigation}>
             <View style={styles.container}>
+
               <View
                 style={styles.headerView}>
+
                 <View
                   style={{
                     flexDirection: "row",
                     justifyContent: "center",
                   }}>
+
                   <View width={height*0.15} height="100%" paddingLeft={10}>
                   {YourImage}
                   </View>
+
                   <View flex={width-height*0.15} height="100%">
                     <View flex={3} style={{padding:10, paddingBottom:0}}>
                       <Text style={styles.profileUserEmail}>{this.props.USER_INFO.userEmail}</Text>
@@ -131,7 +175,9 @@ class Main extends Component {
                       <View flex={1} style={{backgroundColor:'rgb(255,206,84)', paddingRight:10, justifyContent:"center", height:"70%",alignSelf:"flex-end",alignItems:"flex-end"}}><Text style={{color:"white"}}>+{this.state.calorie.guage}</Text></View>
                     </View>
                   </View>
+
                 </View>
+
               <View style={styles.statusView}>
                 <FlatGrid
                   itemDimension={width/2.1}
@@ -164,9 +210,10 @@ class Main extends Component {
                   )}
                 />
               </View>
+
               <View style={styles.foodList}>
                 <SectionGrid
-                  itemDimension={width/2.1 *(this.state.intakeStatuses? 2:1)}
+                  itemDimension={width/2.1 *(this.state.isEmptyPhotos? 2:1)}
                   fixed
                   spacing={5}
                   sections={[
@@ -177,7 +224,12 @@ class Main extends Component {
                   ]}
                   style={styles.gridView}
                   renderItem={({ item, section, index }) => (
-                    <View style={{height:width/2*(this.state.intakeStatuses? 2:1)}}>
+
+                    <TouchableHighlight onPress={()=>{this.props.navigation.navigate("Food", {
+                      food: item
+                    })}}>
+                    <BoxShadow setting={shadowOpt}>
+                    <View style={{height:width/2*(this.state.isEmptyPhotos? 2:1)}}>
                       <View style={{position:"absolute", height:"100%",width:"100%",zIndex:1,alignItems:"center",justifyContent:"center"}}>
                         <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0},textAlign:"center",textAlignVertical:"center"}}>
                         <Ionicons
@@ -189,21 +241,24 @@ class Main extends Component {
                         {item.registTime}
                         </Text>
                       </View>
-                    <FastImage
-                      style={{height:width/2*(this.state.intakeStatuses? 2:1)}}
-                      source={{
-                        uri: item.firebaseDownloadUrl,
-                        priority: FastImage.priority.normal,
-                      }}
-                      resizeMode={FastImage.resizeMode.cover}
-                    />
+                      <FastImage
+                        style={{height:width/2*(this.state.isEmptyPhotos? 2:1)}}
+                        source={{
+                          uri: item.firebaseDownloadUrl,
+                          priority: FastImage.priority.normal,
+                        }}
+                        resizeMode={FastImage.resizeMode.cover}
+                      />
                     </View>
+			              </BoxShadow>
+                    </TouchableHighlight>
                   )}
                   renderSectionHeader={({ section }) => (
                     <Text style={styles.sectionHeader}><Octicons name="calendar" color="#000000" size={FONT_BACK_LABEL}/>&nbsp;&nbsp;{section.title}</Text>
                   )}
                 />
               </View>
+
             </View>
             {/*
             <TouchableOpacity
@@ -233,6 +288,11 @@ class Main extends Component {
             </TouchableOpacity>
             */}
             </View>
+            <Spinner
+              visible={this.state.spinnerVisible}
+              textContent={'잠시만 기다려 주세요...'}
+              textStyle={{color: '#FFF'}}
+            />
           </Container>
           );
           return (
@@ -270,7 +330,7 @@ const styles = StyleSheet.create({
     },
     foodList: {
       backgroundColor:"#F4F2F3",
-      height: height*0.57
+      height: height*0.58
     },profileUserEmail: {
       fontSize: FONT_BACK_LABEL*1.2,
       color:"rgba(0,0,0,1)"
@@ -311,4 +371,4 @@ const styles = StyleSheet.create({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Main);
+)(withNavigationFocus(Main));

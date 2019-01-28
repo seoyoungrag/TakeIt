@@ -1,13 +1,9 @@
 import React from "react";
 import {
-  View,
-  Text,
-  ActivityIndicator,
   StyleSheet,
   ImageBackground,
   Alert,
-  Linking,
-  PixelRatio
+  Linking
 } from "react-native";
 
 import Images from "@assets/Images";
@@ -20,6 +16,8 @@ import cFetch from "@common/network/CustomFetch";
 import APIS from "@common/network/APIS";
 import VersionCheck from "react-native-version-check";
 import { withNavigationFocus } from 'react-navigation';
+
+import Spinner from 'react-native-loading-spinner-overlay';
 
 function mapStateToProps(state) {
   return {
@@ -46,10 +44,7 @@ function mapDispatchToProps(dispatch) {
     }
   };
 }
-var FONT_BACK_LABEL   = 16;
-if (PixelRatio.get() <= 2) {
-  FONT_BACK_LABEL = 12;
-}
+
 class Loading extends React.Component {
   constructor(props) {
     super(props);
@@ -57,6 +52,9 @@ class Loading extends React.Component {
     this.exitApp = this.exitApp.bind(this);
     this.checkPushToken = this.checkPushToken.bind(this);
     this.getCode = this.getCode.bind(this);
+    this.state = {
+      spinnerVisible: true
+    }
   }
   componentDidMount() {
     if (__DEV__) {
@@ -144,6 +142,7 @@ class Loading extends React.Component {
     console.log("loading.js: isFocused");
     console.log(this.props.isFocused);
     if(this.props.isFocused){
+      const COM = this;
       const PROPS = this.props;
       let userInfo = PROPS.USER_INFO;
       console.log("Loading.js: "+JSON.stringify(userInfo));
@@ -174,6 +173,9 @@ class Loading extends React.Component {
           userInfo.id = SNSEmailOrUid; //기본은 email, 전화번호로 로그인한 경우에는 providerData의 uid가 입력된다.
           console.log("loading.js: firebase auth check end");
         } else {
+          COM.setState({
+            spinnerVisible:false
+          })
           PROPS.setIsFromLogin(false);
           //PROPS.setIsFromLoading(true);
           PROPS.navigation.navigate("Login");
@@ -203,9 +205,15 @@ class Loading extends React.Component {
             if (res.userNm == null){ // 이름은 필수 값, 한번도 이름 저장 안한 사람은 로그인부터 해서 이름값 가져오도록 한다.
               PROPS.setIsFromLogin(false);
               //PROPS.setIsFromLoading(true);
+              COM.setState({
+                spinnerVisible:false
+              })
               PROPS.navigation.navigate("Login");
             }else if(res.userSex == null|| res.userEmail == null|| res.userHeight == null|| res.userWeight == null) {
               PROPS.setIsFromLogin(false);
+              COM.setState({
+                spinnerVisible:false
+              })
               PROPS.navigation.navigate("Regist");
             } else {
               var body = JSON.stringify(userInfo);
@@ -231,6 +239,9 @@ class Loading extends React.Component {
               });
               console.log("loading.js: go Main in Loading.js");
               PROPS.setIsFromLogin(false);
+              COM.setState({
+                spinnerVisible:false
+              })
               PROPS.navigation.navigate("Main");
             }
           },
@@ -241,9 +252,15 @@ class Loading extends React.Component {
             if (userInfo.userNm == null){ // 이름은 필수 값, 한번도 이름 저장 안한 사람은 로그인부터 해서 이름값 가져오도록 한다.
               PROPS.setIsFromLogin(false);
               //PROPS.setIsFromLoading(true);
+              COM.setState({
+                spinnerVisible:false
+              })
               PROPS.navigation.navigate("Login");
             }else if(userInfo.userSex == null|| userInfo.userEmail == null|| userInfo.userHeight == null|| userInfo.userWeight == null) {
               PROPS.setIsFromLogin(false);
+              COM.setState({
+                spinnerVisible:false
+              })
               PROPS.navigation.navigate("Regist");
             }
           }
@@ -262,23 +279,11 @@ class Loading extends React.Component {
         source={Images.loginLoadingBack}
         style={styles.container}
       >
-      <View
-        style={{
-          padding: 10,
-          margin: 10,
-          backgroundColor: "rgba(255,255,255,0.8)",
-          borderColor: "silver",
-          borderWidth: 0,
-          borderRadius: 10,
-          elevation: 0
-        }}
-      >
-        <Text style={{ color: "black", fontSize:FONT_BACK_LABEL, 
-                  fontFamily: "NotoSans-Regular",margin:10}}>사용자 정보를 확인중입니다.</Text>
-        <Text>{this.props.isFocused ? 'Focused' : 'Not focused'}</Text>
-        <Text>{this.props.IS_FROM_LOGIN ? 'formLogin' : 'Not fromLogin'}</Text>
-        <ActivityIndicator color="black" size="large" />
-      </View>
+      <Spinner
+        visible={this.state.spinnerVisible}
+        textContent={'잠시만 기다려 주세요...'}
+        textStyle={{color: '#FFF'}}
+      />
       </ImageBackground>
     );
   }

@@ -158,7 +158,11 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-image-crop-picker')
+    implementation (project(':react-native-camera')){ exclude group: "com.google.android.gms" } 
+    implementation 'com.google.android.gms:play-services-vision:15.0.2'
+
+    compile project(':react-native-svg')
+    //compile project(':react-native-image-crop-picker') //image-crop-picker 삭제
     compile project(':react-native-fast-image')
     compile project(':react-native-version-check')
 
