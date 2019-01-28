@@ -157,7 +157,8 @@ class TakeFoodPic extends Component {
             <RNCamera
               style={styles.preview}
               type={RNCamera.Constants.Type.back}
-              flashMode={RNCamera.Constants.FlashMode.on}
+              flashMode={RNCamera.Constants.FlashMode.off}
+              captureAudio={false}
               permissionDialogTitle={'Permission to use camera'}
               permissionDialogMessage={'We need your permission to use your camera phone'}
             >
@@ -242,7 +243,7 @@ class TakeFoodPic extends Component {
     );
   }
   takePicture = async function(camera) {
-    const options = { quality: 0.5, base64: true };
+    const options = { quality: 0.5, base64: true, fixOrientation: true  };
     const image = await camera.takePictureAsync(options);
     this.setState({
       image: { uri: image.uri, width: image.width, height: image.height }

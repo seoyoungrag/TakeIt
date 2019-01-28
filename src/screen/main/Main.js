@@ -52,68 +52,62 @@ class Main extends Component {
           intakeStatuses: [],
           isEmptyPhotos : false,
           calorie: {},
-          spinnerVisible: false
+          spinnerVisible: true
         }
     }
-    componentDidMount(){
-      this.getFoodDiary();
-      this.getMainIntakestatus();
+    componentDidMount = async() => {
+      await this.callbackFnc();
     }
-
-    getMainIntakestatus = () => {
-      PROPS = this.props;
-      COM = this;
-      COM.setState({
-        spinnerVisible:true
-      })
-      cFetch(
-        APIS.GET_MAIN_INTAKESTATUS, [ PROPS.USER_INFO.userId, "date", Moment(new Date()).format("YYYY-MM-DD") ], {},
+    callbackFnc = async() => {
+      const foodList = await this.getFoodDiary();
+      const statuses = await this.getMainIntakestatus();
+      this.setState({
+        photos:
+        foodList.length > 0
+            ? foodList
+            : [
+                {
+                  firebaseDownloadUrl:"https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-6deb2ab9-8334-42c4-b38f-d889db792e42847907521.jpg?alt=media&token=f85d5f15-0cfb-4abe-ae19-9fd0501422b4",
+                  registTime: "촬영한 사진이 없네요."
+                }
+              ],
+        isEmptyPhotos: !foodList.length > 0 ,
+        intakeStatuses: statuses.intakeStats,
+        calorie: statuses.calorie,
+        spinnerVisible: false
+      });
+    }
+    getMainIntakestatus = async () => {
+      var rtn;
+      await cFetch(
+        APIS.GET_MAIN_INTAKESTATUS, [ this.props.USER_INFO.userId, "date", Moment(new Date()).format("YYYY-MM-DD") ], {},
         {
-          responseProc: function(res) {
+          responseProc: async (res) => {
             console.log("Main.js(getMainIntakestatus): "+JSON.stringify(res));
-            COM.setState({
-              intakeStatuses: res.intakeStats,
-              calorie: res.calorie,
-              spinnerVisible: false
-            });
+            rtn=res;
           }
         }
       );
+      return rtn;
     }
 
-    getFoodDiary= () => {
-      PROPS = this.props;
-      COM = this;
-      COM.setState({
-        spinnerVisible:true
-      })
-      cFetch(
-        APIS.GET_USER_FOOD, [ PROPS.USER_INFO.userId, "date", Moment(new Date()).format("YYYY-MM-DD") ], {},
+    getFoodDiary = async () => {
+      var rtn;
+      await cFetch(
+        APIS.GET_USER_FOOD, [ this.props.USER_INFO.userId, "date", Moment(new Date()).format("YYYY-MM-DD") ], {},
         {
-          responseProc: function(res) {
+          responseProc: async (res) => {
             console.log("Main.js(getFOodDiary): "+JSON.stringify(res));
-            COM.setState({
-              photos:
-                res.length > 0
-                  ? res
-                  : [
-                      {
-                        firebaseDownloadUrl:"https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-6deb2ab9-8334-42c4-b38f-d889db792e42847907521.jpg?alt=media&token=f85d5f15-0cfb-4abe-ae19-9fd0501422b4",
-                        registTime: "촬영한 사진이 없네요."
-                      }
-                    ],
-              isEmptyPhotos: !res.length > 0 ,
-              spinnerVisible: false
-            });
+            rtn=res;
           }
         }
       );
+      return rtn;
     }
     render() {
       if(this.props.isFocused&&this.props.FORCE_REFRESH_MAIN){
         this.props.forceRefreshMain(false);
-        this.getFoodDiary();
-        this.getMainIntakestatus();
+        this.callbackFnc();
       }
         const WiseSaying = this.props.WISE_SAYING[ Math.floor(Math.random() * this.props.WISE_SAYING.length) ].text;
         const profileShadowOpt = {
