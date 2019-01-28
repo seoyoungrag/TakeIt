@@ -119,7 +119,7 @@ class Main extends Component {
         const profileShadowOpt = {
           width: height*0.14,
           height: height*0.14,
-          color:COLOR.pink500,
+          color:COLOR.grey900,
           border:2,
           radius:height*0.07,
           opacity:0.2,
@@ -141,7 +141,7 @@ class Main extends Component {
         const shadowOpt = {
           width:width/2.1 *(this.state.isEmptyPhotos? 2:1),
           height:width/2 *(this.state.isEmptyPhotos? 2:1),
-          color:COLOR.pink500,
+          color:COLOR.grey900,
           border:2,
           radius:0,
           opacity:0.1,

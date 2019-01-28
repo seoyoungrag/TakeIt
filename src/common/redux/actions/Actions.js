@@ -4,6 +4,12 @@ import exerciseTypes from "./Types_Exercise";
 import codeTypes from "./Types_Code";
 import constants from "./Types_Constants";
 
+export function spinnerVisible(data) {
+  return {
+    type: constants.SPINNER_VISIBLE,
+    payload: data
+  };
+}
 export function forceRefreshMain(data) {
   return {
     type: constants.FORCE_REFRESH_MAIN,

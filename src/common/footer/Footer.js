@@ -59,7 +59,7 @@ class Footer extends React.Component {
     const shadowOpt = {
       width:width,
       height:height*0.13,
-      color:COLOR.pink500,
+      color:COLOR.grey900,
       border:2,
       radius:3,
       opacity:0.1,

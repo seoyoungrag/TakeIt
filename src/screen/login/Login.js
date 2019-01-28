@@ -258,9 +258,10 @@ class Login extends React.Component {
           />
         </View>
           <Text style={{paddingTop:40, paddingLeft: 20, paddingRight:20, color:"white", textAlign:"center"}}>이 앱을 통한 어떠한 사진 및 동영상도{"\n"}당신의 허락 없이 타인에게 공개되지 않습니다.</Text>
-          
+          {/*
         <Text>{this.props.isFocused ? 'Focused' : 'Not focused'}</Text>
         <Text>{this.props.IS_FROM_LOADING ? 'formLoading' : 'Not formLoading'}</Text>
+          */}
       </View>
       </ImageBackground>
     );
