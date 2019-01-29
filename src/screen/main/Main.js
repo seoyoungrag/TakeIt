@@ -20,6 +20,7 @@ import Moment from "moment";
 
 import { withNavigationFocus } from 'react-navigation';
 import Spinner from 'react-native-loading-spinner-overlay';
+import Guide from '../guide/Guide'
 
 const {width, height} = Dimensions.get("window");
 
@@ -33,6 +34,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
+    setUserInfo: user => {
+      dispatch(ActionCreator.setUserInfo(user));
+    },
     forceRefreshMain: isForce => {
       dispatch(ActionCreator.forceRefreshMain(isForce));
     }
@@ -52,7 +56,8 @@ class Main extends Component {
           intakeStatuses: [],
           isEmptyPhotos : false,
           calorie: {},
-          spinnerVisible: true
+          spinnerVisible: true,
+          guideYn: "Y"
         }
     }
     componentDidMount = async() => {
@@ -73,7 +78,8 @@ class Main extends Component {
               ],
         isEmptyPhotos: !foodList.length > 0 ,
         intakeStatuses: statuses.intakeStats,
-        calorie: statuses.calorie
+        calorie: statuses.calorie,
+        guideYn: this.props.USER_INFO.guideYn
         //spinnerVisible: false
       });
       COM = this;
@@ -144,8 +150,37 @@ class Main extends Component {
           x:3,
           y:3
         }
+        PROPS = this.props;
         const content = (
           <Container navigation={this.props.navigation}>
+            <Modal animationType="fade" hardwareAccelerated={true} visible={this.state.guideYn=="N"} transparent={true} onRequestClose={() => {}}>
+              <Guide onCompleteGuide={()=>{
+                var copy = this.props.USER_INFO.constructor()
+
+                for (var attr in this.props.USER_INFO) {
+                  if (this.props.USER_INFO.hasOwnProperty(attr)) {
+                    copy[attr] = this.props.USER_INFO[attr];
+                  }
+                }
+                copy.guideYn="Y"
+
+                var body = JSON.stringify(copy);
+                cFetch(APIS.PUT_USER_BY_EMAIL, [copy.userEmail], body, {
+                  responseProc: function(res) {
+                    console.log(res);
+                    PROPS.setUserInfo(res);
+                  },
+                  responseNotFound: function(res) {
+                    console.log(res);
+                  }
+                });
+                this.props.setUserInfo(copy);
+                this.setState({
+                  guideYn:"Y"
+                  })
+                }
+              }/>
+            </Modal>
             <View style={styles.container}>
 
               <View

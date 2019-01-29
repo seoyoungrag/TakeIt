@@ -1,57 +1,86 @@
 import React, { Component } from 'react';
 import {
-  AppRegistry,
   StyleSheet,
   Text,
+  ImageBackground,
+  Dimensions,
+  TouchableOpacity,
+  PixelRatio,
   View
 } from 'react-native';
  
+import Images from "@assets/Images";
+
 import Swiper from 'react-native-swiper';
+const {width, height} = Dimensions.get("window");
  
+var FONT_BACK_LABEL   = 16;
+if (PixelRatio.get() <= 2) {
+  FONT_BACK_LABEL = 12;
+}
 const styles = StyleSheet.create({
   wrapper: {
   },
   slide1: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#9DD6EB',
-  },
-  slide2: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#97CAE5',
-  },
-  slide3: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#92BBD9',
+    justifyContent: "flex-end",
+    alignItems: "center"
   },
   text: {
     color: '#fff',
-    fontSize: 30,
+    fontSize: FONT_BACK_LABEL,
     fontWeight: 'bold',
+  },
+  capture: {
+    flex: 0,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    padding: 15,
+    paddingHorizontal: 20,
+    alignSelf: 'flex-end',
+    margin: 20,
   }
 })
- 
-export default class Swiper extends Component {
+
+
+export default class Guide extends Component {
   render(){
     return (
-      <Swiper style={styles.wrapper} showsButtons={true}>
-        <View style={styles.slide1}>
-          <Text style={styles.text}>Hello Swiper</Text>
+      <Swiper paginationStyle={{color:"red"}} showsButtons={true} loop={false} activeDotColor="red"
+      prevButton={<Text style={[styles.text,{fontSize:FONT_BACK_LABEL*3, color:"red"}]}>‹</Text>}
+      nextButton={<Text style={[styles.text,{fontSize:FONT_BACK_LABEL*3,color:"red"}]}>›</Text>}>
+        <ImageBackground
+          source={Images.guide1}
+          style={[styles.slide1,{height:height}]}
+          resizeMode="stretch"
+        />
+        <ImageBackground
+          source={Images.guide2}
+          style={[styles.slide1,{height:height}]}
+          resizeMode="stretch"
+        />
+        <ImageBackground
+          source={Images.guide3}
+          style={[styles.slide1,{height:height}]}
+          resizeMode="stretch"
+        />
+        <ImageBackground
+          source={Images.guide4}
+          style={[styles.slide1,{height:height}]}
+          resizeMode="stretch"
+        />
+        <ImageBackground
+          source={Images.guide5}
+          style={[styles.slide1,{height:height}]}
+          resizeMode="stretch"
+        >
+        <View style={{ flex: 0, flexDirection: 'column', justifyContent: 'flex-end', alignItems:"flex-end" }}>
+          <TouchableOpacity onPress={() => this.props.onCompleteGuide()} style={[styles.capture]}>
+            <Text style={[styles.text,{fontSize:FONT_BACK_LABEL*3,color:"black"}]}> 찍먹 시작! </Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.slide2}>
-          <Text style={styles.text}>Beautiful</Text>
-        </View>
-        <View style={styles.slide3}>
-          <Text style={styles.text}>And simple</Text>
-        </View>
+        </ImageBackground>
       </Swiper>
     );
   }
 }
- 
-AppRegistry.registerComponent('myproject', () => Swiper);
