@@ -44,7 +44,7 @@ if (PixelRatio.get() <= 2) {
   FONT_BACK_LABEL = 12;
 }
 
-class Main extends Component {
+class DayDiary extends Component {
     constructor(props){
         super(props);
         this.state = {
@@ -52,7 +52,8 @@ class Main extends Component {
           intakeStatuses: [],
           isEmptyPhotos : false,
           calorie: {},
-          spinnerVisible: true
+          spinnerVisible: true,
+          inqueryDate: this.props.navigation.getParam('inqueryDate', {})
         }
     }
     componentDidMount = async() => {
@@ -82,7 +83,7 @@ class Main extends Component {
     getMainIntakestatus = async () => {
       var rtn;
       await cFetch(
-        APIS.GET_MAIN_INTAKESTATUS, [ this.props.USER_INFO.userId, "date", Moment(new Date()).format("YYYY-MM-DD") ], {},
+        APIS.GET_MAIN_INTAKESTATUS, [ this.props.USER_INFO.userId, "date", this.state.inqueryDate ], {},
         {
           responseProc: async (res) => {
             console.log("Main.js(getMainIntakestatus): "+JSON.stringify(res));
@@ -96,7 +97,7 @@ class Main extends Component {
     getFoodDiary = async () => {
       var rtn;
       await cFetch(
-        APIS.GET_USER_FOOD, [ this.props.USER_INFO.userId, "date", Moment(new Date()).format("YYYY-MM-DD") ], {},
+        APIS.GET_USER_FOOD, [ this.props.USER_INFO.userId, "date", this.state.inqueryDate ], {},
         {
           responseProc: async (res) => {
             console.log("Main.js(getFOodDiary): "+JSON.stringify(res));
@@ -214,7 +215,7 @@ class Main extends Component {
                   spacing={5}
                   sections={[
                     {
-                      title: Moment(new Date()).format("YYYY-MM-DD"),
+                      title: this.state.inqueryDate,
                       data: this.state.photos,
                     }
                   ]}
@@ -368,4 +369,4 @@ const styles = StyleSheet.create({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withNavigationFocus(Main));
+)(withNavigationFocus(DayDiary));
