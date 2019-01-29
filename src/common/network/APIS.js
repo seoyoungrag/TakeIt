@@ -1,5 +1,5 @@
 const APIS = {
-  GET_USER_FOOD: {
+  GET_USER_FOOD_PHOTO: {
     url: '/photo/food/', //실제 url
     //url: '/user/health/{userId}/{startDt}/{endDt}', //실제 url
     //url: "posts",
