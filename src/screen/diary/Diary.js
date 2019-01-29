@@ -220,8 +220,8 @@ class Diary extends React.Component {
       APIS.GET_TEST,
       [
         //전달 값
-        // this.props.USER_INFO.userId,
-        32,
+        this.props.USER_INFO.userId,
+        // 32,
         Moment(startDate).format('YYYYMMDD'),
         Moment(endDate).format('YYYYMMDD'),
       ],

@@ -1,42 +1,24 @@
 import React, {Component} from 'react';
 
-import {Dimensions, StyleSheet, Text, View, PixelRatio, TouchableHighlight} from 'react-native';
+import {Alert, Dimensions,Platform, StyleSheet, Text, View, TouchableOpacity, PixelRatio} from 'react-native';
 import DrawerWrapped from "@drawer";
 import { connect } from "react-redux";
-import ActionCreator from "@redux-yrseo/actions";
 import Container from '@container/Container';
 import FastImage from 'react-native-fast-image'
 import { SectionGrid, FlatGrid } from 'react-native-super-grid';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Octicons from 'react-native-vector-icons/Octicons';
-import {BoxShadow} from 'react-native-shadow'
-import { COLOR } from 'react-native-material-ui';
-
-import cFetch from "@common/network/CustomFetch";
-import APIS from "@common/network/APIS";
-
-import Moment from "moment";
-
-import { withNavigationFocus } from 'react-navigation';
-import Spinner from 'react-native-loading-spinner-overlay';
-
 const {width, height} = Dimensions.get("window");
+
 
 function mapStateToProps(state) {
   return {
     USER_INFO: state.REDUCER_USER.user,
-    WISE_SAYING: state.REDUCER_EXERCISE.wiseSaying,
-    FORCE_REFRESH_MAIN : state.REDUCER_CONSTANTS.forceRefreshMain
+    WISE_SAYING: state.REDUCER_EXERCISE.wiseSaying
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-    forceRefreshMain: isForce => {
-      dispatch(ActionCreator.forceRefreshMain(isForce));
-    }
-  };
+  return {};
 }
 
 var FONT_BACK_LABEL   = 16;
@@ -47,137 +29,79 @@ if (PixelRatio.get() <= 2) {
 class Main extends Component {
     constructor(props){
         super(props);
-        this.state = {
-          photos : [],
-          intakeStatuses: [],
-          isEmptyPhotos : false,
-          calorie: {},
-          spinnerVisible: true
-        }
     }
-    componentDidMount = async() => {
-      await this.callbackFnc();
-    }
-    callbackFnc = async() => {
-      const foodList = await this.getFoodDiary();
-      const statuses = await this.getMainIntakestatus();
-      this.setState({
-        photos:
-        foodList.length > 0
-            ? foodList
-            : [
-                {
-                  firebaseDownloadUrl:"https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-6deb2ab9-8334-42c4-b38f-d889db792e42847907521.jpg?alt=media&token=f85d5f15-0cfb-4abe-ae19-9fd0501422b4",
-                  registTime: "촬영한 사진이 없네요."
-                }
-              ],
-        isEmptyPhotos: !foodList.length > 0 ,
-        intakeStatuses: statuses.intakeStats,
-        calorie: statuses.calorie,
-        spinnerVisible: false
-      });
-    }
-    getMainIntakestatus = async () => {
-      var rtn;
-      await cFetch(
-        APIS.GET_MAIN_INTAKESTATUS, [ this.props.USER_INFO.userId, "date", Moment(new Date()).format("YYYY-MM-DD") ], {},
-        {
-          responseProc: async (res) => {
-            console.log("Main.js(getMainIntakestatus): "+JSON.stringify(res));
-            rtn=res;
-          }
-        }
-      );
-      return rtn;
-    }
+    componentDidMount(){
 
-    getFoodDiary = async () => {
-      var rtn;
-      await cFetch(
-        APIS.GET_USER_FOOD, [ this.props.USER_INFO.userId, "date", Moment(new Date()).format("YYYY-MM-DD") ], {},
-        {
-          responseProc: async (res) => {
-            console.log("Main.js(getFOodDiary): "+JSON.stringify(res));
-            rtn=res;
-          }
-        }
-      );
-      return rtn;
+    }
+    componentWillReceiveProps(){
+
+    }
+    componentWillUnmount(){
+
     }
     render() {
-      if(this.props.isFocused&&this.props.FORCE_REFRESH_MAIN){
-        this.props.forceRefreshMain(false);
-        this.callbackFnc();
-      }
-        const WiseSaying = this.props.WISE_SAYING[ Math.floor(Math.random() * this.props.WISE_SAYING.length) ].text;
-        const profileShadowOpt = {
-          width: height*0.14,
-          height: height*0.14,
-          color:COLOR.grey900,
-          border:2,
-          radius:height*0.07,
-          opacity:0.2,
-          x:1,
-          y:1
-        }
+        const items = [
+          { id: 'TURQUOISE', dt: "07:22", url: 'https://patch.com/img/cdn20/users/790386/20180525/063909/styles/T800x600/public/processed_images/shutterstock_337714676-1527287683-3245.jpg?width=720' },
+          { id: 'EMERALD', dt: "08:26", url: 'http://www.brcn.go.kr/prog/tour_restaurant/tour/sub04_03/restaurantImage_down.do?rstrntCode=157' },
+          { id: 'PETER RIVER', dt: "09:52", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D2.jpg' },
+          { id: 'AMETHYST', dt: "10:11", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D3.jpg' },
+          { id: 'WET ASPHALT', dt: "12:45", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D4.jpg' },
+          { id: 'GREEN SEA', dt: "14:31", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/09/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EA%B0%80%EC%9E%A5%EC%8A%AC%ED%94%88%EC%9D%8C%EC%8B%9D8.jpg' },
+          { id: 'NEPHRITIS', dt: "15:32", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC2.jpg' },
+          { id: 'BELIZE HOLE', dt: "16:43", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC6.jpg' },
+          { id: 'WISTERIA', dt: "17:23", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC4.jpg' },
+          { id: 'MIDNIGHT BLUE', dt: "18:42", url: 'https://news.samsung.com/kr/wp-content/uploads/2015/11/%ED%88%AC%EB%AA%A8%EB%A1%9C%EC%9A%B0%EC%97%90%EC%84%B8%EC%9D%B4%EC%9D%8C%EC%8B%9D%EC%8A%A4%ED%86%A0%EB%A6%AC3.jpg' }
+        ];
+        const statues = [
+          { name: '탄수화물', guage: '0.1', value: '92g' },
+          { name: '지방', guage: '0.85', value: '24g' },
+          { name: '단백질', guage: '0.6', value: '92g'},
+          { name: '당', guage: '0.3', value: '52g'}
+        ];
+
+        const WiseSaying = this.props.WISE_SAYING[
+          Math.floor(Math.random() * this.props.WISE_SAYING.length)
+        ].text;
         const YourImage = this.props.USER_INFO.userSnsPhoto ?(
-          <BoxShadow setting={profileShadowOpt}>
-            <FastImage
-              style={styles.avatarTempImage}
-              source={{
-                uri: this.props.USER_INFO.userSnsPhoto,
-                priority: FastImage.priority.normal,
-              }}
-              resizeMode={FastImage.resizeMode.center}
-            />
-          </BoxShadow>
+        <FastImage
+          style={styles.avatarTempImage}
+          source={{
+            uri: this.props.USER_INFO.userSnsPhoto,
+            priority: FastImage.priority.normal,
+          }}
+          resizeMode={FastImage.resizeMode.center}
+        />
         ):null;
-        const shadowOpt = {
-          width:width/2.1 *(this.state.isEmptyPhotos? 2:1),
-          height:width/2 *(this.state.isEmptyPhotos? 2:1),
-          color:COLOR.grey900,
-          border:2,
-          radius:0,
-          opacity:0.1,
-          x:3,
-          y:3
-        }
         const content = (
           <Container navigation={this.props.navigation}>
             <View style={styles.container}>
-
               <View
                 style={styles.headerView}>
-
                 <View
                   style={{
                     flexDirection: "row",
                     justifyContent: "center",
                   }}>
-
                   <View width={height*0.15} height="100%" paddingLeft={10}>
                   {YourImage}
                   </View>
-
                   <View flex={width-height*0.15} height="100%">
                     <View flex={3} style={{padding:10, paddingBottom:0}}>
                       <Text style={styles.profileUserEmail}>{this.props.USER_INFO.userEmail}</Text>
                       <Text style={styles.profileWiseSaying}>{WiseSaying}</Text>
                     </View>
                     <View flex={2} flexDirection="row" style={{padding:10, paddingTop:20}}>
-                      <View flex={2} style={{backgroundColor:'rgb(72,207,173)', paddingLeft:10, justifyContent:"center"}}><Text style={{color:"white"}}>today {this.state.calorie.stat} kcal</Text></View>
-                      <View flex={1} style={{backgroundColor:'rgb(255,206,84)', paddingRight:10, justifyContent:"center", height:"70%",alignSelf:"flex-end",alignItems:"flex-end"}}><Text style={{color:"white"}}>+{this.state.calorie.guage}</Text></View>
+                      <View flex={2} style={{backgroundColor:'rgb(72,207,173)', paddingLeft:10, justifyContent:"center"}}><Text style={{color:"white"}}>today 1835 kcal</Text></View>
+                      <View flex={1} style={{backgroundColor:'rgb(255,206,84)', paddingRight:10, justifyContent:"center", height:"70%",alignSelf:"flex-end",alignItems:"flex-end"}}><Text style={{color:"white"}}>+526</Text></View>
                     </View>
                   </View>
-
                 </View>
-
               <View style={styles.statusView}>
                 <FlatGrid
                   itemDimension={width/2.1}
                   fixed
                   spacing={0}
-                  items={this.state.intakeStatuses}
+                  items={statues}
                   style={styles.gridView}
                   renderItem={({ item, section, index }) => (
                     <View style={[styles.statusContainer, { /* backgroundColor: 'rgba(255,0,0,'+item.guage+')'*/}]}>
@@ -186,7 +110,7 @@ class Main extends Component {
                           <Text style={[styles.itemName,{color:"black"}]}>{item.name}</Text>
                         </View>
                         <View style={{flex:1, alignItems:"flex-end"}}>
-                          <Text style={[styles.itemCode,{color:"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",1)"}]}>{item.stat}g
+                          <Text style={[styles.itemCode,{color:"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",1)"}]}>{item.value}
                           </Text>
                         </View>
                       </View>
@@ -204,55 +128,36 @@ class Main extends Component {
                   )}
                 />
               </View>
-
               <View style={styles.foodList}>
                 <SectionGrid
-                  itemDimension={width/2.1 *(this.state.isEmptyPhotos? 2:1)}
+                  itemDimension={width/2.1}
                   fixed
                   spacing={5}
                   sections={[
                     {
-                      title: Moment(new Date()).format("YYYY-MM-DD"),
-                      data: this.state.photos,
+                      title: 'Today - 2019.01.21',
+                      data: items.slice(0, 6),
                     }
                   ]}
                   style={styles.gridView}
                   renderItem={({ item, section, index }) => (
-
-                    <TouchableHighlight onPress={()=>{this.props.navigation.navigate("Food", {
-                      food: item
-                    })}}>
-                    <BoxShadow setting={shadowOpt}>
-                    <View style={{height:width/2*(this.state.isEmptyPhotos? 2:1)}}>
-                      <View style={{position:"absolute", height:"100%",width:"100%",zIndex:1,alignItems:"center",justifyContent:"center"}}>
-                        <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0},textAlign:"center",textAlignVertical:"center"}}>
-                        <Ionicons
-                          name="ios-clock"
-                          color="#ffffff"
-                          size={FONT_BACK_LABEL*1.2}
-                          borderWidth={0}/>
-                          &nbsp;
-                        {item.registTime}
-                        </Text>
-                      </View>
-                      <FastImage
-                        style={{height:width/2*(this.state.isEmptyPhotos? 2:1)}}
-                        source={{
-                          uri: item.firebaseDownloadUrl,
-                          priority: FastImage.priority.normal,
-                        }}
-                        resizeMode={FastImage.resizeMode.cover}
-                      />
+                    <View style={styles.itemContainer}>
+                      <View style={{position:"absolute", height:"100%",width:"100%",zIndex:1,alignItems:"center",justifyContent:"center"}}><Text style={{color:"white",fontSize:FONT_BACK_LABEL*2,fontWeight:"600"}}>{item.dt}</Text></View>
+                    <FastImage
+                      style={[styles.itemContainer,{zIndex:0}]}
+                      source={{
+                        uri: item.url,
+                        priority: FastImage.priority.normal,
+                      }}
+                      resizeMode={FastImage.resizeMode.cover}
+                    />
                     </View>
-			              </BoxShadow>
-                    </TouchableHighlight>
                   )}
                   renderSectionHeader={({ section }) => (
-                    <Text style={styles.sectionHeader}><Octicons name="calendar" color="#000000" size={FONT_BACK_LABEL}/>&nbsp;&nbsp;{section.title}</Text>
+                    <Text style={styles.sectionHeader}>{section.title}</Text>
                   )}
                 />
               </View>
-
             </View>
             {/*
             <TouchableOpacity
@@ -282,11 +187,6 @@ class Main extends Component {
             </TouchableOpacity>
             */}
             </View>
-            <Spinner
-              visible={this.state.spinnerVisible}
-              textContent={'잠시만 기다려 주세요...'}
-              textStyle={{color: '#FFF'}}
-            />
           </Container>
           );
           return (
@@ -324,7 +224,7 @@ const styles = StyleSheet.create({
     },
     foodList: {
       backgroundColor:"#F4F2F3",
-      height: height*0.58
+      height: height*0.57
     },profileUserEmail: {
       fontSize: FONT_BACK_LABEL*1.2,
       color:"rgba(0,0,0,1)"
@@ -333,6 +233,9 @@ const styles = StyleSheet.create({
     },
     gridView: {
       flex: 1,
+    },
+    itemContainer: {
+      height: width/2,
     },
     statusContainer: {
       justifyContent: 'center',
@@ -351,11 +254,9 @@ const styles = StyleSheet.create({
     },
     sectionHeader: {
       flex: 1,
-      textAlignVertical:"bottom",
       fontSize: FONT_BACK_LABEL,
       fontWeight: '600',
       alignItems: 'center',
-      justifyContent:'flex-end',
       color: 'black',
       padding: 10,
       paddingBottom: 0
@@ -365,4 +266,15 @@ const styles = StyleSheet.create({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withNavigationFocus(Main));
+)(Main);
+
+
+
+{(data.photoArr.length ==1) ?
+  {styles.imageStyle1} :
+  (data.photoArr.length ==2 )?
+  {styles.imageStyle2} :
+  (data.photoArr.length ==3) ?
+  {styles.imageStyle3} :
+  {styles.imageStyle4}
+}
