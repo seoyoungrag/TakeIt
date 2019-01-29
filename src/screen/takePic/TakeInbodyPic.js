@@ -11,6 +11,8 @@ import Moment from "moment";
 import Spinner from 'react-native-loading-spinner-overlay';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
+import Entypo from 'react-native-vector-icons/Entypo'
+
 const {width, height} = Dimensions.get("window");
 
 var FONT_BACK_LABEL   = 16;
@@ -55,12 +57,25 @@ class TakeFoodPic extends Component {
         style={{ flex: 0.48, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}
       >
       <Modal animationType="fade" hardwareAccelerated={true} visible={this.state.modalVisible} transparent={true} onRequestClose={() => this.setState({ modalVisible: false })}>
-        <ImageViewer imageUrls={images} 
+      <ImageViewer imageUrls={images} 
             onSwipeDown={() => {
               this.setState({ modalVisible: false })
             }}
             onClick={() => {
               this.setState({ modalVisible: false })
+            }}
+            renderIndicator={() => {}}
+            renderHeader={(curidx, allsize) => {
+              return (
+                <View style={styles.container}>
+                  <View style={styles.ViewForTitleStyle}>
+                    <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0}}}>
+                    <Entypo name="image" color="#ffffff" size={FONT_BACK_LABEL*1.2}/>
+                      클릭하면 창이 닫힙니다.
+                    </Text>
+                  </View>
+              </View>
+              )
             }}
             enableSwipeDown={true} />
       </Modal>

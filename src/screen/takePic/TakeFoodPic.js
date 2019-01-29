@@ -116,12 +116,13 @@ class TakeFoodPic extends Component {
             onClick={() => {
               this.setState({ modalVisible: false })
             }}
-            renderIndicator={(curidx, allsize) => {
+            renderIndicator={() => {}}
+            renderHeader={(curidx, allsize) => {
               return (
                 <View style={styles.container}>
-                  <Entypo name="image" color="#000000" size={FONT_BACK_LABEL}/>
                   <View style={styles.ViewForTitleStyle}>
                     <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0}}}>
+                    <Entypo name="image" color="#ffffff" size={FONT_BACK_LABEL*1.2}/>
                       클릭하면 창이 닫힙니다.
                     </Text>
                   </View>
