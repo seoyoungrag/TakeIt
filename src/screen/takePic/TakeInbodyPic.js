@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert,ImageBackground, PixelRatio, Dimensions, StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
+import { Modal, Alert,ImageBackground, PixelRatio, Dimensions, StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { connect } from "react-redux";
 import Container from '@container/Container';
@@ -9,6 +9,7 @@ import APIS from "@common/network/APIS";
 import Images from "@assets/Images";
 import Moment from "moment";
 import Spinner from 'react-native-loading-spinner-overlay';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const {width, height} = Dimensions.get("window");
 
@@ -42,19 +43,35 @@ class TakeFoodPic extends Component {
     super(props);
     this.state = {
       image: null,
-      spinnerVisible: false
+      spinnerVisible: false,
+      modalVisible: false
     };
   }
 
   renderImage(image) {
+    var images = [{url:image.uri, width:image.width, height: image.height}];
     return (
       <View
         style={{ flex: 0.48, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}
       >
-      <Image
-        style={{ flex: 1, height:"100%", resizeMode: "center" }}
-        source={image}
-      />
+      <Modal animationType="fade" hardwareAccelerated={true} visible={this.state.modalVisible} transparent={true} onRequestClose={() => this.setState({ modalVisible: false })}>
+        <ImageViewer imageUrls={images} 
+            onSwipeDown={() => {
+              this.setState({ modalVisible: false })
+            }}
+            onClick={() => {
+              this.setState({ modalVisible: false })
+            }}
+            enableSwipeDown={true} />
+      </Modal>
+      <TouchableOpacity style={{ flex: 1}} onPress={() => this.setState({ modalVisible: true })}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height:'100%', backgroundColor:'rgba(0,0,0,0)'}}>
+          <Image
+            style={{ flex: 1, height:"100%", resizeMode: "center" }}
+            source={image}
+          />
+      </View>
+      </TouchableOpacity>
       <TouchableOpacity style={{ flex: 1}} onPress={() => this.savePicture()}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height:'100%', backgroundColor:'rgba(0,0,0,0.9)'}}>
           <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0}}}>

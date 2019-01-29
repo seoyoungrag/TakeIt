@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import {Dimensions, StyleSheet, Text, View, PixelRatio, TouchableHighlight} from 'react-native';
+import {Dimensions, StyleSheet, Text, View, PixelRatio, TouchableHighlight, Modal} from 'react-native';
 import DrawerWrapped from "@drawer";
 import { connect } from "react-redux";
 import ActionCreator from "@redux-yrseo/actions";
@@ -73,9 +73,11 @@ class Main extends Component {
               ],
         isEmptyPhotos: !foodList.length > 0 ,
         intakeStatuses: statuses.intakeStats,
-        calorie: statuses.calorie,
-        spinnerVisible: false
+        calorie: statuses.calorie
+        //spinnerVisible: false
       });
+      COM = this;
+      setTimeout(function(){ COM.setState({spinnerVisible:false}) }, 3000);
     }
     getMainIntakestatus = async () => {
       var rtn;
