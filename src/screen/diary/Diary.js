@@ -217,7 +217,7 @@ class Diary extends React.Component {
     }
 
     return cFetch(
-      APIS.GET_TEST,
+      APIS.GET_USER_FOOD,
       [
         //전달 값
         this.props.USER_INFO.userId,

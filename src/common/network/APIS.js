@@ -1,6 +1,6 @@
 const APIS = {
-  GET_TEST: {
-    url: '/photo/test/', //실제 url
+  GET_USER_FOOD: {
+    url: '/photo/food/', //실제 url
     //url: '/user/health/{userId}/{startDt}/{endDt}', //실제 url
     //url: "posts",
     method: 'GET',
