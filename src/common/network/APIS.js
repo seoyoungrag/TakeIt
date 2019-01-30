@@ -1,4 +1,8 @@
 const APIS = {
+  GET_SERVER_TIMESTMAP: {
+    url: '/util/timestamp',
+    method: 'GET'
+  },
   GET_USER_FOOD_PHOTO: {
     url: '/photo/food/', //실제 url
     //url: '/user/health/{userId}/{startDt}/{endDt}', //실제 url

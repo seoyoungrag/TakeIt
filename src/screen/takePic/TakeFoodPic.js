@@ -19,6 +19,9 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
 import Entypo from 'react-native-vector-icons/Entypo'
+import {AsyncStorage} from 'react-native';
+/*import { AdMobRewarded } from 'react-native-admob'*/
+
 
 const {width, height} = Dimensions.get("window");
 
@@ -62,6 +65,7 @@ async function requestCameraPermission() {
 
 function mapStateToProps(state) {
   return {
+    TIMESTAMP: state.REDUCER_CONSTANTS.timestamp,
     USER_INFO: state.REDUCER_USER.user
   };
 }
@@ -226,7 +230,15 @@ class TakeFoodPic extends Component {
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
-        {text: '저장', onPress: () => {
+        {text: '저장', onPress: async() => {
+          /*
+          var cnt = await AsyncStorage.getItem(storKey);
+          cnt = Number(cnt);
+          if(cnt>(this.props.TIMESTAMP.foodupcnt?this.props.TIMESTAMP.foodupcnt: 3)){
+            AdMobRewarded.setAdUnitID('your-admob-unit-id');
+            AdMobRewarded.requestAd().then(() => AdMobRewarded.showAd());
+          }
+          */
           const COM = this;
           const PROPS = this.props;
           COM.setState({spinnerVisible:true});
@@ -249,7 +261,17 @@ class TakeFoodPic extends Component {
                   data.deviceLocalFilePath = image.uri;
                   var body = JSON.stringify(data);
                   cFetch(APIS.POST_USER_FOOD, [], body, {
-                    responseProc: function(res) {
+                    responseProc: async(res) => {
+                      const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
+                      var foodUpCnt = await AsyncStorage.getItem(storKey);
+                      foodUpCnt = Number(foodUpCnt);
+                      if(foodUpCnt){
+                        await AsyncStorage.removeItem(storKey);
+                      }else{
+                        foodUpCnt = 0;
+                      }
+                      foodUpCnt += 1;
+                      await AsyncStorage.setItem(storKey, foodUpCnt.toString());
                       Alert.alert('사진을 저장했습니다.');
                       COM.setState({
                         image:null,

@@ -202,3 +202,4 @@ task copyDownloadableDepsToLibs(type: Copy) {
 
 // firbase add by yrseo
 apply plugin: 'com.google.gms.google-services'
+com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true

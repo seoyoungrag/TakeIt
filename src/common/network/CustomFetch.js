@@ -79,8 +79,13 @@ const cFetch = async (API, params, body, fncs) => {
           if (res.code == 200) {
             if (fncs.responseProc) {
               let ret = res.data;
+              /*
               if (ret && ret.list) {
                 ret = ret.list;
+              }
+              */
+              if(ret&&res&&res.timestamp){
+                ret.timestamp = res.timestamp;
               }
               console.log(JSON.stringify(ret));
               await fncs.responseProc(ret);

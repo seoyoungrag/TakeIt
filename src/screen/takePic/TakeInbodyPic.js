@@ -12,6 +12,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
 import Entypo from 'react-native-vector-icons/Entypo'
+import {AsyncStorage} from 'react-native';
 
 const {width, height} = Dimensions.get("window");
 
@@ -195,7 +196,17 @@ class TakeFoodPic extends Component {
                   data.deviceLocalFilePath = image.uri;
                   var body = JSON.stringify(data);
                   cFetch(APIS.POST_USER_INBODY, [], body, {
-                    responseProc: function(res) {
+                    responseProc: async(res) => {
+                      const storKey = "@"+Moment(new Date()).format('YYMMDD')+"INBODY";
+                      var inbodyUpCnt = await AsyncStorage.getItem(storKey);
+                      inbodyUpCnt = Number(inbodyUpCnt);
+                      if(inbodyUpCnt){
+                        await AsyncStorage.removeItem(storKey);
+                      }else{
+                        inbodyUpCnt = 0;
+                      }
+                      inbodyUpCnt += 1;
+                      await AsyncStorage.setItem(storKey, inbodyUpCnt.toString());
                       Alert.alert('사진을 저장했습니다.');
                       COM.setState({
                         image:null,

@@ -4,6 +4,12 @@ import exerciseTypes from "./Types_Exercise";
 import codeTypes from "./Types_Code";
 import constants from "./Types_Constants";
 
+export function setTimestamp(data) {
+  return {
+    type: constants.SET_TIMESTAMP,
+    payload: data
+  };
+}
 export function spinnerVisible(data) {
   return {
     type: constants.SPINNER_VISIBLE,

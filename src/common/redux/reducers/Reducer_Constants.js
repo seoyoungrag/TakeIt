@@ -4,12 +4,18 @@ const isFromLogin = false;
 const isFromLoading = false;
 const activeFooterBtn = "HOME";
 const forceRefreshMain = false;
+const timestamp = 0;
 
 export default (
   state = {
-    isFromLogin, isFromLoading, activeFooterBtn:"HOME", forceRefreshMain
+    isFromLogin, isFromLoading, activeFooterBtn:"HOME", forceRefreshMain, timestamp
   }, action) => {
   switch (action.type) {
+    case types.SET_TIMESTAMP:
+      return {
+        ...state,
+        timestamp: action.payload
+      }
     case types.FORCE_REFRESH_MAIN:
       return {
         ...state,
