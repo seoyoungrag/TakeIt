@@ -27,134 +27,13 @@ import Moment from 'moment/min/moment-with-locales';
 import { black } from 'ansi-colors';
 Moment.locale('ko');
 
+import Spinner from 'react-native-loading-spinner-overlay';
+import Images from '../../../assets/Images';
+
 const { width, height } = Dimensions.get('window');
 
 
 const data = []
-
-// const result = {
-//   code: 200,
-//   message: 'SUCCESS',
-//   data: [
-//     {
-//       registD: 1547391600000,
-//       userId: 32,
-//       kilocalorie: 1000,
-//       photoArr: [
-//         {
-//           photoId: 12,
-//           firebaseStoragePath:
-//             '/food_diary/32/2018-10-14/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
-//           firebaseDownloadUrl:
-//             'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg?alt=media&token=d8fb27cc-e0b7-4ecc-99a4-a2179589edb8',
-//           deviceLocalFilePath:
-//             'file:///storage/emulated/0/Pictures/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
-//         },
-//         {
-//           photoId: 13,
-//           firebaseStoragePath:
-//             '/food_diary/32/2018-10-14/image-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg',
-//           firebaseDownloadUrl:
-//             'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg?alt=media&token=11f35c9c-dcf4-45fd-be32-7851615ec102',
-//           deviceLocalFilePath:
-//             'file:///storage/emulated/0/Pictures/image-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg',
-//         },
-//         {
-//           photoId: 12,
-//           firebaseStoragePath:
-//             '/food_diary/32/2018-10-14/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
-//           firebaseDownloadUrl:
-//             'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg?alt=media&token=d8fb27cc-e0b7-4ecc-99a4-a2179589edb8',
-//           deviceLocalFilePath:
-//             'file:///storage/emulated/0/Pictures/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
-//         },
-//         {
-//           photoId: 0,
-//           firebaseStoragePath:
-//             '/food_diary/32/2018-10-14/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
-//           firebaseDownloadUrl:
-//             'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg?alt=media&token=d8fb27cc-e0b7-4ecc-99a4-a2179589edb8',
-//           deviceLocalFilePath:
-//             'file:///storage/emulated/0/Pictures/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
-//         },
-//       ],
-//     },{
-//       registD: 1547391600000,
-//       userId: 32,
-//       kilocalorie: 2000,
-//       photoArr: [
-//         {
-//           photoId: 12,
-//           firebaseStoragePath:
-//             '/food_diary/32/2018-10-14/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
-//           firebaseDownloadUrl:
-//             'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg?alt=media&token=d8fb27cc-e0b7-4ecc-99a4-a2179589edb8',
-//           deviceLocalFilePath:
-//             'file:///storage/emulated/0/Pictures/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
-//         },
-//         {
-//           photoId: 13,
-//           firebaseStoragePath:
-//             '/food_diary/32/2018-10-14/image-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg',
-//           firebaseDownloadUrl:
-//             'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg?alt=media&token=11f35c9c-dcf4-45fd-be32-7851615ec102',
-//           deviceLocalFilePath:
-//             'file:///storage/emulated/0/Pictures/image-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg',
-//         },
-//         {
-//           photoId: 12,
-//           firebaseStoragePath:
-//             '/food_diary/32/2018-10-14/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
-//           firebaseDownloadUrl:
-//             'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg?alt=media&token=d8fb27cc-e0b7-4ecc-99a4-a2179589edb8',
-//           deviceLocalFilePath:
-//             'file:///storage/emulated/0/Pictures/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
-//         },
-//       ],
-//     },
-//     {
-//       registD: 1547391600000,
-//       userId: 32,
-//       kilocalorie: 3000,
-//       photoArr: [
-//         {
-//           photoId: 12,
-//           firebaseStoragePath:
-//             '/food_diary/32/2018-10-14/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
-//           firebaseDownloadUrl:
-//             'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg?alt=media&token=d8fb27cc-e0b7-4ecc-99a4-a2179589edb8',
-//           deviceLocalFilePath:
-//             'file:///storage/emulated/0/Pictures/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
-//         },
-//         {
-//           photoId: 13,
-//           firebaseStoragePath:
-//             '/food_diary/32/2018-10-14/image-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg',
-//           firebaseDownloadUrl:
-//             'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg?alt=media&token=11f35c9c-dcf4-45fd-be32-7851615ec102',
-//           deviceLocalFilePath:
-//             'file:///storage/emulated/0/Pictures/image-88e23fca-8fb6-4854-9074-46a4d2db0a3d639147173.jpg',
-//         },
-//       ],
-//     },
-//     {
-//       userId: 32,
-//       registD: 1547650800000,
-//       kilocalorie: 4000,
-//       photoArr: [
-//         {
-//           photoId: 12,
-//           firebaseStoragePath:
-//             '/food_diary/32/2018-10-14/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
-//           firebaseDownloadUrl:
-//             'https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg?alt=media&token=d8fb27cc-e0b7-4ecc-99a4-a2179589edb8',
-//           deviceLocalFilePath:
-//             'file:///storage/emulated/0/Pictures/image-e14012af-ab36-4d8a-be55-297141be7149-1639699646.jpg',
-//         },
-//       ],
-//     },
-//   ],
-// };
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -180,12 +59,14 @@ class Diary extends React.Component {
     this.state = {
       title: this.props.title,
       startDate: new Date(Date.now() + -30 * 24 * 3600 * 1000),
-      endDate: new Date(Date.now() + -1 * 24 * 3600 * 1000),
+      endDate: new Date(Date.now() + 0 * 24 * 3600 * 1000),
       selectedDate: this.props.endDateForDiary,
       visible: false,
       range: {'startDate' : new Date(Date.now() + -30 * 24 * 3600 * 1000),  'endDate':
-        new Date(Date.now() + -1 * 24 * 3600 * 1000)},
+        new Date(Date.now() + 0 * 24 * 3600 * 1000)},
       resultData : [],
+      spinnerVisible: true,
+      dataVisible: false,
     };
     this.openCalendar = this.openCalendar.bind(this);
     this.closeCalendar = this.closeCalendar.bind(this);
@@ -198,6 +79,7 @@ class Diary extends React.Component {
   closeCalendar() {
     this.setState({ visible: false });
   }
+
 
   //애로우 함수는 바인드 없이 사용 가능  함수가 많으면 명시를 하는게 유지보수에 편함
   // getFoodPhotoList() => {
@@ -220,8 +102,8 @@ class Diary extends React.Component {
       APIS.GET_USER_FOOD_PHOTO,
       [
         //전달 값
-        this.props.USER_INFO.userId,
-        // 32,
+        // this.props.USER_INFO.userId,
+        10,
         Moment(startDate).format('YYYYMMDD'),
         Moment(endDate).format('YYYYMMDD'),
       ],
@@ -234,12 +116,15 @@ class Diary extends React.Component {
               resultData : res,
               startDate: startDate,
               endDate: endDate,
+              dataVisible:true,
+              spinnerVisible:false,
             },
             function() {
               console.log('comp');
               console.log(COM.state);
             }
           );
+          // setTimeout(function(){ COM.setState({spinnerVisible:false}) }, 3000);
           //  return res;
         },
         responseNotFound: function(res) {
@@ -257,6 +142,9 @@ class Diary extends React.Component {
   }
   componentDidMount() {
     // this.setState ({'resultData':result.data});
+    // this.getFoodPhotoList();
+  }
+  componentWillMount() {
     this.getFoodPhotoList();
   }
   componentWillReceiveProps() {}
@@ -281,6 +169,7 @@ class Diary extends React.Component {
     const content = (
       <Container
         title={DAY_RANGE_INFO}
+        rightVisible={true}
         toolbarDisplay={true}
         openCalendar={this.openCalendar}
         navigation={this.props.navigation}>
@@ -367,7 +256,7 @@ class Diary extends React.Component {
         </View>
         <View style={[styles.parent]}>
         <ScrollView showsVerticalScrollIndicator={false}>
-              {this.state.resultData.length > 0 ?  this.state.resultData.map(data => {
+              {(this.state.resultData.length  > 0)  ?  this.state.resultData.map(data => {
                 return (
                   <View style={[styles.child]}>
                   <View style={[styles.leftInfo]}>
@@ -402,13 +291,16 @@ class Diary extends React.Component {
                     (data.photoArr.length==2) ? styles.imageStyle2:
                     (data.photoArr.length==3) ? styles.imageStyle3:
                     styles.imageStyle4 }
-                    source={{
+                    source={ (index!=3) ?
+                      {
                       uri: item.firebaseDownloadUrl,
                       priority: FastImage.priority.low,
-                    }}
-                    resizeMode={FastImage.resizeMode.stretch}
+                    }: Images.DiaryMore
+                  }
+                    resizeMode={FastImage.resizeMode.cover}
                   />}
                   </View>
+
                   )}
                 // renderSectionHeader={({ section }) => (
                 //   <Text style={styles.sectionHeader}>{section.title}</Text>
@@ -418,17 +310,25 @@ class Diary extends React.Component {
             </View>
                 )
                 }):
-                <View style={[styles.child]}>
+                (this.state.dataVisible ==  false)  ?
+                <View></View>:
+                  <View style={[styles.child]}>
                   <View style={[styles.emptyInfo]}>
                     <Text style={styles.day}>
                       음식 사진을 올려주세요~
                     </Text>
                     </View>
                 </View>
+
               }
 
             </ScrollView>
         </View>
+        <Spinner
+          visible={this.state.spinnerVisible}
+          textContent={'잠시만 기다려 주세요...'}
+          textStyle={{color: '#FFF'}}
+        />
       </Container>
     );
     return  (

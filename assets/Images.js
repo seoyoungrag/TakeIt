@@ -33,11 +33,13 @@ const Images = {
   Footer_img_btn_home: require("./img/footer/footer__0000s_0000s_0003_photo.png"),
   Footer_img_btn_active_home: require("./img/footer/footer_active_0000s_0000s_0004_home.png"),
 
-  guide1: require("./img/guide/guide1.png"), 
-  guide2: require("./img/guide/guide2.png"), 
-  guide3: require("./img/guide/guide3.png"), 
-  guide4: require("./img/guide/guide4.png"), 
-  guide5: require("./img/guide/guide5.png")
+  guide1: require("./img/guide/guide1.png"),
+  guide2: require("./img/guide/guide2.png"),
+  guide3: require("./img/guide/guide3.png"),
+  guide4: require("./img/guide/guide4.png"),
+  guide5: require("./img/guide/guide5.png"),
+
+  DiaryMore: require("./img/more.png")
 }
 
 export default Images;

@@ -22,6 +22,10 @@ class Container extends Component {
     super(props);
     this.state = {
       title: this.props.title,
+      rightVisible:
+      this.props.rightVisible != undefined
+      ? this.props.rightVisible
+      : false,
     };
   }
 
@@ -35,20 +39,29 @@ class Container extends Component {
       </TouchableHighlight>
     );
 
+    const rightVisible = this.props.rightVisible;
     const titleNm = this.props.title;
 
     return (
       <View style={{flex:1}}>
         <View style={{flex:86}}>
-          {toolbarDisplay ? (
+          {toolbarDisplay && rightVisible ? (
             <Toolbar
               leftElement="arrow-back"
               onLeftElementPress={() => navigation.goBack()}
-              rightElement={calendarBtn}
+
+             rightElement={calendarBtn}
+
               //onRightElementPress={this.props.openCalendar}
               centerElement={titleNm}
             />
-          ) : null}
+            ):(
+              <Toolbar
+                leftElement="arrow-back"
+                onLeftElementPress={() => navigation.goBack()}
+                centerElement={titleNm}
+              />
+              )}
           {this.props.children}
         </View>
           <View style ={{flex:13}}>
