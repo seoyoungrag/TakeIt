@@ -312,9 +312,9 @@ class Loading extends React.Component {
               ]
 
               newUserActCntLogList =[
-                {userId:userInfo.userId, refDate:Moment(new Date()).format('YYYY-MM-DD'), foodUpCnt: cntFood0, inbodyUpCnt: cntInbody0, adViewCnt: cntViewAd0},
-                {userId:userInfo.userId, refDate:Moment(yesterDay).format('YYYY-MM-DD'), foodUpCnt: cntFood1, inbodyUpCnt: cntInbody1, adViewCnt: cntViewAd1},
-                {userId:userInfo.userId, refDate:Moment(dayBeforeYesterday).format('YYYY-MM-DD'), foodUpCnt: cntFood2, inbodyUpCnt: cntInbody2, adViewCnt: cntViewAd2}
+                {userId:userInfo.userId, refDate:String(Moment(new Date()).format('YYYYMMDD')), foodUpCnt: cntFood0, inbodyUpCnt: cntInbody0, adViewCnt: cntViewAd0},
+                {userId:userInfo.userId, refDate:String(Moment(yesterDay).format('YYYYMMDD')), foodUpCnt: cntFood1, inbodyUpCnt: cntInbody1, adViewCnt: cntViewAd1},
+                {userId:userInfo.userId, refDate:String(Moment(dayBeforeYesterday).format('YYYYMMDD')), foodUpCnt: cntFood2, inbodyUpCnt: cntInbody2, adViewCnt: cntViewAd2}
               ]
 
               userInfo.userActCntLogList = userActCntLogList;
