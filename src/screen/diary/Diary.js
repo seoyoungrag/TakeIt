@@ -259,6 +259,10 @@ class Diary extends React.Component {
               {(this.state.resultData.length  > 0)  ?  this.state.resultData.map(data => {
                 return (
                   <View style={[styles.child]}>
+
+
+                  <TouchableHighlight onPress={()=>{this.props.navigation.navigate("DayDiary",
+                   {inqueryDate:Moment(data.registD).format('YYYY-MM-DD')})}}>
                   <View style={[styles.leftInfo]}>
                   <Text style={styles.day}>
                     {Moment(data.registD).format('DD') }
@@ -270,6 +274,7 @@ class Diary extends React.Component {
                     {data.kilocalorie} kcal
                   </Text>
                   </View>
+                  </TouchableHighlight>
               <View style={[styles.rightPhoto]}>
                 <SectionGrid
                 itemDimension={width/3}
@@ -285,6 +290,14 @@ class Diary extends React.Component {
                 renderItem={({ item, section, index }) => (
                   <View>
                   {item.firebaseDownloadUrl!=null &&
+                    <TouchableHighlight onPress=
+                    {(index==3) ? ()=>
+                      {this.props.navigation.navigate("DayDiary",
+                    {inqueryDate:Moment(data.registD).format('YYYY-MM-DD')}
+                    )} :
+                    //추가 해야함  FOOD
+                    null}
+                    >
                   <FastImage
                   style=
                   { (data.photoArr.length==1) ? styles.imageStyle1:
@@ -298,7 +311,9 @@ class Diary extends React.Component {
                     }: Images.DiaryMore
                   }
                     resizeMode={FastImage.resizeMode.cover}
-                  />}
+                  />
+                  </TouchableHighlight>
+                }
                   </View>
 
                   )}
