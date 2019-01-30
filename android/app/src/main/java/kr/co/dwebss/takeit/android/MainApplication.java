@@ -3,6 +3,7 @@ package kr.co.dwebss.takeit.android;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.sbugert.rnadmob.RNAdMobPackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.horcrux.svg.SvgPackage;
 //import com.reactnative.ivpusic.imagepicker.PickerPackage;// <-- crop-picker 제거
@@ -57,6 +58,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNAdMobPackage(),
             new RNCameraPackage(),
             new SvgPackage(),
             //new PickerPackage(), // <-- crop-picker 제거

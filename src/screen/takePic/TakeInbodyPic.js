@@ -232,10 +232,12 @@ class TakeFoodPic extends Component {
     );
   }
   takePicture = async function(camera) {
+    this.setState({spinnerVisible:true});
     const options = { quality: 0.5, base64: true, fixOrientation: true  };
     const image = await camera.takePictureAsync(options);
     this.setState({
-      image: { uri: image.uri, width: image.width, height: image.height }
+      image: { uri: image.uri, width: image.width, height: image.height },
+      spinnerVisible: false
     });
   };
 }

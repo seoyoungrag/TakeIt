@@ -158,13 +158,17 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-admob')
+    implementation "com.google.android.gms:play-services-ads-base:17.1.2"
     implementation (project(':react-native-camera')){ exclude group: "com.google.android.gms" } 
+    
     implementation 'com.google.android.gms:play-services-vision:15.0.2'
+    //implementation "com.google.android.gms:play-services-vision:${rootProject.ext.googlePlayServices}"
 
-    compile project(':react-native-svg')
+    implementation project(':react-native-svg')
     //compile project(':react-native-image-crop-picker') //image-crop-picker 삭제
-    compile project(':react-native-fast-image')
-    compile project(':react-native-version-check')
+    implementation project(':react-native-fast-image')
+    implementation project(':react-native-version-check')
 
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-gesture-handler')
@@ -176,19 +180,22 @@ dependencies {
     implementation project(':react-native-fbsdk')
 
     // added automately but update compile -> implementation firebase marked yrseo
-    implementation project(':react-native-firebase')
+    implementation (project(':react-native-firebase')){
+        transitive = false
+    }
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
     // add Firebase dependencies by yrseo
     implementation "com.google.firebase:firebase-storage:16.0.5"
     implementation "com.google.android.gms:play-services-base:16.0.1"
+    //implementation "com.google.android.gms:play-services-base:${rootProject.ext.googlePlayServices}"
     implementation 'com.google.firebase:firebase-core:16.0.6'
     implementation(project(":react-native-google-signin"))
     implementation "com.google.firebase:firebase-auth:16.1.0"
     implementation "com.google.firebase:firebase-messaging:17.3.4"
     implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
-    compile 'com.android.support:multidex:1.0.0'
+    implementation 'com.android.support:multidex:1.0.0'
 
 }
 
@@ -202,4 +209,3 @@ task copyDownloadableDepsToLibs(type: Copy) {
 
 // firbase add by yrseo
 apply plugin: 'com.google.gms.google-services'
-com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true

@@ -17,6 +17,9 @@
       android:allowBackup="false"
       android:theme="@style/AppTheme">
       >
+      <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-6534444030498662~7383808416"/>
       <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
       <activity
         android:name=".MainActivity"

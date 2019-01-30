@@ -20,7 +20,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 
 import Entypo from 'react-native-vector-icons/Entypo'
 import {AsyncStorage} from 'react-native';
-/*import { AdMobRewarded } from 'react-native-admob'*/
+import { AdMobRewarded, AdMobInterstitial } from 'react-native-admob'
 
 
 const {width, height} = Dimensions.get("window");
@@ -90,11 +90,13 @@ class TakeFoodPic extends Component {
     console.log("TakeFoodPic.js: componentDidMount");
     this.watchId = await navigator.geolocation.watchPosition(
       (position) => {
+        this.setState({spinnerVisible:true});
         console.log("TakeFoodPic.js: "+JSON.stringify(position));
         this.setState({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           error: null,
+          spinnerVisible: false
         });
       },
       (error) => console.log("TakeFoodPic.js: "+JSON.stringify(error))
@@ -220,10 +222,14 @@ class TakeFoodPic extends Component {
     return content;
   }
   
-  savePicture(){
+  savePicture = async() =>{
+    const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
+    var cnt = await AsyncStorage.getItem(storKey);
+    var macCnt = this.props.TIMESTAMP.foodupcnt?this.props.TIMESTAMP.foodupcnt: 3;
+    cnt = Number(cnt);
     Alert.alert(
       '사진을 저장합니다.',
-      '사진을 업로드하면 수정/삭제할 수 없습니다.',
+      '사진을 업로드하면 수정/삭제할 수 없습니다.\n일일 저장 횟수가 '+macCnt+'를 초과하면 광고가 표시됩니다. \n(금일: '+cnt+'회 저장)',
       [
         {
           text: '취소',
@@ -231,16 +237,81 @@ class TakeFoodPic extends Component {
           style: 'cancel',
         },
         {text: '저장', onPress: async() => {
-          /*
-          var cnt = await AsyncStorage.getItem(storKey);
-          cnt = Number(cnt);
-          if(cnt>(this.props.TIMESTAMP.foodupcnt?this.props.TIMESTAMP.foodupcnt: 3)){
-            AdMobRewarded.setAdUnitID('your-admob-unit-id');
-            AdMobRewarded.requestAd().then(() => AdMobRewarded.showAd());
-          }
-          */
+            /*
+            AdMobRewarded.addEventListener('rewarded',
+            (reward) => console.log('AdMobRewarded => rewarded', reward)
+            ); 
+            AdMobRewarded.addEventListener('adLoaded',
+              () => console.log('AdMobRewarded => adLoaded')
+            );
+            AdMobRewarded.addEventListener('adFailedToLoad',
+              (error) => console.warn(error)
+            );
+            AdMobRewarded.addEventListener('adOpened',
+              () => console.log('AdMobRewarded => adOpened')
+            );
+            AdMobRewarded.addEventListener('videoStarted',
+              () => console.log('AdMobRewarded => videoStarted')
+            );
+            AdMobRewarded.addEventListener('adClosed',
+              () => {
+                console.log('AdMobRewarded => adClosed');
+                AdMobRewarded.requestAd().catch(error => console.warn(error));
+              }
+            );
+            AdMobRewarded.addEventListener('adLeftApplication',
+              () => console.log('AdMobRewarded => adLeftApplication')
+            );
+            */
+           /*
+            AdMobInterstitial.addEventListener('adLoaded',
+              () => console.log('AdMobInterstitial => adLoaded')
+            );
+            AdMobInterstitial.addEventListener('adFailedToLoad',
+              (error) => console.warn(error)
+            );
+            AdMobInterstitial.addEventListener('adOpened',
+              () => console.log('AdMobInterstitial => adOpened')
+            );
+            AdMobInterstitial.addEventListener('adClosed',
+              () => {
+                console.log('AdMobInterstitial => adClosed');
+                AdMobInterstitial.requestAd().catch(error => console.warn(error));
+              }
+            );
+            AdMobInterstitial.addEventListener('adLeftApplication',
+              () => console.log('AdMobInterstitial => adLeftApplication')
+            );
+            */
           const COM = this;
           const PROPS = this.props;
+          if(cnt>(macCnt)){
+            /*
+            AdMobRewarded.setAdUnitID('ca-app-pub-6534444030498662/2869848332');
+            AdMobRewarded.requestAd()
+            .then(
+              () => AdMobRewarded.showAd()
+              )
+            .catch(error => console.warn(error));
+            */
+
+            AdMobInterstitial.setAdUnitID('ca-app-pub-6534444030498662/9104331615');
+            AdMobInterstitial.requestAd().then( async() => {
+              const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
+              var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
+              viewAdCnt = Number(viewAdCnt);
+              if(viewAdCnt){
+                await AsyncStorage.removeItem(viewAdStorKey);
+              }else{
+                viewAdCnt = 0;
+              }
+              foodUpCnt += 1;
+              await AsyncStorage.setItem(viewAdStorKey, viewAdCnt.toString());
+            })
+            AdMobInterstitial.showAd();
+
+          }
+          
           COM.setState({spinnerVisible:true});
           var dateTime = new Date();
             let image = this.state.image;
@@ -297,10 +368,12 @@ class TakeFoodPic extends Component {
     );
   }
   takePicture = async function(camera) {
+    this.setState({spinnerVisible:true});
     const options = { quality: 0.5, exif: false, base64: false, fixOrientation: true  };
     const image = await camera.takePictureAsync(options);
     this.setState({
-      image: { uri: image.uri, width: image.width, height: image.height }
+      image: { uri: image.uri, width: image.width, height: image.height },
+      spinnerVisible: false
     });
   };
 }
