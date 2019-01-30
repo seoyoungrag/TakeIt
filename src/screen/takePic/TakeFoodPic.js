@@ -290,12 +290,25 @@ class TakeFoodPic extends Component {
             AdMobRewarded.setAdUnitID('ca-app-pub-6534444030498662/2869848332');
             AdMobRewarded.requestAd()
             .then(
-              () => AdMobRewarded.showAd()
+              async() => {
+                AdMobRewarded.showAd()
+                const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
+                var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
+                viewAdCnt = Number(viewAdCnt);
+                if(viewAdCnt){
+                  await AsyncStorage.removeItem(viewAdStorKey);
+                }else{
+                  viewAdCnt = 0;
+                }
+                foodUpCnt += 1;
+                await AsyncStorage.setItem(viewAdStorKey, viewAdCnt.toString());
+              }
               )
             .catch(error => console.warn(error));
             */
-
+            /* 전면광고는 신청 후 몇일 걸린다고 하여, 일단 리워드 광고를 보여준다. 20190130 */
             AdMobInterstitial.setAdUnitID('ca-app-pub-6534444030498662/9104331615');
+            AdMobInterstitial.setTestDevices([AdMobInterstitial.simulatorId]);
             AdMobInterstitial.requestAd().then( async() => {
               const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
               var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
