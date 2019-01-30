@@ -318,7 +318,7 @@ class TakeFoodPic extends Component {
               }else{
                 viewAdCnt = 0;
               }
-              foodUpCnt += 1;
+              viewAdCnt += 1;
               await AsyncStorage.setItem(viewAdStorKey, viewAdCnt.toString());
             })
             AdMobInterstitial.showAd();

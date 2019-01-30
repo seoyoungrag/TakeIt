@@ -14,6 +14,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import Table from './Table'
 
+import Moment from "moment";
+
 
 var FONT_BACK_LABEL   = 16;
 if (PixelRatio.get() <= 2) {
@@ -103,7 +105,7 @@ class TakeFoodPic extends Component {
                   size={FONT_BACK_LABEL*2}
                   borderWidth={0}/>
                   &nbsp;
-                {this.state.food.registTime}
+                {this.state.food.registTime&&this.state.food.registTime.toString().length==13 ? Moment(this.state.food.registTime).format('YYYY-MM-DD HH:mm:ss'): this.state.food.registTime}
                 </Text>
               </View>
               <FastImage
@@ -116,7 +118,7 @@ class TakeFoodPic extends Component {
                         />
               </View>
             <View style={{flex:1,padding:width*0.05, justifyContent:"center", alignItems:"center"}}>
-              <Table height={height/3-height*0.105} columns={columns} columnWidth={width*0.145} dataSource={this.state.food.foodAnalysisInfo} />
+              <Table height={height/3-height*0.105} columns={columns} columnWidth={width*0.145} dataSource={this.state.food.foodAnalysisInfo ? this.state.food.foodAnalysisInfo: this.state.food.foodList} />
             </View>
           </View>
         </View>

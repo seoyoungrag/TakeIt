@@ -112,29 +112,6 @@ class DayDiary extends Component {
         this.props.forceRefreshMain(false);
         this.callbackFnc();
       }
-        const WiseSaying = this.props.WISE_SAYING[ Math.floor(Math.random() * this.props.WISE_SAYING.length) ].text;
-        const profileShadowOpt = {
-          width: height*0.14,
-          height: height*0.14,
-          color:COLOR.grey900,
-          border:2,
-          radius:height*0.07,
-          opacity:0.2,
-          x:1,
-          y:1
-        }
-        const YourImage = this.props.USER_INFO.userSnsPhoto ?(
-          <BoxShadow setting={profileShadowOpt}>
-            <FastImage
-              style={styles.avatarTempImage}
-              source={{
-                uri: this.props.USER_INFO.userSnsPhoto,
-                priority: FastImage.priority.normal,
-              }}
-              resizeMode={FastImage.resizeMode.center}
-            />
-          </BoxShadow>
-        ):null;
         const shadowOpt = {
           width:width/2.1 *(this.state.isEmptyPhotos? 2:1),
           height:width/2 *(this.state.isEmptyPhotos? 2:1),
@@ -146,7 +123,9 @@ class DayDiary extends Component {
           y:3
         }
         const content = (
-          <Container navigation={this.props.navigation}>
+          <Container 
+            toolbarDisplay={true} 
+            navigation={this.props.navigation}>
             <View style={styles.container}>
 
               <View
@@ -157,19 +136,12 @@ class DayDiary extends Component {
                     flexDirection: "row",
                     justifyContent: "center",
                   }}>
-
-                  <View width={height*0.15} height="100%" paddingLeft={10}>
-                  {YourImage}
+                  <View flex={3} style={{height:height*0.14}}>
                   </View>
-
                   <View flex={width-height*0.15} height="100%">
-                    <View flex={3} style={{padding:10, paddingBottom:0}}>
-                      <Text style={styles.profileUserEmail}>{this.props.USER_INFO.userEmail}</Text>
-                      <Text style={styles.profileWiseSaying}>{WiseSaying}</Text>
-                    </View>
                     <View flex={2} flexDirection="row" style={{padding:10, paddingTop:20}}>
-                      <View flex={2} style={{backgroundColor:'rgb(72,207,173)', paddingLeft:10, justifyContent:"center"}}><Text style={{color:"white"}}>today {this.state.calorie.stat} kcal</Text></View>
-                      <View flex={1} style={{backgroundColor:'rgb(255,206,84)', paddingRight:10, justifyContent:"center", height:"70%",alignSelf:"flex-end",alignItems:"flex-end"}}><Text style={{color:"white"}}>+{this.state.calorie.guage}</Text></View>
+                      <View flex={2} style={{backgroundColor:'rgb(72,207,173)', paddingLeft:10, justifyContent:"flex-end",alignSelf:"flex-end",alignItems:"flex-start"}}><Text style={{color:"white"}}>today {this.state.calorie.stat} kcal</Text></View>
+                      <View flex={1} style={{backgroundColor:'rgb(255,206,84)', paddingRight:10, justifyContent:"flex-end", height:"40%",alignSelf:"flex-end",alignItems:"flex-end"}}><Text style={{color:"white"}}>+{this.state.calorie.guage}</Text></View>
                     </View>
                   </View>
 
@@ -257,33 +229,6 @@ class DayDiary extends Component {
               </View>
 
             </View>
-            {/*
-            <TouchableOpacity
-              onPress={() => { Alert.alert(
-                      "우웃",
-                      "정말 로그아웃 하시겠습니까?",
-                      [
-                        { text: "아니오", onPress: () => {}, style: "cancel" },
-                        {
-                          text: "네",
-                          onPress: () => {
-                            firebase
-                              .auth()
-                              .signOut()
-                              .then(() => this.props.closeDrawer())
-                              .then(() => this.props.navigation.navigate("Login"))
-                              .catch(error => {});
-                          }
-                        }
-                      ],
-                      { cancelable: false }
-                    )
-                  ;
-              }}
-            >
-            <Text style={{fontSize:20, color:"red"}}>로그아웃 테스트</Text>
-            </TouchableOpacity>
-            */}
             </View>
             <Spinner
               visible={this.state.spinnerVisible}

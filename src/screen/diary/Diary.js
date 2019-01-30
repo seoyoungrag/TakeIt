@@ -33,15 +33,6 @@ import Images from '../../../assets/Images';
 const { width, height } = Dimensions.get('window');
 
 
-const data = []
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
 function mapStateToProps(state) {
   return {
     USER_INFO: state.REDUCER_USER.user,
@@ -102,10 +93,10 @@ class Diary extends React.Component {
       APIS.GET_USER_FOOD_PHOTO,
       [
         //전달 값
-        // this.props.USER_INFO.userId,
-        10,
-        Moment(startDate).format('YYYYMMDD'),
-        Moment(endDate).format('YYYYMMDD'),
+         this.props.USER_INFO.userId,
+        //10,
+        Moment(startDate).format('YYYY-MM-DD'),
+        Moment(endDate).format('YYYY-MM-DD'),
       ],
       {},
       {
@@ -258,7 +249,7 @@ class Diary extends React.Component {
         <ScrollView showsVerticalScrollIndicator={false}>
               {(this.state.resultData.length  > 0)  ?  this.state.resultData.map(data => {
                 return (
-                  <View style={[styles.child]}>
+                  <View key={data.registTime} style={[styles.child]}>
 
 
                   <TouchableHighlight onPress={()=>{this.props.navigation.navigate("DayDiary",
@@ -291,12 +282,12 @@ class Diary extends React.Component {
                   <View>
                   {item.firebaseDownloadUrl!=null &&
                     <TouchableHighlight onPress=
-                    {(index==3) ? ()=>
-                      {this.props.navigation.navigate("DayDiary",
-                    {inqueryDate:Moment(data.registD).format('YYYY-MM-DD')}
-                    )} :
-                    //추가 해야함  FOOD
-                    null}
+                    {()=> { 
+                      (index==3) ? 
+                      this.props.navigation.navigate("DayDiary", {inqueryDate:Moment(data.registD).format('YYYY-MM-DD')})
+                      : 
+                      this.props.navigation.navigate("Food", {food:item} )
+                    }}
                     >
                   <FastImage
                   style=
