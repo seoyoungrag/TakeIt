@@ -21,6 +21,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import Entypo from 'react-native-vector-icons/Entypo'
 import {AsyncStorage} from 'react-native';
 import { AdMobRewarded, AdMobInterstitial } from 'react-native-admob'
+import { withNavigationFocus } from 'react-navigation';
 
 
 const {width, height} = Dimensions.get("window");
@@ -85,29 +86,43 @@ class TakeFoodPic extends Component {
       modalVisible: false
     };
   }
-  componentDidMount= async() => {
-    await requestCameraPermission();
-    console.log("TakeFoodPic.js: componentDidMount");
-    this.watchId = await navigator.geolocation.watchPosition(
-      (position) => {
-        this.setState({spinnerVisible:true});
-        console.log("TakeFoodPic.js: "+JSON.stringify(position));
-        this.setState({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          error: null,
-          spinnerVisible: false
-        });
-      },
-      (error) => console.log("TakeFoodPic.js: "+JSON.stringify(error))
+  componentDidMount() {
+    
+  }
+  componentWillMount() {
+    AdMobInterstitial.setTestDevices([AdMobInterstitial.simulatorId]);
+    AdMobInterstitial.setAdUnitID('ca-app-pub-3940256099942544/1033173712');
+
+    AdMobInterstitial.addEventListener('adLoaded',
+      () => console.log('AdMobInterstitial adLoaded')
     );
-    console.log("TakeFoodPic.js: this.state-"+JSON.stringify(this.state));
-    console.log("TakeFoodPic.js: watchId-"+this.watchId);
+    AdMobInterstitial.addEventListener('adFailedToLoad',
+      (error) => console.warn(error)
+    );
+    AdMobInterstitial.addEventListener('adOpened',
+      () => console.log('AdMobInterstitial => adOpened')
+    );
+    AdMobInterstitial.addEventListener('adClosed',
+      () => {
+        console.log('AdMobInterstitial => adClosed');
+        AdMobInterstitial.requestAd().catch(error => console.warn(error));
+      }
+    );
+    AdMobInterstitial.addEventListener('adLeftApplication',
+      () => console.log('AdMobInterstitial => adLeftApplication')
+    );
+
+    AdMobInterstitial.requestAd().catch(error => console.warn(error));
+    //AdMobInterstitial.setAdUnitID('ca-app-pub-6534444030498662/9104331615');
+    //AdMobInterstitial.setAdUnitID('ca-app-pub-3705279151918090/7160757575');
+    //AdMobInterstitial.setTestDevices([AdMobInterstitial.simulatorId]);
+    //AdMobInterstitial.requestAd().catch(error => console.log(error));
   }
   componentWillUnmount() {
     navigator.geolocation.clearWatch(this.watchId);
+    AdMobInterstitial.removeAllListeners();
   }
-  
+
   renderImage(image) {
     var images = [{url:image.uri, width:image.width, height: image.height}];
     return (
@@ -176,6 +191,11 @@ class TakeFoodPic extends Component {
   }
 
   render() {
+    
+    var shouldRenderCamera = false;
+    if(this.props.isFocused&&(this.props.navigation.state.routeName == "TakePhotoFood")){
+      shouldRenderCamera = true;
+    }
     const content = (
       <Container
         title="찍고 먹기!"
@@ -192,11 +212,13 @@ class TakeFoodPic extends Component {
           </View>
             
           <View style={styles.container}>
+          {shouldRenderCamera ? (
             <RNCamera
               style={styles.preview}
               type={RNCamera.Constants.Type.back}
               flashMode={RNCamera.Constants.FlashMode.off}
               captureAudio={false}
+              autoFocus={false}
               permissionDialogTitle={'Permission to use camera'}
               permissionDialogMessage={'We need your permission to use your camera phone'}
             >
@@ -211,6 +233,7 @@ class TakeFoodPic extends Component {
                 );
               }}
             </RNCamera>
+          ):null}
           </View>
         </View>
       <Spinner
@@ -307,9 +330,8 @@ class TakeFoodPic extends Component {
             .catch(error => console.warn(error));
             */
             /* 전면광고는 신청 후 몇일 걸린다고 하여, 일단 리워드 광고를 보여준다. 20190130 */
-            AdMobInterstitial.setAdUnitID('ca-app-pub-6534444030498662/9104331615');
-            AdMobInterstitial.setTestDevices([AdMobInterstitial.simulatorId]);
-            AdMobInterstitial.requestAd().then( async() => {
+            AdMobInterstitial.showAd().then( async ()=>{
+              console.log('showadthen');
               const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
               var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
               viewAdCnt = Number(viewAdCnt);
@@ -320,9 +342,7 @@ class TakeFoodPic extends Component {
               }
               viewAdCnt += 1;
               await AsyncStorage.setItem(viewAdStorKey, viewAdCnt.toString());
-            })
-            AdMobInterstitial.showAd();
-
+            });
           }
           
           COM.setState({spinnerVisible:true});
@@ -381,9 +401,32 @@ class TakeFoodPic extends Component {
     );
   }
   takePicture = async function(camera) {
+    await requestCameraPermission();
+    console.log("TakeFoodPic.js: componentDidMount");
+    this.watchId = await navigator.geolocation.watchPosition(
+      (position) => {
+        this.setState({spinnerVisible:true});
+        console.log("TakeFoodPic.js: "+JSON.stringify(position));
+        this.setState({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          error: null,
+          spinnerVisible: false
+        });
+      },
+      (error) => console.log("TakeFoodPic.js: "+JSON.stringify(error))
+    );
+    console.log("TakeFoodPic.js: this.state-"+JSON.stringify(this.state));
+    console.log("TakeFoodPic.js: watchId-"+this.watchId);
     this.setState({spinnerVisible:true});
-    const options = { quality: 0.5, exif: false, base64: false, fixOrientation: true  };
+    const options = { quality: 0.5, exif: false, base64: false, fixOrientation: true,
+      //아래 둘다 false해야 프리뷰 나옴.
+      //skipProcessing: true, 
+      //doNotSave:true 
+    };
+    console.log('takepicture start');
     const image = await camera.takePictureAsync(options);
+    console.log('takepicture end');
     this.setState({
       image: { uri: image.uri, width: image.width, height: image.height },
       spinnerVisible: false
@@ -415,4 +458,4 @@ const styles = StyleSheet.create({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(TakeFoodPic);
+)(withNavigationFocus(TakeFoodPic));

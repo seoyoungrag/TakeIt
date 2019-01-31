@@ -45,10 +45,10 @@ function mapDispatchToProps(dispatch) {
 }
 class Footer extends React.Component {
   state = {
-    activeButton: this.props.ACTIVE_BTN
+    //activeButton: this.props.ACTIVE_BTN
   }
   componentDidUpdate(){
-    this.btnChange();
+    //this.btnChange();
   }
   btnChange = async () =>{
     if(this.props.isFocused&&this.state.activeButton!=this.props.ACTIVE_BTN){
@@ -81,17 +81,18 @@ class Footer extends React.Component {
       <TouchableOpacity
         underlayColor="rgba(0,0,0,.1)"
         onPress={() => {
-          if(this.props.ACTIVE_BTN!="HOME"){
+          //if(this.props.ACTIVE_BTN!="HOME"){
+          if(this.props.navigation.state.routeName!='Main'){
             this.props.forceRefreshMain(true);
           } 
-          this.props.setActiveFooterBtn("HOME")
+          //this.props.setActiveFooterBtn("HOME")
           this.props.navigation.navigate("Main")
         }}
         flex={1}
       >
         <View style={styles.footerIconContainer}>
-            <Image style={styles.footerIcon} source={this.state.activeButton=='HOME' ? Images.Footer_img_btn_active_home: Images.Footer_img_btn_home} />
-            <Image style={styles.footerText} source={this.state.activeButton=='HOME' ? Images.Footer_txt_btn_active_home: Images.Footer_txt_btn_home} />
+            <Image style={styles.footerIcon} source={this.props.navigation.state.routeName=='Main' ? Images.Footer_img_btn_active_home: Images.Footer_img_btn_home} />
+            <Image style={styles.footerText} source={this.props.navigation.state.routeName=='Main' ? Images.Footer_txt_btn_active_home: Images.Footer_txt_btn_home} />
         </View>
       </TouchableOpacity>
 
@@ -99,49 +100,49 @@ class Footer extends React.Component {
       <TouchableOpacity
         underlayColor="rgba(0,0,0,.1)"
         onPress={() => {
-          this.props.setActiveFooterBtn("PHOTO")
+          //this.props.setActiveFooterBtn("PHOTO")
           this.props.navigation.navigate("TakePhotoFood")
           }}
       >
         <View style={styles.footerIconContainer}>
-          <Image style={styles.footerIcon} source={this.state.activeButton=='PHOTO' ? Images.Footer_img_btn_active_home:Images.Footer_img_btn_photo} />
-          <Image style={styles.footerText} source={this.state.activeButton=='PHOTO' ? Images.Footer_txt_btn_active_photo:Images.Footer_txt_btn_photo} />
+          <Image style={styles.footerIcon} source={this.props.navigation.state.routeName=='TakePhotoFood' ? Images.Footer_img_btn_active_home:Images.Footer_img_btn_photo} />
+          <Image style={styles.footerText} source={this.props.navigation.state.routeName=='TakePhotoFood' ? Images.Footer_txt_btn_active_photo:Images.Footer_txt_btn_photo} />
         </View>
       </TouchableOpacity>
       <TouchableOpacity
         underlayColor="rgba(0,0,0,.1)"
         onPress={() => {
-          this.props.setActiveFooterBtn("INBODY")
+          //this.props.setActiveFooterBtn("INBODY")
           this.props.navigation.navigate("TakePhotoInbody")
         }}
       >
         <View style={styles.footerIconContainer}>
-          <Image style={styles.footerIcon} source={this.state.activeButton=='INBODY' ? Images.Footer_img_btn_active_home:Images.Footer_img_btn_inbody} />
-          <Image style={styles.footerText} source={this.state.activeButton=='INBODY' ? Images.Footer_txt_btn_active_inbody:Images.Footer_txt_btn_inbody} />
+          <Image style={styles.footerIcon} source={this.props.navigation.state.routeName=='TakePhotoInbody' ? Images.Footer_img_btn_active_home:Images.Footer_img_btn_inbody} />
+          <Image style={styles.footerText} source={this.props.navigation.state.routeName=='TakePhotoInbody' ? Images.Footer_txt_btn_active_inbody:Images.Footer_txt_btn_inbody} />
         </View>
       </TouchableOpacity>
       <TouchableOpacity
         underlayColor="rgba(0,0,0,.1)"
         onPress={() => {
-          this.props.setActiveFooterBtn("DIARY")
+          //this.props.setActiveFooterBtn("DIARY")
           this.props.navigation.navigate("Diary")
         }}
       >
         <View style={styles.footerIconContainer}>
-          <Image style={styles.footerIcon} source={this.state.activeButton=='DIARY' ? Images.Footer_img_btn_active_home:Images.Footer_img_btn_diary} />
-          <Image style={styles.footerText} source={this.state.activeButton=='DIARY' ? Images.Footer_txt_btn_active_diary:Images.Footer_txt_btn_diary} />
+          <Image style={styles.footerIcon} source={this.props.navigation.state.routeName=='Diary' ? Images.Footer_img_btn_active_home:Images.Footer_img_btn_diary} />
+          <Image style={styles.footerText} source={this.props.navigation.state.routeName=='Diary' ? Images.Footer_txt_btn_active_diary:Images.Footer_txt_btn_diary} />
         </View>
       </TouchableOpacity>
       <TouchableOpacity
         underlayColor="rgba(255,51,102,.1)"
         onPress={() => {
-          this.props.setActiveFooterBtn("GRAPH")
+          //this.props.setActiveFooterBtn("GRAPH")
           this.props.navigation.navigate("Main")
           }}
       >
         <View style={styles.footerIconContainer}>
-          <Image style={styles.footerIcon} source={this.state.activeButton=='GRAPH' ? Images.Footer_img_btn_active_home:Images.Footer_img_btn_graph} />
-          <Image style={styles.footerText} source={this.state.activeButton=='GRAPH' ? Images.Footer_txt_btn_active_graph:Images.Footer_txt_btn_graph} />
+          <Image style={styles.footerIcon} source={this.props.navigation.state.routeName=='Graph' ? Images.Footer_img_btn_active_home:Images.Footer_img_btn_graph} />
+          <Image style={styles.footerText} source={this.props.navigation.state.routeName=='Graph' ? Images.Footer_txt_btn_active_graph:Images.Footer_txt_btn_graph} />
         </View>
       </TouchableOpacity>
       

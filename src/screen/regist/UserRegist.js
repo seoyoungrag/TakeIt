@@ -161,7 +161,7 @@ class UserRegist extends Component {
     if (!data.userNm || !data.userSex || !data.userHeight || !data.userWeight || !data.userEmail) {
       //alert("미입력된 정보가 있습니다. 확인해주세요.");
     } else {
-      cFetch(APIS.PUT_USER_BY_EMAIL, [this.props.USER_INFO.userEmail], body, {
+      cFetch(APIS.PUT_USER_BY_EMAIL, [this.props.USER_INFO.userEmail+"/"], body, {
         responseProc: function(res) {
           console.log("UserRegist.js :"+ JSON.stringify(res));
           PROPS.setUserInfo(res);
@@ -171,7 +171,7 @@ class UserRegist extends Component {
         //입력된 회원정보가 없음.
         responseNotFound: function(res) {
           alert("신규 유저 생성 및 유저 업데이트가 실패했습니다.");
-          PROPS.navigation.navigate("Login");
+          //PROPS.navigation.navigate("Login");
           // APIS.PUT_SUER_BY_PHONE에서 사용자가 없으면 생성되어야 한다.
         }
       });

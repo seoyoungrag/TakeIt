@@ -28,11 +28,8 @@ const {width, height} = Dimensions.get("window");
 
 function mapStateToProps(state) {
   return {
-    TIMESTAMP: state.REDUCER_CONSTANTS.timestamp,
     IS_FROM_LOGIN: state.REDUCER_CONSTANTS.isFromLogin,
-    USER_INFO: state.REDUCER_USER.user,
-    CODE: state.REDUCER_CODE.code,
-    IS_FROM_LOADING: state.REDUCER_CONSTANTS.isFromLoading
+    USER_INFO: state.REDUCER_USER.user
   };
 }
 
@@ -160,9 +157,7 @@ class Loading extends React.Component {
   getCode = async (CHECKMAP) => {
     var code;
     const CODE = await AsyncStorage.getItem("@CODE");
-    console.log("ASYNC ,, ");
     const jsonCode = JSON.parse(CODE);
-    console.log(jsonCode);
     if(jsonCode&&!jsonCode.timestamp){
       await AsyncStorage.removeItem("@CODE");
     }
@@ -181,7 +176,6 @@ class Loading extends React.Component {
 
     this.props.setCode(code);
     const strCode = JSON.stringify(code);
-    console.log(strCode);
     await AsyncStorage.setItem('@CODE', strCode )
     .then( ()=>{
     console.log('It was saved successfully')
@@ -189,7 +183,6 @@ class Loading extends React.Component {
     .catch( ()=>{
     console.log('There was an error saving the product')
     } )
-    //let CODE2 = await _retrieveData("@CODE");
   }
 
   authProc = async () => {
@@ -242,10 +235,10 @@ class Loading extends React.Component {
       pushToken = token;
 
       await this.getCode(CHECKMAP);
-
+      
       await cFetch(
         APIS.GET_USER_BY_EMAIL,
-        [SNSEmailOrUid],
+        [SNSEmailOrUid+"/"],
         {},
         {
           responseProc: async (res) =>  {
@@ -322,7 +315,7 @@ class Loading extends React.Component {
               
               var body = JSON.stringify(userInfo);
 
-              await cFetch(APIS.PUT_USER_BY_EMAIL, [userInfo.userEmail], body, {
+              await cFetch(APIS.PUT_USER_BY_EMAIL, [userInfo.userEmail+"/"], body, {
                 responseProc: function(res) {
                   //console.log( "loading.js: pushToken saved in loading.js start- put method response:" );
                   //console.log(res);
@@ -350,9 +343,9 @@ class Loading extends React.Component {
             console.log("loading.js: userInfo AFTER GET_USER_BY_EMAIL: "+JSON.stringify(userInfo));
             PROPS.setUserInfo(userInfo);
             if (userInfo.userNm == null){ // 이름은 필수 값, 한번도 이름 저장 안한 사람은 로그인부터 해서 이름값 가져오도록 한다.
-              PROPS.setIsFromLogin(false);
+              //PROPS.setIsFromLogin(false);
               //PROPS.setIsFromLoading(true);
-              PROPS.navigation.navigate("Login");
+              //PROPS.navigation.navigate("Login");
             }else if(userInfo.userSex == null|| userInfo.userEmail == null|| userInfo.userHeight == null|| userInfo.userWeight == null) {
               PROPS.setIsFromLogin(false);
               PROPS.navigation.navigate("Regist");
@@ -364,10 +357,13 @@ class Loading extends React.Component {
     //console.log("loading.js: authProc in Loading.js end");
   }
   render() {
-    if(this.props.isFocused&&this.props.IS_FROM_LOGIN){
-      //this.props.setIsFromLogin(false); //state 트랜지션 중엔 update할 수 없다. 
-      this.authProc();
-    }
+    COM = this;
+    setTimeout(function(){
+      if(COM.props.isFocused&&COM.props.IS_FROM_LOGIN){
+        //this.props.setIsFromLogin(false); //state 트랜지션 중엔 update할 수 없다. 
+        COM.authProc(); 
+      }
+    }, 1000);
     return (
       <ImageBackground
         source={Images.loginLoadingBack}

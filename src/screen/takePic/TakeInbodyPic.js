@@ -13,6 +13,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 
 import Entypo from 'react-native-vector-icons/Entypo'
 import {AsyncStorage} from 'react-native';
+import { withNavigationFocus } from 'react-navigation';
 
 const {width, height} = Dimensions.get("window");
 
@@ -117,6 +118,10 @@ class TakeFoodPic extends Component {
     );
   }
   render() {
+    var shouldRenderCamera = false;
+    if(this.props.isFocused&&(this.props.navigation.state.routeName == "TakePhotoInbody")){
+      shouldRenderCamera = true;
+    }
     const content = (
       <Container
         title="인바디 사진 찍기!"
@@ -133,11 +138,13 @@ class TakeFoodPic extends Component {
           </View>
             
           <View style={styles.container}>
+          {shouldRenderCamera ? (
             <RNCamera
               style={styles.preview}
               type={RNCamera.Constants.Type.back}
               flashMode={RNCamera.Constants.FlashMode.off}
               captureAudio={false}
+              autoFocus={false}
               permissionDialogTitle={'Permission to use camera'}
               permissionDialogMessage={'We need your permission to use your camera phone'}
             >
@@ -152,6 +159,7 @@ class TakeFoodPic extends Component {
                 );
               }}
             </RNCamera>
+          ):null}
           </View>
         </View>
       <Spinner
@@ -233,7 +241,9 @@ class TakeFoodPic extends Component {
   }
   takePicture = async function(camera) {
     this.setState({spinnerVisible:true});
-    const options = { quality: 0.5, base64: true, fixOrientation: true  };
+    const options = { quality: 0.5, exif: false, base64: false, fixOrientation: true,
+      //skipProcessing: true 
+    };
     const image = await camera.takePictureAsync(options);
     this.setState({
       image: { uri: image.uri, width: image.width, height: image.height },
@@ -266,4 +276,4 @@ const styles = StyleSheet.create({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(TakeFoodPic);
+)(withNavigationFocus(TakeFoodPic));

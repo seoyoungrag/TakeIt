@@ -56,7 +56,7 @@ class Main extends Component {
           intakeStatuses: [],
           isEmptyPhotos : false,
           calorie: {},
-          spinnerVisible: true,
+          spinnerVisible: false,
           guideYn: "Y"
         }
     }
@@ -64,6 +64,7 @@ class Main extends Component {
       await this.callbackFnc();
     }
     callbackFnc = async() => {
+      this.setState({spinnerVisible:true}) 
       const foodList = await this.getFoodDiary();
       const statuses = await this.getMainIntakestatus();
       this.setState({
@@ -83,7 +84,7 @@ class Main extends Component {
         //spinnerVisible: false
       });
       COM = this;
-      setTimeout(function(){ COM.setState({spinnerVisible:false}) }, 3000);
+      setTimeout(function(){ COM.setState({spinnerVisible:false}) }, 1500);
     }
     getMainIntakestatus = async () => {
       var rtn;
@@ -91,7 +92,7 @@ class Main extends Component {
         APIS.GET_MAIN_INTAKESTATUS, [ this.props.USER_INFO.userId, "date", Moment(new Date()).format("YYYY-MM-DD") ], {},
         {
           responseProc: async (res) => {
-            console.log("Main.js(getMainIntakestatus): "+JSON.stringify(res));
+            //console.log("Main.js(getMainIntakestatus): "+JSON.stringify(res));
             rtn=res;
           }
         }
@@ -105,7 +106,7 @@ class Main extends Component {
         APIS.GET_USER_FOOD, [ this.props.USER_INFO.userId, "date", Moment(new Date()).format("YYYY-MM-DD") ], {},
         {
           responseProc: async (res) => {
-            console.log("Main.js(getFOodDiary): "+JSON.stringify(res));
+            //console.log("Main.js(getFOodDiary): "+JSON.stringify(res));
             rtn=res;
           }
         }
@@ -113,10 +114,13 @@ class Main extends Component {
       return rtn;
     }
     render() {
-      if(this.props.isFocused&&this.props.FORCE_REFRESH_MAIN){
-        this.props.forceRefreshMain(false);
-        this.callbackFnc();
-      }
+      COM = this;
+      setTimeout(function(){
+        if(COM.props.isFocused&&COM.props.FORCE_REFRESH_MAIN){
+          COM.props.forceRefreshMain(false);
+          COM.callbackFnc();
+        }
+      }, 1000);
         const WiseSaying = this.props.WISE_SAYING[ Math.floor(Math.random() * this.props.WISE_SAYING.length) ].text;
         const profileShadowOpt = {
           width: height*0.14,
@@ -165,7 +169,7 @@ class Main extends Component {
                 copy.guideYn="Y"
 
                 var body = JSON.stringify(copy);
-                cFetch(APIS.PUT_USER_BY_EMAIL, [copy.userEmail], body, {
+                cFetch(APIS.PUT_USER_BY_EMAIL, [copy.userEmail+"/"], body, {
                   responseProc: function(res) {
                     console.log(res);
                     PROPS.setUserInfo(res);

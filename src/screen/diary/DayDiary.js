@@ -78,7 +78,7 @@ class DayDiary extends Component {
         //spinnerVisible: false
       });
       COM = this;
-      setTimeout(function(){ COM.setState({spinnerVisible:false}) }, 3000);
+      setTimeout(function(){ COM.setState({spinnerVisible:false}) }, 1500);
     }
     getMainIntakestatus = async () => {
       var rtn;

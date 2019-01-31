@@ -31,7 +31,6 @@ function isEmpty(obj) {
 function mapStateToProps(state) {
   return {
     USER_INFO: state.REDUCER_USER.user,
-    IS_FROM_LOGIN: state.REDUCER_CONSTANTS.isFromLogin,
     IS_FROM_LOADING: state.REDUCER_CONSTANTS.isFromLoading
   };
 }
@@ -54,16 +53,15 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
   }
-  componentDidMount() {
-  }
-  rerendering = async () => {
-    this.props.setIsFromLogin(false);
-    //this.setState({ state: this.state }); --> 안먹힘..
-    PROPS.navigation.navigate("Login");
-}
+
+  // rerendering = async () => {
+  //   this.props.setIsFromLogin(false);
+  //   PROPS.navigation.navigate("Login");
+  // }
+  
   googleFnc = async () => {
     const resInfo = await this.googleSignIn();
-    console.log("Login.js(googleSignin): "+JSON.stringify(resInfo));
+    //console.log("Login.js(googleSignin): "+JSON.stringify(resInfo));
     if(resInfo) {await this.googleLogin(resInfo);}
     return;
   }

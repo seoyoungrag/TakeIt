@@ -71,6 +71,12 @@ const RootStack = createStackNavigator(
       navigationOptions: ({ navigation }) => ({
         header: null,
       }),
+    },
+    Graph: {
+      screen: Main,
+      navigationOptions: ({ navigation }) => ({
+        header: null,
+      }),
     }
   },
   {
