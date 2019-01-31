@@ -56,7 +56,7 @@ class Diary extends React.Component {
       range: {'startDate' : new Date(Date.now() + -30 * 24 * 3600 * 1000),  'endDate':
         new Date(Date.now() + 0 * 24 * 3600 * 1000)},
       resultData : [],
-      spinnerVisible: true,
+      spinnerDiaryVisible: true,
       dataVisible: false,
     };
     this.openCalendar = this.openCalendar.bind(this);
@@ -75,18 +75,13 @@ class Diary extends React.Component {
   //애로우 함수는 바인드 없이 사용 가능  함수가 많으면 명시를 하는게 유지보수에 편함
   // getFoodPhotoList() => {
   getFoodPhotoList() {
-    COM = this;
+    const COM = this;
     COM.setState({ visible: false });
     let startDate = COM.state.range.startDate;
     let endDate =  COM.state.range.endDate;
 
-
     if(endDate==null){
       endDate = startDate;
-      console.log('endDate null');
-    }else{
-      console.log('endDate else');
-      // endDate = COM.state.range.endDate;
     }
 
     return cFetch(
@@ -101,21 +96,18 @@ class Diary extends React.Component {
       {},
       {
         responseProc: function(res) {
-          // console.log(res);
           COM.setState(
             {
               resultData : res,
               startDate: startDate,
               endDate: endDate,
               dataVisible:true,
-              spinnerVisible:false,
+              spinnerDiaryVisible:false,
             },
             function() {
-              console.log('comp');
-              console.log(COM.state);
             }
           );
-          // setTimeout(function(){ COM.setState({spinnerVisible:false}) }, 3000);
+          // setTimeout(function(){ COM.setState({spinnerDiaryVisible:false}) }, 3000);
           //  return res;
         },
         responseNotFound: function(res) {
@@ -133,10 +125,10 @@ class Diary extends React.Component {
   }
   componentDidMount() {
     // this.setState ({'resultData':result.data});
-    // this.getFoodPhotoList();
+    this.getFoodPhotoList();
   }
   componentWillMount() {
-    this.getFoodPhotoList();
+    // this.getFoodPhotoList();
   }
   componentWillReceiveProps() {}
   componentWillUnmount() {}
@@ -282,10 +274,10 @@ class Diary extends React.Component {
                   <View>
                   {item.firebaseDownloadUrl!=null &&
                     <TouchableHighlight onPress=
-                    {()=> { 
-                      (index==3) ? 
+                    {()=> {
+                      (index==3) ?
                       this.props.navigation.navigate("DayDiary", {inqueryDate:Moment(data.registD).format('YYYY-MM-DD')})
-                      : 
+                      :
                       this.props.navigation.navigate("Food", {food:item} )
                     }}
                     >
@@ -331,7 +323,7 @@ class Diary extends React.Component {
             </ScrollView>
         </View>
         <Spinner
-          visible={this.state.spinnerVisible}
+          visible={this.state.spinnerDiaryVisible}
           textContent={'잠시만 기다려 주세요...'}
           textStyle={{color: '#FFF'}}
         />
@@ -444,8 +436,6 @@ const styles = StyleSheet.create({
     width: width*0.70,
     height: height*0.3,
   },
-
-
 });
 
 export default connect(
