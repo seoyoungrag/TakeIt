@@ -181,14 +181,14 @@ class Diary extends React.Component {
             }>
             <View style={[styles.popupButton]}>
               <Text
-                style={{ fontSize: 20, marginLeft: 10, right: 0 }}
-                onPress={this.closeCalendar}>
-                Close
+                style={{ fontSize: 20, marginLeft: 200, right: 0,color:'#E91E63' }}
+                onPress={this.getFoodPhotoList}>
+                선택
               </Text>
               <Text
-                style={{ fontSize: 20, marginLeft: 10 }}
-                onPress={this.getFoodPhotoList}>
-                OK
+                style={{ fontSize: 20, marginLeft: 10, left: 20 }}
+                onPress={this.closeCalendar}>
+                닫기
               </Text>
             </View>
             <View style={[styles.calandar]}>
