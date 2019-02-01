@@ -5,6 +5,7 @@ import { Alert,ImageBackground, PixelRatio, Dimensions, StyleSheet, Text, Toucha
 import Moment from "moment";
 
 import { connect } from "react-redux";
+import ActionCreator from "@redux-yrseo/actions";
 
 import firebase from "react-native-firebase";
 
@@ -13,15 +14,14 @@ import cFetch from "@common/network/CustomFetch";
 import APIS from "@common/network/APIS";
 import Images from "@assets/Images";
 
-import { PermissionsAndroid } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import Spinner from 'react-native-loading-spinner-overlay';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
 import Entypo from 'react-native-vector-icons/Entypo'
 import {AsyncStorage} from 'react-native';
-import { AdMobRewarded, AdMobInterstitial } from 'react-native-admob'
 import { withNavigationFocus } from 'react-navigation';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 const {width, height} = Dimensions.get("window");
@@ -29,39 +29,6 @@ const {width, height} = Dimensions.get("window");
 var FONT_BACK_LABEL   = 16;
 if (PixelRatio.get() <= 2) {
   FONT_BACK_LABEL = 12;
-}
-const PendingView = () => (
-  <View
-    style={{
-      flex: 1,
-      backgroundColor: 'lightgreen',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}
-  >
-    <Text>Waiting</Text>
-  </View>
-);
-async function requestCameraPermission() {
-  try {
-    const check = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-    if(!check){
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          'title': 'GPS 권한 필요',
-          'message': '사진의 위치 정보 제공을 위해 필요합니다. '
-        }
-      )
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log("You can use the ACCESS_FINE_LOCATION")
-      } else {
-        console.log("ACCESS_FINE_LOCATION permission denied")
-      }
-    }
-  } catch (err) {
-    console.warn(err)
-  }
 }
 
 function mapStateToProps(state) {
@@ -72,7 +39,11 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {};
+  return {
+    forceRefreshMain: isForce => {
+      dispatch(ActionCreator.forceRefreshMain(isForce));
+    }
+  };
 }
 class TakeFoodPic extends Component {
   constructor(props) {
@@ -83,90 +54,68 @@ class TakeFoodPic extends Component {
       error: null,
       image: null,
       spinnerVisible: false,
-      modalVisible: false
+      modalVisible: false,
+      pending: false
     };
   }
   componentDidMount() {
-    
   }
   componentWillMount() {
-    AdMobInterstitial.setTestDevices([AdMobInterstitial.simulatorId]);
-    AdMobInterstitial.setAdUnitID('ca-app-pub-3940256099942544/1033173712');
-
-    AdMobInterstitial.addEventListener('adLoaded',
-      () => console.log('AdMobInterstitial adLoaded')
-    );
-    AdMobInterstitial.addEventListener('adFailedToLoad',
-      (error) => console.warn(error)
-    );
-    AdMobInterstitial.addEventListener('adOpened',
-      () => console.log('AdMobInterstitial => adOpened')
-    );
-    AdMobInterstitial.addEventListener('adClosed',
-      () => {
-        console.log('AdMobInterstitial => adClosed');
-        AdMobInterstitial.requestAd().catch(error => console.warn(error));
-      }
-    );
-    AdMobInterstitial.addEventListener('adLeftApplication',
-      () => console.log('AdMobInterstitial => adLeftApplication')
-    );
-
-    AdMobInterstitial.requestAd().catch(error => console.warn(error));
-    //AdMobInterstitial.setAdUnitID('ca-app-pub-6534444030498662/9104331615');
-    //AdMobInterstitial.setAdUnitID('ca-app-pub-3705279151918090/7160757575');
-    //AdMobInterstitial.setTestDevices([AdMobInterstitial.simulatorId]);
-    //AdMobInterstitial.requestAd().catch(error => console.log(error));
   }
   componentWillUnmount() {
     navigator.geolocation.clearWatch(this.watchId);
-    AdMobInterstitial.removeAllListeners();
   }
 
   renderImage(image) {
     var images = [{url:image.uri, width:image.width, height: image.height}];
+        
     return (
       <View
-        style={{ flex: 0.48, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}
+        style={{ flex: 0.5, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}
       >
-      <Modal animationType="fade" hardwareAccelerated={true} visible={this.state.modalVisible} transparent={true} onRequestClose={() => this.setState({ modalVisible: false })}>
-        <ImageViewer imageUrls={images} 
-            onSwipeDown={() => {
-              this.setState({ modalVisible: false })
-            }}
-            onClick={() => {
-              this.setState({ modalVisible: false })
-            }}
-            renderIndicator={() => {}}
-            renderHeader={(curidx, allsize) => {
-              return (
-                <View style={styles.container}>
-                  <View style={styles.ViewForTitleStyle}>
-                    <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0}}}>
-                    <Entypo name="image" color="#ffffff" size={FONT_BACK_LABEL*1.2}/>
-                      클릭하면 창이 닫힙니다.
-                    </Text>
-                  </View>
-              </View>
-              )
-            }}
-            enableSwipeDown={true} />
-      </Modal>
-      <TouchableOpacity style={{ flex: 1}} onPress={() => this.setState({ modalVisible: true })}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height:'100%', backgroundColor:'rgba(0,0,0,0)'}}>
-          <Image
-            style={{ flex: 1, height:"100%", resizeMode: "center" }}
-            source={image}
-          />
-      </View>
-      </TouchableOpacity>
-      <TouchableOpacity style={{ flex: 1}} onPress={() => this.savePicture()}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height:'100%', backgroundColor:'rgba(0,0,0,0.9)'}}>
-          <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0}}}>
-          사진 저장
-          </Text>
+        <Modal animationType="fade" hardwareAccelerated={true} visible={this.state.modalVisible} transparent={true} onRequestClose={() => this.setState({ modalVisible: false })}>
+          <ImageViewer imageUrls={images} 
+              onSwipeDown={() => {
+                this.setState({ modalVisible: false })
+              }}
+              onClick={() => {
+                this.setState({ modalVisible: false })
+              }}
+              renderIndicator={() => {}}
+              renderHeader={(curidx, allsize) => {
+                return (
+                  <View style={styles.container}>
+                    <View style={styles.ViewForTitleStyle}>
+                      <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0}}}>
+                      <Entypo name="image" color="#ffffff" size={FONT_BACK_LABEL*1.2}/>
+                        클릭하면 창이 닫힙니다.
+                      </Text>
+                    </View>
+                </View>
+                )
+              }}
+              enableSwipeDown={true} />
+        </Modal>
+        <TouchableOpacity style={{ flex: 1}} onPress={() => this.setState({ modalVisible: true })}>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height:'100%', backgroundColor:'rgba(0,0,0,0)'}}>
+            <Image
+              style={{ flex: 1, height:"100%", resizeMode: "center" }}
+              source={image}
+            />
+          </View>
+        </TouchableOpacity>
+        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
+          <TouchableOpacity onPress={() => this.savePicture()} style={styles.analysis}>
+            <Text style={{ fontSize: FONT_BACK_LABEL,color:"#ffffff" }}> 
+            <MaterialCommunityIcons
+                              name="magnify"
+                              color={"#ffffff"}
+                              size={FONT_BACK_LABEL}
+                              borderWidth={0}/>
+            분석 요청하기
+            </Text>
+          </TouchableOpacity>
         </View>
-      </TouchableOpacity>
       </View>
     );
   }
@@ -183,19 +132,33 @@ class TakeFoodPic extends Component {
       <View style={{position:"absolute",width:width,height:height,top:0,left:0,backgroundColor:'rgba(0,0,0,0.9)',zIndex:0}}/>
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%'}}>
         <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0}}}>
-        사진을 촬영해 주세요.
+        {this.state.pending ? "사진 권한이 필요합니다." : "사진을 촬영해 주세요."}
         </Text>
       </View>
       </ImageBackground>
     );
   }
-
+  
   render() {
-    
     var shouldRenderCamera = false;
     if(this.props.isFocused&&(this.props.navigation.state.routeName == "TakePhotoFood")){
       shouldRenderCamera = true;
     }
+    const PendingView = () => (
+      this.state.pending ?
+      (<View
+        style={{
+          flex: 1,
+          flexDirection: 'column',
+          backgroundColor: 'black',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start',
+        }}
+      >
+          <Text style={{ fontSize: FONT_BACK_LABEL }}> 카메라 권한 승인이 필요합니다.{"\n"}아래 PHOTO 버튼을 클릭해주세요. </Text>
+      </View>
+      ):null
+    );
     const content = (
       <Container
         title="찍고 먹기!"
@@ -218,16 +181,16 @@ class TakeFoodPic extends Component {
               type={RNCamera.Constants.Type.back}
               flashMode={RNCamera.Constants.FlashMode.off}
               captureAudio={false}
-              autoFocus={false}
-              permissionDialogTitle={'Permission to use camera'}
-              permissionDialogMessage={'We need your permission to use your camera phone'}
+              autoFocus={true}
+              permissionDialogTitle={'카메라 사용권한이 필요합니다.'}
+              permissionDialogMessage={'음식 사진을 찍기 위해 카메라 사용 권한을 허가해 주세요.'}
             >
               {({ camera, status, recordAudioPermissionStatus }) => {
-                if (status !== 'READY') return <PendingView />;
+                if (status !== 'READY') return  <PendingView/>
                 return (
                   <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
                     <TouchableOpacity onPress={() => this.takePicture(camera)} style={styles.capture}>
-                      <Text style={{ fontSize: 14 }}> 찍고 먹기! </Text>
+                      <Text style={{ fontSize: FONT_BACK_LABEL }}> 찍고 먹기! </Text>
                     </TouchableOpacity>
                   </View>
                 );
@@ -246,6 +209,7 @@ class TakeFoodPic extends Component {
   }
   
   savePicture = async() =>{
+    const COM = this;
     const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
     var cnt = await AsyncStorage.getItem(storKey);
     var macCnt = this.props.TIMESTAMP.foodupcnt?this.props.TIMESTAMP.foodupcnt: 3;
@@ -260,91 +224,6 @@ class TakeFoodPic extends Component {
           style: 'cancel',
         },
         {text: '저장', onPress: async() => {
-            /*
-            AdMobRewarded.addEventListener('rewarded',
-            (reward) => console.log('AdMobRewarded => rewarded', reward)
-            ); 
-            AdMobRewarded.addEventListener('adLoaded',
-              () => console.log('AdMobRewarded => adLoaded')
-            );
-            AdMobRewarded.addEventListener('adFailedToLoad',
-              (error) => console.warn(error)
-            );
-            AdMobRewarded.addEventListener('adOpened',
-              () => console.log('AdMobRewarded => adOpened')
-            );
-            AdMobRewarded.addEventListener('videoStarted',
-              () => console.log('AdMobRewarded => videoStarted')
-            );
-            AdMobRewarded.addEventListener('adClosed',
-              () => {
-                console.log('AdMobRewarded => adClosed');
-                AdMobRewarded.requestAd().catch(error => console.warn(error));
-              }
-            );
-            AdMobRewarded.addEventListener('adLeftApplication',
-              () => console.log('AdMobRewarded => adLeftApplication')
-            );
-            */
-           /*
-            AdMobInterstitial.addEventListener('adLoaded',
-              () => console.log('AdMobInterstitial => adLoaded')
-            );
-            AdMobInterstitial.addEventListener('adFailedToLoad',
-              (error) => console.warn(error)
-            );
-            AdMobInterstitial.addEventListener('adOpened',
-              () => console.log('AdMobInterstitial => adOpened')
-            );
-            AdMobInterstitial.addEventListener('adClosed',
-              () => {
-                console.log('AdMobInterstitial => adClosed');
-                AdMobInterstitial.requestAd().catch(error => console.warn(error));
-              }
-            );
-            AdMobInterstitial.addEventListener('adLeftApplication',
-              () => console.log('AdMobInterstitial => adLeftApplication')
-            );
-            */
-          const COM = this;
-          const PROPS = this.props;
-          if(cnt>(macCnt)){
-            /*
-            AdMobRewarded.setAdUnitID('ca-app-pub-6534444030498662/2869848332');
-            AdMobRewarded.requestAd()
-            .then(
-              async() => {
-                AdMobRewarded.showAd()
-                const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
-                var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
-                viewAdCnt = Number(viewAdCnt);
-                if(viewAdCnt){
-                  await AsyncStorage.removeItem(viewAdStorKey);
-                }else{
-                  viewAdCnt = 0;
-                }
-                foodUpCnt += 1;
-                await AsyncStorage.setItem(viewAdStorKey, viewAdCnt.toString());
-              }
-              )
-            .catch(error => console.warn(error));
-            */
-            /* 전면광고는 신청 후 몇일 걸린다고 하여, 일단 리워드 광고를 보여준다. 20190130 */
-            AdMobInterstitial.showAd().then( async ()=>{
-              console.log('showadthen');
-              const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
-              var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
-              viewAdCnt = Number(viewAdCnt);
-              if(viewAdCnt){
-                await AsyncStorage.removeItem(viewAdStorKey);
-              }else{
-                viewAdCnt = 0;
-              }
-              viewAdCnt += 1;
-              await AsyncStorage.setItem(viewAdStorKey, viewAdCnt.toString());
-            });
-          }
-          
           COM.setState({spinnerVisible:true});
           var dateTime = new Date();
             let image = this.state.image;
@@ -381,6 +260,8 @@ class TakeFoodPic extends Component {
                         image:null,
                         spinnerVisible:false
                       })
+                      this.props.forceRefreshMain(true);
+                      this.props.navigation.navigate("Main");
                       console.log("TakeInbodyPic.js(responseProc): "+JSON.stringify(res));
                     },
                     responseNotFound: function(res) {
@@ -401,7 +282,6 @@ class TakeFoodPic extends Component {
     );
   }
   takePicture = async function(camera) {
-    await requestCameraPermission();
     console.log("TakeFoodPic.js: componentDidMount");
     this.watchId = await navigator.geolocation.watchPosition(
       (position) => {
@@ -419,7 +299,7 @@ class TakeFoodPic extends Component {
     console.log("TakeFoodPic.js: this.state-"+JSON.stringify(this.state));
     console.log("TakeFoodPic.js: watchId-"+this.watchId);
     this.setState({spinnerVisible:true});
-    const options = { quality: 0.5, exif: false, base64: false, fixOrientation: true,
+    const options = { quality: 0.1, exif: false, base64: false, fixOrientation: true,
       //아래 둘다 false해야 프리뷰 나옴.
       //skipProcessing: true, 
       //doNotSave:true 
@@ -444,6 +324,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
+  },
+  analysis: {
+    flex: 0,
+    backgroundColor: '#000',
+    borderRadius: 5,
+    padding: 15,
+    paddingHorizontal: 20,
+    alignSelf: 'center',
+    margin: 20,
   },
   capture: {
     flex: 0,

@@ -39,7 +39,8 @@ const Images = {
   guide4: require("./img/guide/guide4.png"),
   guide5: require("./img/guide/guide5.png"),
 
-  DiaryMore: require("./img/more.png")
+  DiaryMore: require("./img/more.png"),
+  empty: require("./img/empty.png")
 }
 
 export default Images;

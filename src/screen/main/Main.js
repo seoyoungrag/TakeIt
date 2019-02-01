@@ -21,6 +21,7 @@ import Moment from "moment";
 import { withNavigationFocus } from 'react-navigation';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Guide from '../guide/Guide'
+import Images from "@assets/Images";
 
 const {width, height} = Dimensions.get("window");
 
@@ -73,7 +74,7 @@ class Main extends Component {
             ? foodList
             : [
                 {
-                  firebaseDownloadUrl:"https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-6deb2ab9-8334-42c4-b38f-d889db792e42847907521.jpg?alt=media&token=f85d5f15-0cfb-4abe-ae19-9fd0501422b4",
+                  firebaseDownloadUrl:"",
                   registTime: "촬영한 사진이 없네요."
                 }
               ],
@@ -120,7 +121,7 @@ class Main extends Component {
           COM.props.forceRefreshMain(false);
           COM.callbackFnc();
         }
-      }, 1000);
+      }, 100);
         const WiseSaying = this.props.WISE_SAYING[ Math.floor(Math.random() * this.props.WISE_SAYING.length) ].text;
         const profileShadowOpt = {
           width: height*0.14,
@@ -132,18 +133,18 @@ class Main extends Component {
           x:1,
           y:1
         }
-        const YourImage = this.props.USER_INFO.userSnsPhoto ?(
+        const YourImage = (
           <BoxShadow setting={profileShadowOpt}>
             <FastImage
               style={styles.avatarTempImage}
               source={{
-                uri: this.props.USER_INFO.userSnsPhoto,
+                uri: (this.props.USER_INFO.userSnsPhoto&&this.props.USER_INFO.userSnsPhoto.length>0)? this.props.USER_INFO.userSnsPhoto : "http://nhac.cdnvn.com/content/biblcross.jpg",
                 priority: FastImage.priority.normal,
               }}
               resizeMode={FastImage.resizeMode.center}
             />
           </BoxShadow>
-        ):null;
+        );
         const shadowOpt = {
           width:width/2.1 *(this.state.isEmptyPhotos? 2:1),
           height:width/2 *(this.state.isEmptyPhotos? 2:1),
@@ -260,28 +261,32 @@ class Main extends Component {
                   style={styles.gridView}
                   renderItem={({ item, section, index }) => (
 
-                    <TouchableHighlight onPress={()=>{this.props.navigation.navigate("Food", {
-                      food: item
-                    })}}>
+                    <TouchableHighlight onPress={()=>
+                      {this.state.isEmptyPhotos?
+                        null:
+                        this.props.navigation.navigate("Food", {
+                          food: item
+                          })
+                        }}>
                     <BoxShadow setting={shadowOpt}>
                     <View style={{height:width/2*(this.state.isEmptyPhotos? 2:1)}}>
                       <View style={{position:"absolute", height:"100%",width:"100%",zIndex:1,alignItems:"center",justifyContent:"center"}}>
-                        <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0},textAlign:"center",textAlignVertical:"center"}}>
+                      {item.firebaseDownloadUrl !="" ? (<Text style={{color:item.firebaseDownloadUrl !="" ?"white":"black",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0},textAlign:"center",textAlignVertical:"center"}}>
                         <Ionicons
                           name="ios-clock"
-                          color="#ffffff"
+                          color={"#ffffff"}
                           size={FONT_BACK_LABEL*1.2}
                           borderWidth={0}/>
                           &nbsp;
                         {item.registTime}
-                        </Text>
+                        </Text> ) : null}
                       </View>
                       <FastImage
                         style={{height:width/2*(this.state.isEmptyPhotos? 2:1)}}
-                        source={{
+                        source={item.firebaseDownloadUrl !="" ?{
                           uri: item.firebaseDownloadUrl,
                           priority: FastImage.priority.normal,
-                        }}
+                        }: Images.empty}
                         resizeMode={FastImage.resizeMode.cover}
                       />
                     </View>
