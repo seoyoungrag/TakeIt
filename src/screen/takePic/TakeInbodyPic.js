@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Modal, Alert,ImageBackground, PixelRatio, Dimensions, StyleSheet, Text, TouchableOpacity, View, Image, AsyncStorage} from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { connect } from "react-redux";
+import ActionCreator from "@redux-yrseo/actions";
 import Container from '@container/Container';
 import firebase from "react-native-firebase";
 import cFetch from "@common/network/CustomFetch";
@@ -29,7 +30,11 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {};
+  return {
+    forceRefreshMain: isForce => {
+      dispatch(ActionCreator.forceRefreshMain(isForce));
+    }
+  };
 }
 class TakeFoodPic extends Component {
   constructor(props) {
@@ -83,7 +88,7 @@ class TakeFoodPic extends Component {
       <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
         <TouchableOpacity onPress={() => this.savePicture()} style={[styles.analysis,{elevation:5}]}>
               <Text style={{ fontSize: FONT_BACK_LABEL,color:COLOR.pink500 }}> 
-              인바디
+              분석해드릴까요?
               </Text>
         </TouchableOpacity>
       </View>
@@ -222,11 +227,13 @@ class TakeFoodPic extends Component {
                       }
                       inbodyUpCnt += 1;
                       await AsyncStorage.setItem(storKey, inbodyUpCnt.toString());
-                      Alert.alert('사진을 저장했습니다.');
+                      Alert.alert('분석이 끝나면 알림을 보내드릴게요.\n잠시 후에 확인해주세요.');
                       COM.setState({
                         image:null,
                         spinnerVisible:false
                       })
+                      this.props.forceRefreshMain(true);
+                      this.props.navigation.navigate("Main");
                       console.log("TakeInbodyPic.js(responseProc): "+JSON.stringify(res));
                     },
                     responseNotFound: function(res) {

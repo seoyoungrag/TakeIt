@@ -209,7 +209,7 @@ class TakeFoodPic extends Component {
     cnt = Number(cnt);
     Alert.alert(
       '사진을 저장합니다.',
-      '사진을 업로드하면 수정/삭제할 수 없습니다.\n일일 저장 횟수가 '+macCnt+'를 초과하면 광고가 표시됩니다. \n(금일: '+cnt+'회 저장)',
+      '사진을 업로드하면 수정/삭제할 수 없습니다.\n일일 저장 횟수가 '+macCnt+'를 초과하면 찍먹티켓을 사용합니다. \n(금일: '+cnt+'회 저장)',
       [
         {
           text: '취소',
@@ -248,7 +248,7 @@ class TakeFoodPic extends Component {
                       }
                       foodUpCnt += 1;
                       await AsyncStorage.setItem(storKey, foodUpCnt.toString());
-                      Alert.alert('사진을 저장했습니다.');
+                      Alert.alert('분석이 끝나면 알림을 보내드릴게요.\n잠시 후에 확인해주세요.');
                       COM.setState({
                         image:null,
                         spinnerVisible:false

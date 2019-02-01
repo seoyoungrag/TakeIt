@@ -12,7 +12,7 @@ import ActionCreator from "@redux-yrseo/actions";
 import { withNavigationFocus } from 'react-navigation';
 import {BoxShadow} from 'react-native-shadow'
 import { COLOR } from 'react-native-material-ui';
-import { AdMobRewarded } from 'react-native-admob'
+import { AdMobRewarded, AdMobInterstitial } from 'react-native-admob'
 import Moment from "moment";
 const { height, width } = Dimensions.get("window");
 let styles = {
@@ -112,6 +112,31 @@ class Footer extends React.Component {
     //activeButton: this.props.ACTIVE_BTN
   }
   componentDidMount(){
+
+    AdMobInterstitial.setTestDevices([AdMobInterstitial.simulatorId]);
+    AdMobInterstitial.setAdUnitID('ca-app-pub-3940256099942544/1033173712');
+
+    AdMobInterstitial.addEventListener('adLoaded',
+      () => console.log('AdMobInterstitial adLoaded')
+    );
+    AdMobInterstitial.addEventListener('adFailedToLoad',
+      (error) => console.warn(error)
+    );
+    AdMobInterstitial.addEventListener('adOpened',
+      () => console.log('AdMobInterstitial => adOpened')
+    );
+    AdMobInterstitial.addEventListener('adClosed',
+      () => {
+        console.log('AdMobInterstitial => adClosed');
+        AdMobInterstitial.requestAd().catch(error => console.warn(error));
+      }
+    );
+    AdMobInterstitial.addEventListener('adLeftApplication',
+      () => console.log('AdMobInterstitial => adLeftApplication')
+    );
+
+    AdMobInterstitial.requestAd().catch(error => console.warn(error));
+    
     AdMobRewarded.setTestDevices([AdMobRewarded.simulatorId]);
     AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/5224354917');
 
@@ -136,15 +161,75 @@ class Footer extends React.Component {
   }
   componentWillUnmount(){
     AdMobRewarded.removeAllListeners();
+    AdMobInterstitial.removeAllListeners();
   }
   componentDidUpdate(){
     //this.btnChange();
   }
+  /*
   btnChange = async () =>{
     if(this.props.isFocused&&this.state.activeButton!=this.props.ACTIVE_BTN){
       this.setState({activeButton:this.props.ACTIVE_BTN});
     }
   }
+  */
+  showInterstitial() {
+    AdMobInterstitial.showAd().catch(error => console.warn(error));
+  }
+  addScreenViewCnt = async() => {
+    const storKey = "@"+Moment(new Date()).format('YYMMDD')+"SCREEN";
+    var screenViewCnt = await AsyncStorage.getItem(storKey);
+    screenViewCnt = Number(screenViewCnt);
+    if(screenViewCnt){
+      await AsyncStorage.removeItem(storKey);
+    }else{
+      screenViewCnt = 0;
+    }
+    screenViewCnt += 1;
+    await AsyncStorage.setItem(storKey, screenViewCnt.toString());
+  }
+
+  compareViewCnt = async () => {
+    const storKey = "@"+Moment(new Date()).format('YYMMDD')+"SCREEN";
+    var currentScreenViewCnt = await AsyncStorage.getItem(storKey);
+    currentScreenViewCnt = Number(currentScreenViewCnt);
+    var maxSreenViewCnt = this.props.TIMESTAMP.screenViewCnt?this.props.TIMESTAMP.screenViewCnt: 5;
+    if(currentScreenViewCnt>maxSreenViewCnt){
+      const storKey = "@"+Moment(new Date()).format('YYMMDD')+"SCREEN";
+      var screenViewCnt = await AsyncStorage.getItem(storKey);
+      screenViewCnt = Number(screenViewCnt);
+      if(screenViewCnt){
+        await AsyncStorage.removeItem(storKey);
+      }
+      screenViewCnt = 0;
+      await AsyncStorage.setItem(storKey, screenViewCnt.toString());
+      AdMobInterstitial.showAd().catch(error => console.warn(error));
+    }
+  }
+  
+  compareInbodyTimestamp = async () =>{
+    //1. 인바디 타임 스탬프
+    //1-1. timestamp값이 없으면 입력 
+    //1-1. 혹은 일주일이 지난 값이면 초기화
+    const storKey = "@"+Moment(new Date()).format('YYMMDD')+"INBODYTIMESTAMP";
+    var currentInbodyTimestamp = await AsyncStorage.getItem(storKey);
+    currentInbodyTimestamp = Number(currentInbodyTimestamp);
+    if(!currentInbodyTimestamp || (currentInbodyTimestamp&&Math.abs(currentInbodyTimestamp-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7))){
+      currentInbodyTimestamp = this.props.TIMESTAMP.timestamp;
+      await AsyncStorage.setItem(storKey, currentInbodyTimestamp.toString());
+    }else{
+      //1-2. 값이 일주일이 지나지 않았으면 3번 넘었는지 체크해서 분기
+      const inbodyStorKey = "@"+Moment(new Date()).format('YYMMDD')+"INBODY";
+      var inbodyUpCnt = await AsyncStorage.getItem(inbodyStorKey);
+      inbodyUpCnt = Number(inbodyUpCnt);
+      console.log("FOoter.js:"+inbodyUpCnt);
+      Alert.alert("인바디 촬영은 일주일 간격으로 3번씩만 찍을 수 있어요.", '기준일: '+Moment(currentInbodyTimestamp).format('YYYY-MM-DD').toString()+', 찍은 횟수: '+inbodyUpCnt);
+      if(inbodyUpCnt < 3){
+        this.props.navigation.navigate("TakePhotoInbody");
+      }
+    }
+  }
+
   render() {
     const shadowOpt = {
       width:width,
@@ -171,12 +256,13 @@ class Footer extends React.Component {
       >
       <TouchableOpacity
         underlayColor="rgba(0,0,0,.1)"
-        onPress={() => {
+        onPress={async() => {
           //if(this.props.ACTIVE_BTN!="HOME"){
           if(this.props.navigation.state.routeName!='Main'){
             this.props.forceRefreshMain(true);
           } 
           //this.props.setActiveFooterBtn("HOME")
+          await this.compareViewCnt(this.addScreenViewCnt());
           this.props.navigation.navigate("Main")
         }}
         flex={1}
@@ -275,7 +361,7 @@ class Footer extends React.Component {
           if(!requestCameraPermission()){
             Alert.alert('카메라 권한이 없으면 인바디 촬영 메뉴를 이용할 수 없어요.');
           }else{
-            this.props.navigation.navigate("TakePhotoInbody")
+            this.compareInbodyTimestamp();
           }
         }}
       >
@@ -287,6 +373,8 @@ class Footer extends React.Component {
       <TouchableOpacity
         underlayColor="rgba(0,0,0,.1)"
         onPress={() => {
+          console.log('diary!!!');
+          this.compareViewCnt().then(viewCnt=>{this.addScreenViewCnt(viewCnt)});
           //this.props.setActiveFooterBtn("DIARY")
           this.props.navigation.navigate("Diary")
         }}
@@ -298,7 +386,8 @@ class Footer extends React.Component {
       </TouchableOpacity>
       <TouchableOpacity
         underlayColor="rgba(255,51,102,.1)"
-        onPress={() => {
+        onPress={async() => {
+          this.compareViewCnt().then(viewCnt=>{this.addScreenViewCnt(viewCnt)});
           //this.props.setActiveFooterBtn("GRAPH")
           this.props.navigation.navigate("Main")
           }}

@@ -76,7 +76,7 @@ class Login extends React.Component {
       resInfo.userEmail = resInfo.user.email;
       resInfo.userSnsPhoto = resInfo.user.photo;
       resInfo.hasSnsLogin = true;
-      console.log('Loading.js: User Info(googlelogin) --> ', resInfo);
+      console.log('Loading.js: User Info(googlelogin) --> ', JSON.stringify(resInfo));
       this.props.setUserInfo(resInfo);
       return resInfo;
     } catch (error) {
