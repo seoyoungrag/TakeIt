@@ -21,8 +21,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import Entypo from 'react-native-vector-icons/Entypo'
 import {AsyncStorage} from 'react-native';
 import { withNavigationFocus } from 'react-navigation';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import { COLOR } from 'react-native-material-ui';
 
 const {width, height} = Dimensions.get("window");
 
@@ -68,7 +67,6 @@ class TakeFoodPic extends Component {
 
   renderImage(image) {
     var images = [{url:image.uri, width:image.width, height: image.height}];
-        
     return (
       <View
         style={{ flex: 0.5, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}
@@ -105,14 +103,9 @@ class TakeFoodPic extends Component {
           </View>
         </TouchableOpacity>
         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={() => this.savePicture()} style={styles.analysis}>
-            <Text style={{ fontSize: FONT_BACK_LABEL,color:"#ffffff" }}> 
-            <MaterialCommunityIcons
-                              name="magnify"
-                              color={"#ffffff"}
-                              size={FONT_BACK_LABEL}
-                              borderWidth={0}/>
-            분석 요청하기
+          <TouchableOpacity onPress={() => this.savePicture()} style={[styles.analysis,{elevation:5}]}>
+            <Text style={{ fontSize: FONT_BACK_LABEL,color:COLOR.pink500 }}> 
+            찍먹
             </Text>
           </TouchableOpacity>
         </View>
@@ -327,7 +320,7 @@ const styles = StyleSheet.create({
   },
   analysis: {
     flex: 0,
-    backgroundColor: '#000',
+    backgroundColor: '#fff',
     borderRadius: 5,
     padding: 15,
     paddingHorizontal: 20,

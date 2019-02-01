@@ -17,15 +17,19 @@ import Moment from "moment";
 const { height, width } = Dimensions.get("window");
 let styles = {
   footerIcon: {
-    height: height * 0.038,
+    height: height * 0.038*0.69,
     resizeMode: "contain"
   },
   footerText: {
-    height: height * 0.019,
+    height: height * 0.019*0.69,
     resizeMode: "contain",
-    marginTop:height * 0.015
+    marginTop:height * 0.015*0.69
   },
-  footerIconContainer: { width:width/5, alignItems: "center",marginTop:height * 0.03, marginBottom: height * 0.03
+  footerIconContainer: { 
+    width:width/5, 
+    alignItems: "center",
+    marginTop:height * 0.03*0.69, 
+    marginBottom: height * 0.03*0.69
 }
 };
 
@@ -144,9 +148,9 @@ class Footer extends React.Component {
   render() {
     const shadowOpt = {
       width:width,
-      height:height*0.13,
+      height:height*0.13*0.69,
       color:COLOR.grey900,
-      border:2,
+      border:1,
       radius:3,
       opacity:0.1,
       x:0,
@@ -162,7 +166,8 @@ class Footer extends React.Component {
         flexDirection="row"
         alignItems="center"
         justifyContent="center"
-        flex={1}
+        alignSelf="center"
+        flex={0}
       >
       <TouchableOpacity
         underlayColor="rgba(0,0,0,.1)"
