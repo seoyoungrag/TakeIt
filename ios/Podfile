@@ -7,6 +7,11 @@ target 'TakeIt' do
 
   # Pods for TakeIt
 	pod 'Firebase/Core', '~> 5.15.0'
+	pod 'Firebase/Auth', '~> 5.15.0'
+	pod 'Firebase/Messaging', '~> 5.15.0'
+	pod 'Firebase/Storage', '~> 5.15.0'
+	pod 'GoogleSignIn'
+	pod 'Google-Mobile-Ads-SDK'
 
   target 'TakeItTests' do
     inherit! :search_paths
