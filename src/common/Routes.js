@@ -15,6 +15,7 @@ import TakePhotoFood from '@screens/takePic';
 import TakePhotoInbody from '@screens/takePic/TakeInbodyPic';
 import UserRegist from '@screens/regist';
 import Food from '@screens/food';
+import Graph from '@screens/graph';
 
 const RootStack = createStackNavigator(
   {
@@ -73,7 +74,7 @@ const RootStack = createStackNavigator(
       }),
     },
     Graph: {
-      screen: Main,
+      screen: Graph,
       navigationOptions: ({ navigation }) => ({
         header: null,
       }),

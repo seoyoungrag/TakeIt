@@ -355,7 +355,7 @@ class Footer extends React.Component {
           //if(this.props.ACTIVE_BTN!="HOME"){
           if(this.props.navigation.state.routeName!='Main'){
             this.props.forceRefreshMain(true);
-          } 
+          }
           //this.props.setActiveFooterBtn("HOME")
           await this.compareViewCnt(this.addScreenViewCnt());
           this.props.navigation.navigate("Main")
@@ -368,7 +368,7 @@ class Footer extends React.Component {
         </View>
       </TouchableOpacity>
 
-      
+
       <TouchableOpacity
         underlayColor="rgba(0,0,0,.1)"
         onPress={() => {
@@ -489,7 +489,7 @@ class Footer extends React.Component {
         onPress={async() => {
           this.compareViewCnt().then(viewCnt=>{this.addScreenViewCnt(viewCnt)});
           //this.props.setActiveFooterBtn("GRAPH")
-          this.props.navigation.navigate("Main")
+          this.props.navigation.navigate("Graph")
           }}
       >
         <View style={styles.footerIconContainer}>
@@ -497,7 +497,7 @@ class Footer extends React.Component {
           <Image style={styles.footerText} source={this.props.navigation.state.routeName=='Graph' ? Images.Footer_txt_btn_active_graph:Images.Footer_txt_btn_graph} />
         </View>
       </TouchableOpacity>
-      
+
       </View>
       </BoxShadow>
     );
