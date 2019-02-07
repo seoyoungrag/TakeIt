@@ -40,7 +40,8 @@ const Images = {
   guide5: require("./img/guide/guide5.png"),
 
   DiaryMore: require("./img/more.png"),
-  empty: require("./img/empty.png")
+  empty: require("./img/empty.png"),
+  emptySnsProfile: require("./img/emptySnsProfile.jpg")
 }
 
 export default Images;

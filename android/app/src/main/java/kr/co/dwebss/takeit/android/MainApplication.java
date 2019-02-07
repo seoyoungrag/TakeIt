@@ -3,7 +3,6 @@ package kr.co.dwebss.takeit.android;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.sbugert.rnadmob.RNAdMobPackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.horcrux.svg.SvgPackage;
 //import com.reactnative.ivpusic.imagepicker.PickerPackage;// <-- crop-picker 제거
@@ -16,6 +15,7 @@ import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage; // <-- firebase auth 관련 추가
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage; // <-- firebase message 관련 추가
 import io.invertase.firebase.storage.RNFirebaseStoragePackage; // <-- firebase storage 관련 추가
+import io.invertase.firebase.admob.RNFirebaseAdMobPackage; // <-- admob 제거하고 firebase admob 추가
 
 
 import com.facebook.react.ReactNativeHost;
@@ -58,7 +58,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNAdMobPackage(),
+            new RNFirebaseAdMobPackage(), // <-- admob 제거하고 firebase admob 추가
             new RNCameraPackage(),
             new SvgPackage(),
             //new PickerPackage(), // <-- crop-picker 제거

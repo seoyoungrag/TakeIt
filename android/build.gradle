@@ -33,9 +33,10 @@ allprojects {
         configurations.all {
             resolutionStrategy {
                 // react-native-admob
-                force "com.google.android.gms:play-services-ads-base:17.1.2"
-                force "com.google.android.gms:play-services-ads-lite:17.1.2"
-                force "com.google.android.gms:play-services-gass:17.1.2"
+                //force "com.google.android.gms:play-services-ads-base:17.1.+"
+                //force "com.google.android.gms:play-services-ads-lite:17.1.+"
+                //force "com.google.android.gms:play-services-gass:17.1.+"
+                //force "com.google.android.gms:play-services-measurement-base:16.+"
             }
         }
 }

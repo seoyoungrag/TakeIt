@@ -161,11 +161,12 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-admob')
-    implementation "com.google.android.gms:play-services-ads-base:17.1.2"
+    implementation "com.google.firebase:firebase-ads:15.0.1"
+    //implementation project(':react-native-admob')
+    //implementation "com.google.android.gms:play-services-ads-base:17.1.2"
     implementation (project(':react-native-camera')){ exclude group: "com.google.android.gms" } 
     
-    implementation 'com.google.android.gms:play-services-vision:15.0.2'
+    //implementation 'com.google.android.gms:play-services-vision:15.0.2'
     //implementation "com.google.android.gms:play-services-vision:${rootProject.ext.googlePlayServices}"
 
     implementation project(':react-native-svg')

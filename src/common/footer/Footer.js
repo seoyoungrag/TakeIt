@@ -4,16 +4,24 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
-  Alert, PermissionsAndroid, AsyncStorage
+  Alert, PermissionsAndroid, AsyncStorage, Platform
 } from "react-native";
+import Permissions from 'react-native-permissions'
 import Images from "@assets/Images";
 import { connect } from "react-redux";
 import ActionCreator from "@redux-yrseo/actions";
 import { withNavigationFocus } from 'react-navigation';
 import {BoxShadow} from 'react-native-shadow'
 import { COLOR } from 'react-native-material-ui';
-import { AdMobRewarded, AdMobInterstitial } from 'react-native-admob'
+//import { AdMobRewarded, AdMobInterstitial } from 'react-native-admob'
+import firebase from 'react-native-firebase';
 import Moment from "moment";
+
+const AdMobRewarded = firebase.admob().rewarded('ca-app-pub-3705279151918090/3468709592');
+//const AdMobInterstitial = firebase.admob().rewarded('ca-app-pub-3705279151918090/4058315659');
+const AdRequest = firebase.admob.AdRequest;
+const request = new AdRequest();
+
 const { height, width } = Dimensions.get("window");
 let styles = {
   footerIcon: {
@@ -32,29 +40,47 @@ let styles = {
     marginBottom: height * 0.03*0.69
 }
 };
-
 async function requestGpsPermission() {
   var isGranted = false;
   try {
-    const check = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-    if(!check){
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          'title': 'GPS 권한 필요',
-          'message': '음식 사진의 위치 정보 제공을 위해 필요합니다.'
+    if(Platform.OS === 'ios' ){
+      const check = await Permissions.check('location')
+      console.log("check is one of: 'authorized', 'denied', 'restricted', or 'undetermined'");
+      console.log(check);
+      if(check!='authorized'){
+        console.log('request permission');
+        const GRANTED = await Permissions.request('location');
+        console.log('GRANTED');
+        console.log(GRANTED);
+        if(GRANTED=='authorized'){
+          isGranted = true;
+        }else{
+          isGranted = false;
         }
-      )
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      }else{
         isGranted = true;
-        console.log("You can use the ACCESS_FINE_LOCATION")
-      } else {
-        isGranted = false;
-        console.log("ACCESS_FINE_LOCATION permission denied")
       }
     }else{
-      isGranted = true;
-    }
+      const check = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+      if(!check){
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            'title': 'GPS 권한 필요',
+            'message': '음식 사진의 위치 정보 제공을 위해 필요합니다.'
+          }
+        )
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          isGranted = true;
+          //console.log("You can use the ACCESS_FINE_LOCATION")
+        } else {
+          isGranted = false;
+          //console.log("ACCESS_FINE_LOCATION permission denied")
+        }
+      }else{
+        isGranted = true;
+      }
+  }
   } catch (err) {
     console.warn(err)
   }
@@ -64,24 +90,43 @@ async function requestGpsPermission() {
 async function requestCameraPermission(){
   var isGranted = false;
   try {
-    const check = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA);
-    if(!check){
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        {
-          'title': '카메라 권한 필요',
-          'message': '음식 사진을 찍기 위해 카메라 권한이 필요합니다.'
+    if(Platform.OS === 'ios' ){
+      const check = await Permissions.check('camera')
+      //console.log("check is one of: 'authorized', 'denied', 'restricted', or 'undetermined'");
+      //console.log(check);
+      if(check!='authorized'){
+        //console.log('request permission');
+        const GRANTED = await Permissions.request('camera');
+        console.log('GRANTED');
+        console.log(GRANTED);
+        if(GRANTED=='authorized'){
+          isGranted = true;
+        }else{
+          isGranted = false;
         }
-      )
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      }else{
         isGranted = true;
-        console.log("You can use the CAMERA")
-      } else {
-        isGranted = false;
-        console.log("CAMERA permission denied")
       }
     }else{
-      isGranted = true;
+      const check = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA);
+      if(!check){
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            'title': '카메라 권한 필요',
+            'message': '음식 사진을 찍기 위해 카메라 권한이 필요합니다.'
+          }
+        )
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          isGranted = true;
+          //console.log("You can use the CAMERA")
+        } else {
+          isGranted = false;
+          //console.log("CAMERA permission denied")
+        }
+      }else{
+        isGranted = true;
+      }
     }
   } catch (err) {
     console.warn(err)
@@ -112,7 +157,7 @@ class Footer extends React.Component {
     //activeButton: this.props.ACTIVE_BTN
   }
   componentDidMount(){
-
+    /*
     AdMobInterstitial.setTestDevices([AdMobInterstitial.simulatorId]);
     AdMobInterstitial.setAdUnitID('ca-app-pub-3940256099942544/1033173712');
 
@@ -136,7 +181,30 @@ class Footer extends React.Component {
     );
 
     AdMobInterstitial.requestAd().catch(error => console.warn(error));
-    
+    */
+
+    //AdMobRewarded.setTestDevices([AdMobRewarded.simulatorId]);
+    //AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/5224354917');
+
+
+    AdMobRewarded.loadAd(request.build());
+    AdMobRewarded.on('adLoaded',
+      () => console.log('AdMobRewarded => adLoaded')
+    );
+    AdMobRewarded.on('adFailedToLoad',
+      (error) => console.warn(error)
+    );
+    AdMobRewarded.on('adOpened',
+      () => console.log('AdMobRewarded => adOpened')
+    );
+    AdMobRewarded.on('videoStarted',
+      () => console.log('AdMobRewarded => videoStarted')
+    );
+    AdMobRewarded.on('adLeftApplication',
+      () => console.log('AdMobRewarded => adLeftApplication')
+    );
+
+    /*
     AdMobRewarded.setTestDevices([AdMobRewarded.simulatorId]);
     AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/5224354917');
 
@@ -158,6 +226,7 @@ class Footer extends React.Component {
     );
 
     AdMobRewarded.requestAd().catch(error => console.warn(error));
+    */
   }
   componentWillUnmount(){
     AdMobRewarded.removeAllListeners();
@@ -174,7 +243,33 @@ class Footer extends React.Component {
   }
   */
   showInterstitial() {
-    AdMobInterstitial.showAd().catch(error => console.warn(error));
+    AdMobInterstitial.showAd().catch(error => {
+      console.warn(error)
+      console.warn('AdMobInterstitial reload');
+      AdMobInterstitial.setTestDevices([AdMobInterstitial.simulatorId]);
+      AdMobInterstitial.setAdUnitID('ca-app-pub-3940256099942544/1033173712');
+
+      AdMobInterstitial.addEventListener('adLoaded',
+        () => console.log('AdMobInterstitial adLoaded')
+      );
+      AdMobInterstitial.addEventListener('adFailedToLoad',
+        (error) => console.warn(error)
+      );
+      AdMobInterstitial.addEventListener('adOpened',
+        () => console.log('AdMobInterstitial => adOpened')
+      );
+      AdMobInterstitial.addEventListener('adClosed',
+        () => {
+          console.log('AdMobInterstitial => adClosed');
+          AdMobInterstitial.requestAd().catch(error => console.warn(error));
+        }
+      );
+      AdMobInterstitial.addEventListener('adLeftApplication',
+        () => console.log('AdMobInterstitial => adLeftApplication')
+      );
+
+      AdMobInterstitial.requestAd().catch(error => console.warn(error));
+    });
   }
   addScreenViewCnt = async() => {
     const storKey = "@"+Moment(new Date()).format('YYMMDD')+"SCREEN";
@@ -334,7 +429,12 @@ class Footer extends React.Component {
                               AdMobRewarded.requestAd().catch(error => console.warn(error));
                             }
                           );
-                          await AdMobRewarded.showAd().catch(error => console.warn(error));
+                          //await AdMobRewarded.showAd().catch(error => console.warn(error));
+                          if (AdMobRewarded.isLoaded()) {
+                            await AdMobRewarded.show().catch(error => console.warn(error));;
+                          }else{
+                            console.log('ad not loaded');
+                          }
                           }
                         }
                       ],

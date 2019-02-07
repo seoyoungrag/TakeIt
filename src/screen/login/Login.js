@@ -201,8 +201,6 @@ class Login extends React.Component {
             borderWidth: 0,
             backgroundColor: "rgba(255,255,255,0)",
             borderRadius: 10,
-            elevation: 0,
-            
             padding: 20
 
           }

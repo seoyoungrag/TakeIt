@@ -52,7 +52,7 @@ class TakeFoodPic extends Component {
     var images = [{url:image.uri, width:image.width, height: image.height}];
     return (
       <View
-        style={{ flex: 0.48, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}
+        style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}
       >
       <Modal animationType="fade" hardwareAccelerated={true} visible={this.state.modalVisible} transparent={true} onRequestClose={() => this.setState({ modalVisible: false })}>
       <ImageViewer imageUrls={images} 
@@ -80,13 +80,18 @@ class TakeFoodPic extends Component {
       <TouchableOpacity style={{ flex: 1}} onPress={() => this.setState({ modalVisible: true })}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height:'100%', backgroundColor:'rgba(0,0,0,0)'}}>
           <Image
-            style={{ flex: 1, height:"100%", resizeMode: "center" }}
+            style={{ flex: 1, height:"100%", resizeMode: "contain" }}
             source={image}
           />
       </View>
       </TouchableOpacity>
       <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-        <TouchableOpacity onPress={() => this.savePicture()} style={[styles.analysis,{elevation:5}]}>
+        <TouchableOpacity onPress={() => this.savePicture()} 
+        style={[styles.analysis,
+              {elevation:5,shadowColor:COLOR.grey900,
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: 0.8,
+              shadowRadius: 2}]}>
               <Text style={{ fontSize: FONT_BACK_LABEL,color:COLOR.pink500 }}> 
               분석해드릴까요?
               </Text>
@@ -101,7 +106,7 @@ class TakeFoodPic extends Component {
   renderEmpty() {
     return (
       <ImageBackground
-        style={{ flex: 0.5, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}
+        style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}
         source={Images.loginLoadingBack}
       >
       <View style={{position:"absolute",width:width,height:height,top:0,left:0,backgroundColor:'rgba(0,0,0,0.9)',zIndex:0}}/>
@@ -204,7 +209,7 @@ class TakeFoodPic extends Component {
               .storage()
               .ref("/inbody/" + PROPS.USER_INFO.userId + "/" + Moment(dateTime).format("YYYY-MM-DD") + "/" + image.uri.substr(image.uri.lastIndexOf("/") + 1) )
               .putFile(image.uri)
-              .then(uploadedFile => {
+              .then(async(uploadedFile) => {
                 console.log(uploadedFile);
                 if (uploadedFile.state == "success") {
                   var data = {};
@@ -215,25 +220,10 @@ class TakeFoodPic extends Component {
                   data.firebaseDownloadUrl = uploadedFile.downloadURL;
                   data.deviceLocalFilePath = image.uri;
                   var body = JSON.stringify(data);
-                  cFetch(APIS.POST_USER_INBODY, [], body, {
+                  var isSended = false;
+                  await cFetch(APIS.POST_USER_INBODY, [], body, {
                     responseProc: async(res) => {
-                      const storKey = "@"+Moment(new Date()).format('YYMMDD')+"INBODY";
-                      var inbodyUpCnt = await AsyncStorage.getItem(storKey);
-                      inbodyUpCnt = Number(inbodyUpCnt);
-                      if(inbodyUpCnt){
-                        await AsyncStorage.removeItem(storKey);
-                      }else{
-                        inbodyUpCnt = 0;
-                      }
-                      inbodyUpCnt += 1;
-                      await AsyncStorage.setItem(storKey, inbodyUpCnt.toString());
-                      Alert.alert('분석이 끝나면 알림을 보내드릴게요.\n잠시 후에 확인해주세요.');
-                      COM.setState({
-                        image:null,
-                        spinnerVisible:false
-                      })
-                      this.props.forceRefreshMain(true);
-                      this.props.navigation.navigate("Main");
+                      isSended = true;
                       console.log("TakeInbodyPic.js(responseProc): "+JSON.stringify(res));
                     },
                     responseNotFound: function(res) {
@@ -243,6 +233,27 @@ class TakeFoodPic extends Component {
                       console.log("TakeInbodyPic.js(responseError): "+JSON.stringify(res));
                     }
                   });
+                  await COM.setState({
+                    image:null,
+                    spinnerVisible:false
+                  })
+                  if(isSended){
+                    const storKey = "@"+Moment(new Date()).format('YYMMDD')+"INBODY";
+                    var inbodyUpCnt = await AsyncStorage.getItem(storKey);
+                    inbodyUpCnt = Number(inbodyUpCnt);
+                    if(inbodyUpCnt){
+                      await AsyncStorage.removeItem(storKey);
+                    }else{
+                      inbodyUpCnt = 0;
+                    }
+                    inbodyUpCnt += 1;
+                    await AsyncStorage.setItem(storKey, inbodyUpCnt.toString());
+                    Alert.alert('분석이 끝나면 알림을 보내드릴게요.\n잠시 후에 확인해주세요.');
+                    setTimeout(function(){ 
+                      PROPS.forceRefreshMain(true);
+                      PROPS.navigation.navigate("Main"); 
+                    }, 100);
+                  }
                 }
               })
               .catch(err => {
@@ -268,7 +279,7 @@ class TakeFoodPic extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 3,
     flexDirection: 'column',
     backgroundColor: 'black',
   },

@@ -23,9 +23,14 @@ import { withNavigationFocus } from 'react-navigation';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Guide from '../guide/Guide'
 import Images from "@assets/Images";
-import { AdMobRewarded } from 'react-native-admob';
+//import { AdMobRewarded } from 'react-native-admob';
+import firebase from 'react-native-firebase';
 
 const {width, height} = Dimensions.get("window");
+
+const AdMobRewarded = firebase.admob().rewarded('ca-app-pub-3705279151918090/3468709592');
+const AdRequest = firebase.admob.AdRequest;
+const request = new AdRequest();
 
 function mapStateToProps(state) {
   return {
@@ -68,10 +73,27 @@ class Main extends Component {
     }
     componentDidMount = async() => {
 
-      AdMobRewarded.setTestDevices([AdMobRewarded.simulatorId]);
-      AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/5224354917');
+      //AdMobRewarded.setTestDevices([AdMobRewarded.simulatorId]);
+      //AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/5224354917');
 
-
+      AdMobRewarded.loadAd(request.build());
+      AdMobRewarded.on('onAdLoaded',
+        () => console.log('AdMobRewarded => adLoaded')
+      );
+      AdMobRewarded.on('onAdFailedToLoad',
+        (error) => console.warn(error)
+      );
+      AdMobRewarded.on('onAdOpened',
+        () => console.log('AdMobRewarded => adOpened')
+      );
+      AdMobRewarded.on('onRewardedVideoStarted',
+        () => console.log('AdMobRewarded => videoStarted')
+      );
+      AdMobRewarded.on('onAdLeftApplication',
+        () => console.log('AdMobRewarded => adLeftApplication')
+      );
+  
+      /*
       AdMobRewarded.addEventListener('adLoaded',
         () => console.log('AdMobRewarded => adLoaded')
       );
@@ -89,11 +111,12 @@ class Main extends Component {
       );
 
       AdMobRewarded.requestAd().catch(error => console.warn(error));
+      */
       await this.callbackFnc();
     }
 
     componentWillUnmount() {
-      AdMobRewarded.removeAllListeners();
+      //AdMobRewarded.removeAllListeners();
     }
     callbackFnc = async() => {
       this.setState({spinnerVisible:true}) 
@@ -110,7 +133,7 @@ class Main extends Component {
       var maxCnt = this.props.TIMESTAMP.foodupcnt?this.props.TIMESTAMP.foodupcnt: 3;
       const foodList = await this.getFoodDiary();
       const statuses = await this.getMainIntakestatus();
-      this.setState({
+      await this.setState({
         photos:
         foodList.length > 0
             ? foodList
@@ -130,11 +153,11 @@ class Main extends Component {
         inbodyUpCnt: inbodyUpCnt
         //spinnerVisible: false
       });
-      COM = this;
-      setTimeout(function(){ COM.setState({spinnerVisible:false}) }, 100);
+      const COM = this;
+      await setTimeout(async()=>{ await COM.setState({spinnerVisible:false}) }, 100);
     }
     viewAd = async() =>{
-      AdMobRewarded.addEventListener('rewarded',
+      AdMobRewarded.on('onRewarded',
       async(reward) => {
         console.log('rewarded;');
         const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
@@ -152,7 +175,7 @@ class Main extends Component {
         })
       }
     );
-    AdMobRewarded.addEventListener('adClosed',
+    AdMobRewarded.on('onAdClosed',
       async() => {
         console.log('adClosed');
         const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
@@ -161,10 +184,22 @@ class Main extends Component {
         if(afterViewAdCnt>this.state.viewAdCnt){
         }else{
         }
-        AdMobRewarded.requestAd().catch(error => console.warn(error));
+        AdMobRewarded.loadAd(request.build());
+        //AdMobRewarded.requestAd().catch(error => console.warn(error));
       }
     );
-    await AdMobRewarded.showAd().catch(error => console.warn(error));
+    
+    if (AdMobRewarded.isLoaded()) {
+      AdMobRewarded.show();
+    } else {
+      await AdMobRewarded.loadAd(request.build());
+      AdMobRewarded.show();
+    }
+    /*
+    AdMobRewarded.showAd().catch(async(error) => {
+      
+    });
+    */
     }
 
     getMainIntakestatus = async () => {
@@ -208,7 +243,7 @@ class Main extends Component {
           height: height*0.14,
           color:COLOR.grey900,
           border:2,
-          radius:height*0.07,
+          //radius:height*0.07,
           opacity:0.2,
           x:1,
           y:1
@@ -217,11 +252,11 @@ class Main extends Component {
           <BoxShadow setting={profileShadowOpt}>
             <FastImage
               style={styles.avatarTempImage}
-              source={{
-                uri: (this.props.USER_INFO.userSnsPhoto&&this.props.USER_INFO.userSnsPhoto.length>0)? this.props.USER_INFO.userSnsPhoto : "http://nhac.cdnvn.com/content/biblcross.jpg",
-                priority: FastImage.priority.normal,
-              }}
-              resizeMode={FastImage.resizeMode.center}
+              source={this.props.USER_INFO.userSnsPhoto&&this.props.USER_INFO.userSnsPhoto.length>0 ?{
+                uri: this.props.USER_INFO.userSnsPhoto,
+                priority: FastImage.priority.normal
+              }: Images.emptySnsProfile}
+              resizeMode={FastImage.resizeMode.contain}
             />
           </BoxShadow>
         );
@@ -513,7 +548,7 @@ const styles = StyleSheet.create({
      avatarTempImage: {
       height: "100%",
       width: "100%",
-      borderRadius: 10000
+      borderRadius: 0
     },
     statusView:{
       flex: 14,
