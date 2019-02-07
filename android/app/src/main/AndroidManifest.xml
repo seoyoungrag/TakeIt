@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="kr.co.dwebss.takeit.android">
+    package="kr.co.dwebss.takeat.android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
@@ -19,7 +19,7 @@
       >
       <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-6534444030498662~7383808416"/>
+            android:value="ca-app-pub-3705279151918090~6277284886"/>
       <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
       <activity
         android:name=".MainActivity"
@@ -38,6 +38,11 @@
         </intent-filter>
       </service>
       <service android:name="io.invertase.firebase.messaging.RNFirebaseBackgroundMessagingService" />
+      <service android:name="io.invertase.firebase.messaging.RNFirebaseMessagingService">
+        <intent-filter>
+          <action android:name="com.google.firebase.MESSAGING_EVENT" />
+        </intent-filter>
+      </service>
     </application>
 
 </manifest>

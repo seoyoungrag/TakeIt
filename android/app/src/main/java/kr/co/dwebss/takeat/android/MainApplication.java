@@ -1,4 +1,4 @@
-package kr.co.dwebss.takeit.android;
+package kr.co.dwebss.takeat.android;
 
 import android.app.Application;
 

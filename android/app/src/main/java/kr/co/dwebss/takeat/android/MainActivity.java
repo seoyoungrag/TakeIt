@@ -1,4 +1,4 @@
-package kr.co.dwebss.takeit.android;
+package kr.co.dwebss.takeat.android;
 
 /**
 * react-native-fbsdk 관련 추가
