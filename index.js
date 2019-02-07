@@ -20,7 +20,8 @@ YellowBox.ignoreWarnings([
     "{message: \"Parse Error. Your app's play store page doesn't seem to have latest app version info.\", text: \"<!DOCTYPE html><html><head><meta http-equiv=\"conte…yle=\"clear:both\"></div></div></div></body></html>\"}",
     "Possible Unhandled Promise Rejection",
     "Require cycle:",
-    "Warning: Cannot update during an existing state"
+    "Warning: Cannot update during an existing state",
+    '{"framesToPop":1,"code":"E_AD_ALREADY_LOADED"}'
   ]);
 
 AppRegistry.registerComponent(appName, () => App);

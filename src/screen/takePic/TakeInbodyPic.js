@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Modal, Alert,ImageBackground, PixelRatio, Dimensions, StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
+import { Modal, Alert,ImageBackground, PixelRatio, Dimensions, StyleSheet, Text, TouchableOpacity, View, Image, AsyncStorage} from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { connect } from "react-redux";
+import ActionCreator from "@redux-yrseo/actions";
 import Container from '@container/Container';
 import firebase from "react-native-firebase";
 import cFetch from "@common/network/CustomFetch";
@@ -12,8 +13,8 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
 import Entypo from 'react-native-vector-icons/Entypo'
-import {AsyncStorage} from 'react-native';
 import { withNavigationFocus } from 'react-navigation';
+import { COLOR } from 'react-native-material-ui';
 
 const {width, height} = Dimensions.get("window");
 
@@ -21,18 +22,7 @@ var FONT_BACK_LABEL   = 16;
 if (PixelRatio.get() <= 2) {
   FONT_BACK_LABEL = 12;
 }
-const PendingView = () => (
-  <View
-    style={{
-      flex: 1,
-      backgroundColor: 'lightgreen',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}
-  >
-    <Text>Waiting</Text>
-  </View>
-);
+
 function mapStateToProps(state) {
   return {
     USER_INFO: state.REDUCER_USER.user
@@ -40,7 +30,11 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {};
+  return {
+    forceRefreshMain: isForce => {
+      dispatch(ActionCreator.forceRefreshMain(isForce));
+    }
+  };
 }
 class TakeFoodPic extends Component {
   constructor(props) {
@@ -48,10 +42,12 @@ class TakeFoodPic extends Component {
     this.state = {
       image: null,
       spinnerVisible: false,
-      modalVisible: false
+      modalVisible: false,
+      pending: false
     };
   }
-
+  componentDidMount = async() => {
+  }
   renderImage(image) {
     var images = [{url:image.uri, width:image.width, height: image.height}];
     return (
@@ -89,13 +85,13 @@ class TakeFoodPic extends Component {
           />
       </View>
       </TouchableOpacity>
-      <TouchableOpacity style={{ flex: 1}} onPress={() => this.savePicture()}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height:'100%', backgroundColor:'rgba(0,0,0,0.9)'}}>
-          <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0}}}>
-          사진 저장
-          </Text>
-        </View>
-      </TouchableOpacity>
+      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
+        <TouchableOpacity onPress={() => this.savePicture()} style={[styles.analysis,{elevation:5}]}>
+              <Text style={{ fontSize: FONT_BACK_LABEL,color:COLOR.pink500 }}> 
+              분석해드릴까요?
+              </Text>
+        </TouchableOpacity>
+      </View>
       </View>
     );
   }
@@ -111,17 +107,33 @@ class TakeFoodPic extends Component {
       <View style={{position:"absolute",width:width,height:height,top:0,left:0,backgroundColor:'rgba(0,0,0,0.9)',zIndex:0}}/>
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%'}}>
         <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0}}}>
-        사진을 촬영해 주세요.
+        {this.state.pending ? "사진 권한이 필요합니다." : "사진을 촬영해 주세요."}
         </Text>
       </View>
       </ImageBackground>
     );
   }
+
   render() {
     var shouldRenderCamera = false;
     if(this.props.isFocused&&(this.props.navigation.state.routeName == "TakePhotoInbody")){
       shouldRenderCamera = true;
     }
+    const PendingView = () => (
+      this.state.pending ?
+      (<View
+        style={{
+          flex: 1,
+          flexDirection: 'column',
+          backgroundColor: 'black',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start',
+        }}
+      >
+        <Text style={{ fontSize: FONT_BACK_LABEL }}> 카메라 권한 승인이 필요합니다.{"\n"}아래 PHOTO 버튼을 클릭해주세요. </Text>
+      </View>
+      ):null
+    );
     const content = (
       <Container
         title="인바디 사진 찍기!"
@@ -144,20 +156,20 @@ class TakeFoodPic extends Component {
               type={RNCamera.Constants.Type.back}
               flashMode={RNCamera.Constants.FlashMode.off}
               captureAudio={false}
-              autoFocus={false}
-              permissionDialogTitle={'Permission to use camera'}
-              permissionDialogMessage={'We need your permission to use your camera phone'}
+              autoFocus={true}
+              permissionDialogTitle={'카메라 사용권한이 필요합니다.'}
+              permissionDialogMessage={'음식 사진을 찍기 위해 카메라 사용 권한을 허가해 주세요.'}
             >
-              {({ camera, status, recordAudioPermissionStatus }) => {
-                if (status !== 'READY') return <PendingView />;
-                return (
-                  <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
-                    <TouchableOpacity onPress={() => this.takePicture(camera)} style={styles.capture}>
-                      <Text style={{ fontSize: 14 }}> 인바디 찍기! </Text>
-                    </TouchableOpacity>
-                  </View>
-                );
-              }}
+            {({ camera, status, recordAudioPermissionStatus }) => {
+              if (status !== 'READY') return  <PendingView/>
+              return (
+                <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
+                  <TouchableOpacity onPress={() => this.takePicture(camera)} style={styles.capture}>
+                    <Text style={{ fontSize: FONT_BACK_LABEL }}> 인바디 찍기 </Text>
+                  </TouchableOpacity>
+                </View>
+              );
+            }}
             </RNCamera>
           ):null}
           </View>
@@ -215,11 +227,13 @@ class TakeFoodPic extends Component {
                       }
                       inbodyUpCnt += 1;
                       await AsyncStorage.setItem(storKey, inbodyUpCnt.toString());
-                      Alert.alert('사진을 저장했습니다.');
+                      Alert.alert('분석이 끝나면 알림을 보내드릴게요.\n잠시 후에 확인해주세요.');
                       COM.setState({
                         image:null,
                         spinnerVisible:false
                       })
+                      this.props.forceRefreshMain(true);
+                      this.props.navigation.navigate("Main");
                       console.log("TakeInbodyPic.js(responseProc): "+JSON.stringify(res));
                     },
                     responseNotFound: function(res) {
@@ -241,7 +255,7 @@ class TakeFoodPic extends Component {
   }
   takePicture = async function(camera) {
     this.setState({spinnerVisible:true});
-    const options = { quality: 0.5, exif: false, base64: false, fixOrientation: true,
+    const options = { quality: 0.1, exif: false, base64: false, fixOrientation: true,
       //skipProcessing: true 
     };
     const image = await camera.takePictureAsync(options);
@@ -261,7 +275,16 @@ const styles = StyleSheet.create({
   preview: {
     flex: 1,
     justifyContent: 'flex-end',
-    alignItems: 'center',
+    alignItems: 'center'
+  },
+  analysis: {
+    flex: 0,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    padding: 15,
+    paddingHorizontal: 20,
+    alignSelf: 'center',
+    margin: 20,
   },
   capture: {
     flex: 0,

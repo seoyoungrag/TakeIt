@@ -49,7 +49,7 @@ class Container extends Component {
 
     return (
       <View style={{flex:1}}>
-        <View style={{flex:86}}>
+        <View style={{flex:90,backgroundColor:"#fff"}}>
           {toolbarDisplay ? (
             <Toolbar
               leftElement="arrow-back"
@@ -60,7 +60,7 @@ class Container extends Component {
             ):null}
           {this.props.children}
         </View>
-          <View style ={{flex:13}}>
+          <View style ={{flex:9, backgroundColor:"#fff"}}>
           {footer}
           </View>
       </View>

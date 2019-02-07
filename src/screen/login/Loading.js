@@ -200,7 +200,7 @@ class Loading extends React.Component {
       let SNSEmailOrUid = "";
       let pushToken = "";
 
-      await firebase.auth().onAuthStateChanged(user => {
+      await firebase.auth().onAuthStateChanged(async(user) => {
         //console.log("loading.js: firebase auth check start"+Date.now()); //원래 여러번 호출된다고 한다. https://stackoverflow.com/questions/37673616/firebase-android-onauthstatechanged-called-twice
         if (user) {
           //providerID를 가져온다. 페이스북이냐 구글이냐
@@ -222,12 +222,7 @@ class Loading extends React.Component {
           userInfo.userEmail = SNSEmailOrUid;
           userInfo.id = SNSEmailOrUid; //기본은 email, 전화번호로 로그인한 경우에는 providerData의 uid가 입력된다.
           //console.log("loading.js: firebase auth check end");
-        } else {
-          PROPS.setIsFromLogin(false);
-          //PROPS.setIsFromLoading(true);
-          PROPS.navigation.navigate("Login");
-        }
-      });
+        
       var token = await this.checkPushToken();
       //console.log("loading.js: pushToken: " + token);
       //console.log("loading.js: push perm check end");
@@ -347,12 +342,21 @@ class Loading extends React.Component {
               //PROPS.setIsFromLoading(true);
               //PROPS.navigation.navigate("Login");
             }else if(userInfo.userSex == null|| userInfo.userEmail == null|| userInfo.userHeight == null|| userInfo.userWeight == null) {
-              PROPS.setIsFromLogin(false);
-              PROPS.navigation.navigate("Regist");
+              //PROPS.setIsFromLogin(false);
+              //PROPS.navigation.navigate("Regist");
             }
+            PROPS.setIsFromLogin(false);
+            PROPS.navigation.navigate("Regist");
           }
         }
       )
+    } else {
+        //console.log('firebase user null');
+        PROPS.setIsFromLogin(false);
+        //PROPS.setIsFromLoading(true);
+        PROPS.navigation.navigate("Login");
+      }
+    });
     }
     //console.log("loading.js: authProc in Loading.js end");
   }

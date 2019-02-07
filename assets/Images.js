@@ -41,6 +41,7 @@ const Images = {
 
   //Diary
   DiaryMore: require("./img/more.png"),
+  empty: require("./img/empty.png"),
 
   //Graph
   WorkoutLogHealthInfoDetail: require("./img/workoutlog_health_info_detail_back.png"),

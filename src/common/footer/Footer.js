@@ -3,7 +3,8 @@ import {
   View,
   Image,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert, PermissionsAndroid, AsyncStorage
 } from "react-native";
 import Images from "@assets/Images";
 import { connect } from "react-redux";
@@ -11,23 +12,86 @@ import ActionCreator from "@redux-yrseo/actions";
 import { withNavigationFocus } from 'react-navigation';
 import {BoxShadow} from 'react-native-shadow'
 import { COLOR } from 'react-native-material-ui';
+import { AdMobRewarded, AdMobInterstitial } from 'react-native-admob'
+import Moment from "moment";
 const { height, width } = Dimensions.get("window");
 let styles = {
   footerIcon: {
-    height: height * 0.038,
+    height: height * 0.038*0.69,
     resizeMode: "contain"
   },
   footerText: {
-    height: height * 0.019,
+    height: height * 0.019*0.69,
     resizeMode: "contain",
-    marginTop:height * 0.015
+    marginTop:height * 0.015*0.69
   },
-  footerIconContainer: { width:width/5, alignItems: "center",marginTop:height * 0.03, marginBottom: height * 0.03
+  footerIconContainer: { 
+    width:width/5, 
+    alignItems: "center",
+    marginTop:height * 0.03*0.69, 
+    marginBottom: height * 0.03*0.69
 }
 };
 
+async function requestGpsPermission() {
+  var isGranted = false;
+  try {
+    const check = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+    if(!check){
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          'title': 'GPS 권한 필요',
+          'message': '음식 사진의 위치 정보 제공을 위해 필요합니다.'
+        }
+      )
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        isGranted = true;
+        console.log("You can use the ACCESS_FINE_LOCATION")
+      } else {
+        isGranted = false;
+        console.log("ACCESS_FINE_LOCATION permission denied")
+      }
+    }else{
+      isGranted = true;
+    }
+  } catch (err) {
+    console.warn(err)
+  }
+  return isGranted;
+}
+
+async function requestCameraPermission(){
+  var isGranted = false;
+  try {
+    const check = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA);
+    if(!check){
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          'title': '카메라 권한 필요',
+          'message': '음식 사진을 찍기 위해 카메라 권한이 필요합니다.'
+        }
+      )
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        isGranted = true;
+        console.log("You can use the CAMERA")
+      } else {
+        isGranted = false;
+        console.log("CAMERA permission denied")
+      }
+    }else{
+      isGranted = true;
+    }
+  } catch (err) {
+    console.warn(err)
+  }
+  return isGranted;
+}
+
 function mapStateToProps(state) {
   return {
+    TIMESTAMP: state.REDUCER_CONSTANTS.timestamp,
     ACTIVE_BTN : state.REDUCER_CONSTANTS.activeFooterBtn,
     FORCE_REFRESH_MAIN : state.REDUCER_CONSTANTS.forceRefreshMain
   };
@@ -47,20 +111,131 @@ class Footer extends React.Component {
   state = {
     //activeButton: this.props.ACTIVE_BTN
   }
+  componentDidMount(){
+
+    AdMobInterstitial.setTestDevices([AdMobInterstitial.simulatorId]);
+    AdMobInterstitial.setAdUnitID('ca-app-pub-3940256099942544/1033173712');
+
+    AdMobInterstitial.addEventListener('adLoaded',
+      () => console.log('AdMobInterstitial adLoaded')
+    );
+    AdMobInterstitial.addEventListener('adFailedToLoad',
+      (error) => console.warn(error)
+    );
+    AdMobInterstitial.addEventListener('adOpened',
+      () => console.log('AdMobInterstitial => adOpened')
+    );
+    AdMobInterstitial.addEventListener('adClosed',
+      () => {
+        console.log('AdMobInterstitial => adClosed');
+        AdMobInterstitial.requestAd().catch(error => console.warn(error));
+      }
+    );
+    AdMobInterstitial.addEventListener('adLeftApplication',
+      () => console.log('AdMobInterstitial => adLeftApplication')
+    );
+
+    AdMobInterstitial.requestAd().catch(error => console.warn(error));
+    
+    AdMobRewarded.setTestDevices([AdMobRewarded.simulatorId]);
+    AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/5224354917');
+
+
+    AdMobRewarded.addEventListener('adLoaded',
+      () => console.log('AdMobRewarded => adLoaded')
+    );
+    AdMobRewarded.addEventListener('adFailedToLoad',
+      (error) => console.warn(error)
+    );
+    AdMobRewarded.addEventListener('adOpened',
+      () => console.log('AdMobRewarded => adOpened')
+    );
+    AdMobRewarded.addEventListener('videoStarted',
+      () => console.log('AdMobRewarded => videoStarted')
+    );
+    AdMobRewarded.addEventListener('adLeftApplication',
+      () => console.log('AdMobRewarded => adLeftApplication')
+    );
+
+    AdMobRewarded.requestAd().catch(error => console.warn(error));
+  }
+  componentWillUnmount(){
+    AdMobRewarded.removeAllListeners();
+    AdMobInterstitial.removeAllListeners();
+  }
   componentDidUpdate(){
     //this.btnChange();
   }
+  /*
   btnChange = async () =>{
     if(this.props.isFocused&&this.state.activeButton!=this.props.ACTIVE_BTN){
       this.setState({activeButton:this.props.ACTIVE_BTN});
     }
   }
+  */
+  showInterstitial() {
+    AdMobInterstitial.showAd().catch(error => console.warn(error));
+  }
+  addScreenViewCnt = async() => {
+    const storKey = "@"+Moment(new Date()).format('YYMMDD')+"SCREEN";
+    var screenViewCnt = await AsyncStorage.getItem(storKey);
+    screenViewCnt = Number(screenViewCnt);
+    if(screenViewCnt){
+      await AsyncStorage.removeItem(storKey);
+    }else{
+      screenViewCnt = 0;
+    }
+    screenViewCnt += 1;
+    await AsyncStorage.setItem(storKey, screenViewCnt.toString());
+  }
+
+  compareViewCnt = async () => {
+    const storKey = "@"+Moment(new Date()).format('YYMMDD')+"SCREEN";
+    var currentScreenViewCnt = await AsyncStorage.getItem(storKey);
+    currentScreenViewCnt = Number(currentScreenViewCnt);
+    var maxSreenViewCnt = this.props.TIMESTAMP.screenViewCnt?this.props.TIMESTAMP.screenViewCnt: 5;
+    if(currentScreenViewCnt>maxSreenViewCnt){
+      const storKey = "@"+Moment(new Date()).format('YYMMDD')+"SCREEN";
+      var screenViewCnt = await AsyncStorage.getItem(storKey);
+      screenViewCnt = Number(screenViewCnt);
+      if(screenViewCnt){
+        await AsyncStorage.removeItem(storKey);
+      }
+      screenViewCnt = 0;
+      await AsyncStorage.setItem(storKey, screenViewCnt.toString());
+      AdMobInterstitial.showAd().catch(error => console.warn(error));
+    }
+  }
+  
+  compareInbodyTimestamp = async () =>{
+    //1. 인바디 타임 스탬프
+    //1-1. timestamp값이 없으면 입력 
+    //1-1. 혹은 일주일이 지난 값이면 초기화
+    const storKey = "@"+Moment(new Date()).format('YYMMDD')+"INBODYTIMESTAMP";
+    var currentInbodyTimestamp = await AsyncStorage.getItem(storKey);
+    currentInbodyTimestamp = Number(currentInbodyTimestamp);
+    if(!currentInbodyTimestamp || (currentInbodyTimestamp&&Math.abs(currentInbodyTimestamp-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7))){
+      currentInbodyTimestamp = this.props.TIMESTAMP.timestamp;
+      await AsyncStorage.setItem(storKey, currentInbodyTimestamp.toString());
+    }else{
+      //1-2. 값이 일주일이 지나지 않았으면 3번 넘었는지 체크해서 분기
+      const inbodyStorKey = "@"+Moment(new Date()).format('YYMMDD')+"INBODY";
+      var inbodyUpCnt = await AsyncStorage.getItem(inbodyStorKey);
+      inbodyUpCnt = Number(inbodyUpCnt);
+      console.log("FOoter.js:"+inbodyUpCnt);
+      Alert.alert("인바디 촬영은 일주일 간격으로 3번씩만 찍을 수 있어요.", '기준일: '+Moment(currentInbodyTimestamp).format('YYYY-MM-DD').toString()+', 찍은 횟수: '+inbodyUpCnt);
+      if(inbodyUpCnt < 3){
+        this.props.navigation.navigate("TakePhotoInbody");
+      }
+    }
+  }
+
   render() {
     const shadowOpt = {
       width:width,
-      height:height*0.13,
+      height:height*0.13*0.69,
       color:COLOR.grey900,
-      border:2,
+      border:1,
       radius:3,
       opacity:0.1,
       x:0,
@@ -76,16 +251,18 @@ class Footer extends React.Component {
         flexDirection="row"
         alignItems="center"
         justifyContent="center"
-        flex={1}
+        alignSelf="center"
+        flex={0}
       >
       <TouchableOpacity
         underlayColor="rgba(0,0,0,.1)"
-        onPress={() => {
+        onPress={async() => {
           //if(this.props.ACTIVE_BTN!="HOME"){
           if(this.props.navigation.state.routeName!='Main'){
             this.props.forceRefreshMain(true);
           }
           //this.props.setActiveFooterBtn("HOME")
+          await this.compareViewCnt(this.addScreenViewCnt());
           this.props.navigation.navigate("Main")
         }}
         flex={1}
@@ -101,7 +278,75 @@ class Footer extends React.Component {
         underlayColor="rgba(0,0,0,.1)"
         onPress={() => {
           //this.props.setActiveFooterBtn("PHOTO")
-          this.props.navigation.navigate("TakePhotoFood")
+          requestCameraPermission().then(isGranted => {
+            if(!isGranted){
+              Alert.alert('카메라 권한이 없으면 찍먹의 메뉴를 이용할 수 없어요.');
+            }else{
+              requestGpsPermission().then(async(isGrantedGps) => {
+                if(!isGrantedGps){
+                  Alert.alert('GPS 권한이 없으면 찍먹의 메뉴를 이용할 수 없어요.');
+                }else{
+                  const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
+                  var cnt = await AsyncStorage.getItem(storKey);
+                  var maxCnt = this.props.TIMESTAMP.foodupcnt?this.props.TIMESTAMP.foodupcnt: 3;
+                  const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
+                  var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
+                  viewAdCnt = Number(viewAdCnt);
+                  cnt = Number(cnt);
+                  console.log(cnt+"vs"+maxCnt+"+"+viewAdCnt);
+                  if(cnt>=maxCnt+viewAdCnt){
+                    Alert.alert(
+                      '오늘 '+cnt+'번 찍먹하셨네요!',
+                      '일일 찍먹 횟수가 '+maxCnt+'를 초과하면 광고를 봐주셔야 이용하실 수 있어요.',
+                      [
+                        {
+                          text: '취소',
+                          onPress: () => {/*console.log('Cancel Pressed')*/},
+                          style: 'cancel',
+                        },
+                        {text: '광고보기', onPress: async() => {
+                          AdMobRewarded.addEventListener('rewarded',
+                            async(reward) => {
+                              console.log('rewarded;');
+                              const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
+                              var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
+                              viewAdCnt = Number(viewAdCnt);
+                              if(viewAdCnt){
+                                await AsyncStorage.removeItem(viewAdStorKey);
+                              }else{
+                                viewAdCnt = 0;
+                              }
+                              viewAdCnt += 1;
+                              await AsyncStorage.setItem(viewAdStorKey, viewAdCnt.toString());
+                            }
+                          );
+                          AdMobRewarded.addEventListener('adClosed',
+                            async() => {
+                              console.log('adClosed');
+                              const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
+                              var afterViewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
+                              console.log(viewAdCnt+"vs"+afterViewAdCnt);
+                              if(afterViewAdCnt>viewAdCnt){
+                                this.props.navigation.navigate("TakePhotoFood");
+                              }else{
+                                Alert.alert("광고를 끝까지 봐주셔야 해요!");
+                              }
+                              AdMobRewarded.requestAd().catch(error => console.warn(error));
+                            }
+                          );
+                          await AdMobRewarded.showAd().catch(error => console.warn(error));
+                          }
+                        }
+                      ],
+                      {cancelable: false},
+                    )
+                  }else{
+                    this.props.navigation.navigate("TakePhotoFood");
+                  }
+                }
+              });
+            }
+          });
           }}
       >
         <View style={styles.footerIconContainer}>
@@ -113,7 +358,11 @@ class Footer extends React.Component {
         underlayColor="rgba(0,0,0,.1)"
         onPress={() => {
           //this.props.setActiveFooterBtn("INBODY")
-          this.props.navigation.navigate("TakePhotoInbody")
+          if(!requestCameraPermission()){
+            Alert.alert('카메라 권한이 없으면 인바디 촬영 메뉴를 이용할 수 없어요.');
+          }else{
+            this.compareInbodyTimestamp();
+          }
         }}
       >
         <View style={styles.footerIconContainer}>
@@ -124,6 +373,8 @@ class Footer extends React.Component {
       <TouchableOpacity
         underlayColor="rgba(0,0,0,.1)"
         onPress={() => {
+          console.log('diary!!!');
+          this.compareViewCnt().then(viewCnt=>{this.addScreenViewCnt(viewCnt)});
           //this.props.setActiveFooterBtn("DIARY")
           this.props.navigation.navigate("Diary")
         }}
@@ -135,7 +386,8 @@ class Footer extends React.Component {
       </TouchableOpacity>
       <TouchableOpacity
         underlayColor="rgba(255,51,102,.1)"
-        onPress={() => {
+        onPress={async() => {
+          this.compareViewCnt().then(viewCnt=>{this.addScreenViewCnt(viewCnt)});
           //this.props.setActiveFooterBtn("GRAPH")
           this.props.navigation.navigate("Graph")
           }}

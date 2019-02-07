@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import {Dimensions, StyleSheet, Text, View, PixelRatio, TouchableHighlight, Modal} from 'react-native';
+import {Alert, AsyncStorage, Dimensions, StyleSheet, Text, View, PixelRatio, TouchableHighlight, TouchableOpacity, Modal, ScrollView} from 'react-native';
 import DrawerWrapped from "@drawer";
 import { connect } from "react-redux";
 import ActionCreator from "@redux-yrseo/actions";
@@ -10,6 +10,7 @@ import { SectionGrid, FlatGrid } from 'react-native-super-grid';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Octicons from 'react-native-vector-icons/Octicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {BoxShadow} from 'react-native-shadow'
 import { COLOR } from 'react-native-material-ui';
 
@@ -21,11 +22,14 @@ import Moment from "moment";
 import { withNavigationFocus } from 'react-navigation';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Guide from '../guide/Guide'
+import Images from "@assets/Images";
+import { AdMobRewarded } from 'react-native-admob';
 
 const {width, height} = Dimensions.get("window");
 
 function mapStateToProps(state) {
   return {
+    TIMESTAMP: state.REDUCER_CONSTANTS.timestamp,
     USER_INFO: state.REDUCER_USER.user,
     WISE_SAYING: state.REDUCER_EXERCISE.wiseSaying,
     FORCE_REFRESH_MAIN : state.REDUCER_CONSTANTS.forceRefreshMain
@@ -57,14 +61,53 @@ class Main extends Component {
           isEmptyPhotos : false,
           calorie: {},
           spinnerVisible: false,
-          guideYn: "Y"
+          guideYn: "Y",
+          maxCnt : 0,
+          viewAdCnt: 0
         }
     }
     componentDidMount = async() => {
+
+      AdMobRewarded.setTestDevices([AdMobRewarded.simulatorId]);
+      AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/5224354917');
+
+
+      AdMobRewarded.addEventListener('adLoaded',
+        () => console.log('AdMobRewarded => adLoaded')
+      );
+      AdMobRewarded.addEventListener('adFailedToLoad',
+        (error) => console.warn(error)
+      );
+      AdMobRewarded.addEventListener('adOpened',
+        () => console.log('AdMobRewarded => adOpened')
+      );
+      AdMobRewarded.addEventListener('videoStarted',
+        () => console.log('AdMobRewarded => videoStarted')
+      );
+      AdMobRewarded.addEventListener('adLeftApplication',
+        () => console.log('AdMobRewarded => adLeftApplication')
+      );
+
+      AdMobRewarded.requestAd().catch(error => console.warn(error));
       await this.callbackFnc();
+    }
+
+    componentWillUnmount() {
+      AdMobRewarded.removeAllListeners();
     }
     callbackFnc = async() => {
       this.setState({spinnerVisible:true}) 
+
+      const foodStorKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
+      var foodUpCnt = await AsyncStorage.getItem(foodStorKey);
+      foodUpCnt = Number(foodUpCnt);
+      const inbodyStorKey = "@"+Moment(new Date()).format('YYMMDD')+"INBODY";
+      var inbodyUpCnt = await AsyncStorage.getItem(inbodyStorKey);
+      inbodyUpCnt = Number(inbodyUpCnt);
+      const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
+      var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
+      viewAdCnt = Number(viewAdCnt);
+      var maxCnt = this.props.TIMESTAMP.foodupcnt?this.props.TIMESTAMP.foodupcnt: 3;
       const foodList = await this.getFoodDiary();
       const statuses = await this.getMainIntakestatus();
       this.setState({
@@ -73,19 +116,57 @@ class Main extends Component {
             ? foodList
             : [
                 {
-                  firebaseDownloadUrl:"https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-6deb2ab9-8334-42c4-b38f-d889db792e42847907521.jpg?alt=media&token=f85d5f15-0cfb-4abe-ae19-9fd0501422b4",
+                  firebaseDownloadUrl:"",
                   registTime: "촬영한 사진이 없네요."
                 }
               ],
         isEmptyPhotos: !foodList.length > 0 ,
         intakeStatuses: statuses.intakeStats,
         calorie: statuses.calorie,
-        guideYn: this.props.USER_INFO.guideYn
+        guideYn: this.props.USER_INFO.guideYn,
+        maxCnt : maxCnt,
+        viewAdCnt : viewAdCnt,
+        foodUpCnt: foodUpCnt,
+        inbodyUpCnt: inbodyUpCnt
         //spinnerVisible: false
       });
       COM = this;
-      setTimeout(function(){ COM.setState({spinnerVisible:false}) }, 1500);
+      setTimeout(function(){ COM.setState({spinnerVisible:false}) }, 100);
     }
+    viewAd = async() =>{
+      AdMobRewarded.addEventListener('rewarded',
+      async(reward) => {
+        console.log('rewarded;');
+        const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
+        var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
+        viewAdCnt = Number(viewAdCnt);
+        if(viewAdCnt){
+          await AsyncStorage.removeItem(viewAdStorKey);
+        }else{
+          viewAdCnt = 0;
+        }
+        viewAdCnt += 1;
+        await AsyncStorage.setItem(viewAdStorKey, viewAdCnt.toString());
+        this.setState({
+          viewAdCnt:viewAdCnt
+        })
+      }
+    );
+    AdMobRewarded.addEventListener('adClosed',
+      async() => {
+        console.log('adClosed');
+        const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
+        var afterViewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
+        console.log(this.state.viewAdCnt+"vs"+afterViewAdCnt);
+        if(afterViewAdCnt>this.state.viewAdCnt){
+        }else{
+        }
+        AdMobRewarded.requestAd().catch(error => console.warn(error));
+      }
+    );
+    await AdMobRewarded.showAd().catch(error => console.warn(error));
+    }
+
     getMainIntakestatus = async () => {
       var rtn;
       await cFetch(
@@ -120,7 +201,7 @@ class Main extends Component {
           COM.props.forceRefreshMain(false);
           COM.callbackFnc();
         }
-      }, 1000);
+      }, 100);
         const WiseSaying = this.props.WISE_SAYING[ Math.floor(Math.random() * this.props.WISE_SAYING.length) ].text;
         const profileShadowOpt = {
           width: height*0.14,
@@ -132,18 +213,18 @@ class Main extends Component {
           x:1,
           y:1
         }
-        const YourImage = this.props.USER_INFO.userSnsPhoto ?(
+        const YourImage = (
           <BoxShadow setting={profileShadowOpt}>
             <FastImage
               style={styles.avatarTempImage}
               source={{
-                uri: this.props.USER_INFO.userSnsPhoto,
+                uri: (this.props.USER_INFO.userSnsPhoto&&this.props.USER_INFO.userSnsPhoto.length>0)? this.props.USER_INFO.userSnsPhoto : "http://nhac.cdnvn.com/content/biblcross.jpg",
                 priority: FastImage.priority.normal,
               }}
               resizeMode={FastImage.resizeMode.center}
             />
           </BoxShadow>
-        ):null;
+        );
         const shadowOpt = {
           width:width/2.1 *(this.state.isEmptyPhotos? 2:1),
           height:width/2 *(this.state.isEmptyPhotos? 2:1),
@@ -186,6 +267,47 @@ class Main extends Component {
               }/>
             </Modal>
             <View style={styles.container}>
+              <View style={{flex:5, flexDirection:"row", padding:10, borderBottomColor:COLOR.grey900, borderBottomWidth:0.5}}>
+
+                <View style={[styles.seeAdBtn,{ flex: 1, flexDirection: 'row', justifyContent: 'flex-start', alignSelf:"center",borderWidth:0 }]}>
+                  <Text style={{color:COLOR.pink500, fontSize:FONT_BACK_LABEL*0.9}}>
+                  <MaterialCommunityIcons 
+                      name="ticket" 
+                      color={COLOR.pink500} 
+                      size={FONT_BACK_LABEL*0.9}/>
+                      &nbsp;
+                      찍먹티켓
+                    <Text>
+                      &nbsp;&nbsp;{this.state.maxCnt-this.state.foodUpCnt<0 ? 0 : this.state.maxCnt-this.state.foodUpCnt || 0}
+                    </Text>
+                    <Text>
+                      {/*일일임계횟수에서 차감한 후에, 광고보기 횟수에서 차감한다,
+                      1. 차감횟수가 일일횟수보다 큰 경우, 광고보기 횟수에서 차감횟수-일일임계횟수를 빼야한다.
+                      1-1. 0보다 작을 수 있을까? 없다.
+                      2. 차감횟수가 일일횟수보다 작 은경우, 광고보기 횟수는 변함 없다.*/ }
+                      &nbsp;+
+                        {
+                        this.state.maxCnt-this.state.foodUpCnt<0?
+                        this.state.viewAdCnt-(this.state.foodUpCnt-this.state.maxCnt) || 0 : this.state.viewAdCnt
+                        }
+                    </Text>
+                  </Text>                
+                </View>
+
+                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignSelf:"center" }}>
+                  <TouchableOpacity onPress={() => this.viewAd()} style={[styles.seeAdBtn,{/*elevation:5*/}]}>
+                  <Text style={{color:COLOR.pink500, fontSize:FONT_BACK_LABEL*0.9}}>
+                    <MaterialCommunityIcons 
+                      name="television-classic" 
+                      color={COLOR.pink500} 
+                      size={FONT_BACK_LABEL*0.9}/>
+                      &nbsp;
+                      광고보고 충전하기
+                  </Text>
+                  </TouchableOpacity>
+                </View>
+
+              </View>
 
               <View
                 style={styles.headerView}>
@@ -213,6 +335,8 @@ class Main extends Component {
 
                 </View>
 
+              </View>
+
               <View style={styles.statusView}>
                 <FlatGrid
                   itemDimension={width/2.1}
@@ -224,7 +348,7 @@ class Main extends Component {
                     <View style={[styles.statusContainer, { /* backgroundColor: 'rgba(255,0,0,'+item.guage+')'*/}]}>
                       <View flexDirection="row" width={width/2-width*0.1}>
                         <View style={{flex:1, alignItems:"flex-start"}}>
-                          <Text style={[styles.itemName,{color:"black"}]}>{item.name}</Text>
+                          <Text style={[styles.itemName,{color:COLOR.grey800}]}>{item.name}</Text>
                         </View>
                         <View style={{flex:1, alignItems:"flex-end"}}>
                           <Text style={[styles.itemCode,{color:"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",1)"}]}>{item.stat}g
@@ -236,7 +360,7 @@ class Main extends Component {
                         height={height*0.005}
                         value={100*item.guage}
                         backgroundColor={"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",1)"}
-                        borderColor={"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",1)"}
+                        borderColor={"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",0.1)"}
                       />
                     </View>
                   )}
@@ -247,6 +371,7 @@ class Main extends Component {
               </View>
 
               <View style={styles.foodList}>
+              <ScrollView contentContainerStyle={[styles.foodListScroll]}>
                 <SectionGrid
                   itemDimension={width/2.1 *(this.state.isEmptyPhotos? 2:1)}
                   fixed
@@ -260,28 +385,60 @@ class Main extends Component {
                   style={styles.gridView}
                   renderItem={({ item, section, index }) => (
 
-                    <TouchableHighlight onPress={()=>{this.props.navigation.navigate("Food", {
-                      food: item
-                    })}}>
+                    <TouchableHighlight onPress={()=>
+                      {this.state.isEmptyPhotos?
+                        null:
+                        this.props.navigation.navigate("Food", {
+                          food: item
+                          })
+                        }}>
                     <BoxShadow setting={shadowOpt}>
                     <View style={{height:width/2*(this.state.isEmptyPhotos? 2:1)}}>
-                      <View style={{position:"absolute", height:"100%",width:"100%",zIndex:1,alignItems:"center",justifyContent:"center"}}>
-                        <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0},textAlign:"center",textAlignVertical:"center"}}>
-                        <Ionicons
-                          name="ios-clock"
-                          color="#ffffff"
-                          size={FONT_BACK_LABEL*1.2}
-                          borderWidth={0}/>
-                          &nbsp;
-                        {item.registTime}
-                        </Text>
+                      <View style={{
+                        position:"absolute", 
+                        height:"100%",width:"100%",
+                        zIndex:1,
+                        alignItems:"center",
+                        justifyContent:"center",
+                        flexDirection:"row"
+                        }}>
+                        {item.firebaseDownloadUrl !="" ? 
+                        (<Text style={{
+                            color:"white",
+                            fontSize:FONT_BACK_LABEL*1.2,
+                            textShadowRadius:10,
+                            textShadowColor:'#000000',
+                            textShadowOffset:{width:0, height:0},
+                            textAlign:"center",
+                            textAlignVertical:"center"
+                            }}>&nbsp;
+                            <Ionicons
+                              name="ios-clock"
+                              color={"#ffffff"}
+                              size={FONT_BACK_LABEL*2}
+                              borderWidth={0}/>
+                              &nbsp;
+                          </Text>
+                        ):null}
+                          {item.firebaseDownloadUrl !="" ? 
+                          (<Text style={{
+                            color:"white",
+                            fontSize:FONT_BACK_LABEL*1.2,
+                            textShadowRadius:10,
+                            textShadowColor:'#000000',
+                            textShadowOffset:{width:0, height:0},
+                            textAlign:"center",
+                            textAlignVertical:"center"}}>
+                            {item.registTime.substring(0,10)}{"\n"}{item.registTime.substring(10,19)} 
+                          </Text> ) 
+                          : null}
                       </View>
                       <FastImage
                         style={{height:width/2*(this.state.isEmptyPhotos? 2:1)}}
-                        source={{
+                        source={item.firebaseDownloadUrl !="" ?{
                           uri: item.firebaseDownloadUrl,
                           priority: FastImage.priority.normal,
-                        }}
+                        }: Images.empty}
                         resizeMode={FastImage.resizeMode.cover}
                       />
                     </View>
@@ -292,9 +449,9 @@ class Main extends Component {
                     <Text style={styles.sectionHeader}><Octicons name="calendar" color="#000000" size={FONT_BACK_LABEL}/>&nbsp;&nbsp;{section.title}</Text>
                   )}
                 />
+              </ScrollView>
               </View>
-
-            </View>
+            
             {/*
             <TouchableOpacity
               onPress={() => { Alert.alert(
@@ -345,36 +502,42 @@ class Main extends Component {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      position:'absolute',
-      top:0,
-      left:0,
       width: width
     },
     headerView: {
-      height: height*0.15,
-      paddingTop:10,
-      paddingBottom:10
+      flex:16,
+      paddingTop:20,
+      paddingBottom:20,
+      //backgroundColor: "blue"
     },
      avatarTempImage: {
-      height: height*0.14,
-      width: height*0.14,
-      borderRadius: height*0.2
+      height: "100%",
+      width: "100%",
+      borderRadius: 10000
     },
     statusView:{
-      height: height*0.10,
+      flex: 14,
       backgroundColor: "#FAFAFA"
     },
     foodList: {
-      backgroundColor:"#F4F2F3",
-      height: height*0.58
-    },profileUserEmail: {
+      backgroundColor:"#F8F4F6",
+      flex: 65
+    },
+    foodListScroll: {
+      height: "100%",
+      backgroundColor:"#F8F4F6",
+      flexGrow: 1,
+      justifyContent: 'space-between'
+    },
+    profileUserEmail: {
       fontSize: FONT_BACK_LABEL*1.2,
       color:"rgba(0,0,0,1)"
-    }, profileWiseSaying: {
+    }, 
+    profileWiseSaying: {
       fontSize: FONT_BACK_LABEL*0.8
     },
     gridView: {
-      flex: 1,
+      flex: 0,
     },
     statusContainer: {
       justifyContent: 'center',
@@ -398,9 +561,16 @@ const styles = StyleSheet.create({
       fontWeight: '600',
       alignItems: 'center',
       justifyContent:'flex-end',
-      color: 'black',
+      color: COLOR.grey800,
       padding: 10,
-      paddingBottom: 0
+      paddingBottom: 15
+    }, 
+    seeAdBtn: {
+      flex: 0,
+      alignSelf: 'center',
+      padding:5,
+      borderColor:COLOR.pink500,
+      borderWidth:1
     }
   });
 
