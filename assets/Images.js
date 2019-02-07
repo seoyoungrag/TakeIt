@@ -39,7 +39,18 @@ const Images = {
   guide4: require("./img/guide/guide4.png"),
   guide5: require("./img/guide/guide5.png"),
 
-  DiaryMore: require("./img/more.png")
+  //Diary
+  DiaryMore: require("./img/more.png"),
+
+  //Graph
+  WorkoutLogHealthInfoDetail: require("./img/workoutlog_health_info_detail_back.png"),
+  WorkoutLogAnalysis: require("./img/workoutlog_analysis_back.png"),
+  WorkoutLogHealthInfoDetailTitle: require("./img/workoutlog_health_info_detail_back_title.png"),
+  WorkoutLogHealthInfoDetailRow: require("./img/workoutlog_health_info_detail_back_row.png"),
+  WorkoutLogHealthInfoGraphMain: require("./img/workoutlog_health_info_graph_main.png"),
+  WorkoutLogHealthInfoGraphSubLeft: require("./img/workoutlog_health_info_graph_sub_left.png"),
+  WorkoutLogHealthInfoGraphSubRight: require("./img/workoutlog_health_info_graph_sub_right.png"),
+  WorkoutLogHealthInfoGraphBack: require("./img/workoutlog_health_info_graph_back.png")
 }
 
 export default Images;

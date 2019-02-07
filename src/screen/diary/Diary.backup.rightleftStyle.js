@@ -53,7 +53,7 @@ class Diary extends React.Component {
       startDate: new Date(Date.now() + -7* 24 * 3600 * 1000),
       endDate: new Date(Date.now() + 0 * 24 * 3600 * 1000),
       selectedDate: this.props.endDateForDiary,
-      calendarVisible: false,
+      visible: false,
       range: {'startDate' : new Date(Date.now() + -7* 24 * 3600 * 1000),  'endDate':
         new Date(Date.now() + 0 * 24 * 3600 * 1000)},
       resultData : [],
@@ -66,10 +66,10 @@ class Diary extends React.Component {
     this.setStateRange = this.setStateRange.bind(this);
   }
   openCalendar() {
-    this.setState({ calendarVisible: true });
+    this.setState({ visible: true });
   }
   closeCalendar() {
-    this.setState({ calendarVisible: false });
+    this.setState({ visible: false });
   }
 
 
@@ -77,7 +77,7 @@ class Diary extends React.Component {
   // getFoodPhotoList() => {
   getFoodPhotoList() {
     const COM = this;
-    COM.setState({ calendarVisible: false });
+    COM.setState({ visible: false });
     let startDate = COM.state.range.startDate;
     let endDate =  COM.state.range.endDate;
 
@@ -165,7 +165,7 @@ class Diary extends React.Component {
             // dialogTitle={<DialogTitle title="날짜선택" />}
             // height={(height * 2) / 5}
             height={height}
-            visible={this.state.calendarVisible}
+            visible={this.state.visible}
             containerStyle={{
               // justifyContent: 'flex-start',
               zIndex: 1010,
