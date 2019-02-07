@@ -13,12 +13,11 @@ import ActionCreator from "@redux-yrseo/actions";
 import { withNavigationFocus } from 'react-navigation';
 import {BoxShadow} from 'react-native-shadow'
 import { COLOR } from 'react-native-material-ui';
-//import { AdMobRewarded, AdMobInterstitial } from 'react-native-admob'
 import firebase from 'react-native-firebase';
 import Moment from "moment";
 
 const AdMobRewarded = firebase.admob().rewarded('ca-app-pub-3705279151918090/3468709592');
-//const AdMobInterstitial = firebase.admob().rewarded('ca-app-pub-3705279151918090/4058315659');
+const AdMobInterstitial = firebase.admob().interstitial('ca-app-pub-3705279151918090/4058315659');
 const AdRequest = firebase.admob.AdRequest;
 const request = new AdRequest();
 
@@ -157,80 +156,45 @@ class Footer extends React.Component {
     //activeButton: this.props.ACTIVE_BTN
   }
   componentDidMount(){
-    /*
-    AdMobInterstitial.setTestDevices([AdMobInterstitial.simulatorId]);
-    AdMobInterstitial.setAdUnitID('ca-app-pub-3940256099942544/1033173712');
-
-    AdMobInterstitial.addEventListener('adLoaded',
+    AdMobInterstitial.loadAd(request.build());
+    AdMobInterstitial.on('onAdLoaded',
       () => console.log('AdMobInterstitial adLoaded')
     );
-    AdMobInterstitial.addEventListener('adFailedToLoad',
+    AdMobInterstitial.on('onAdFailedToLoad',
       (error) => console.warn(error)
     );
-    AdMobInterstitial.addEventListener('adOpened',
+    AdMobInterstitial.on('onAdOpened',
       () => console.log('AdMobInterstitial => adOpened')
     );
-    AdMobInterstitial.addEventListener('adClosed',
+    AdMobInterstitial.on('onAdClosed',
       () => {
         console.log('AdMobInterstitial => adClosed');
-        AdMobInterstitial.requestAd().catch(error => console.warn(error));
       }
     );
-    AdMobInterstitial.addEventListener('adLeftApplication',
+    AdMobInterstitial.on('onAdLeftApplication',
       () => console.log('AdMobInterstitial => adLeftApplication')
     );
 
-    AdMobInterstitial.requestAd().catch(error => console.warn(error));
-    */
-
-    //AdMobRewarded.setTestDevices([AdMobRewarded.simulatorId]);
-    //AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/5224354917');
-
-
     AdMobRewarded.loadAd(request.build());
-    AdMobRewarded.on('adLoaded',
+    AdMobRewarded.on('onAdLoaded',
       () => console.log('AdMobRewarded => adLoaded')
     );
-    AdMobRewarded.on('adFailedToLoad',
+    AdMobRewarded.on('onAdFailedToLoad',
       (error) => console.warn(error)
     );
-    AdMobRewarded.on('adOpened',
+    AdMobRewarded.on('onAdOpened',
       () => console.log('AdMobRewarded => adOpened')
     );
-    AdMobRewarded.on('videoStarted',
+    AdMobRewarded.on('onRewardedVideoStarted',
       () => console.log('AdMobRewarded => videoStarted')
     );
-    AdMobRewarded.on('adLeftApplication',
+    AdMobRewarded.on('onAdLeftApplication',
       () => console.log('AdMobRewarded => adLeftApplication')
     );
-
-    /*
-    AdMobRewarded.setTestDevices([AdMobRewarded.simulatorId]);
-    AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/5224354917');
-
-
-    AdMobRewarded.addEventListener('adLoaded',
-      () => console.log('AdMobRewarded => adLoaded')
-    );
-    AdMobRewarded.addEventListener('adFailedToLoad',
-      (error) => console.warn(error)
-    );
-    AdMobRewarded.addEventListener('adOpened',
-      () => console.log('AdMobRewarded => adOpened')
-    );
-    AdMobRewarded.addEventListener('videoStarted',
-      () => console.log('AdMobRewarded => videoStarted')
-    );
-    AdMobRewarded.addEventListener('adLeftApplication',
-      () => console.log('AdMobRewarded => adLeftApplication')
-    );
-
-    AdMobRewarded.requestAd().catch(error => console.warn(error));
-    */
   }
   componentWillUnmount(){
-    AdMobRewarded.removeAllListeners();
-    AdMobInterstitial.removeAllListeners();
+    //AdMobRewarded.removeAllListeners();
+    //AdMobInterstitial.removeAllListeners();
   }
   componentDidUpdate(){
     //this.btnChange();
@@ -243,33 +207,7 @@ class Footer extends React.Component {
   }
   */
   showInterstitial() {
-    AdMobInterstitial.showAd().catch(error => {
-      console.warn(error)
-      console.warn('AdMobInterstitial reload');
-      AdMobInterstitial.setTestDevices([AdMobInterstitial.simulatorId]);
-      AdMobInterstitial.setAdUnitID('ca-app-pub-3940256099942544/1033173712');
-
-      AdMobInterstitial.addEventListener('adLoaded',
-        () => console.log('AdMobInterstitial adLoaded')
-      );
-      AdMobInterstitial.addEventListener('adFailedToLoad',
-        (error) => console.warn(error)
-      );
-      AdMobInterstitial.addEventListener('adOpened',
-        () => console.log('AdMobInterstitial => adOpened')
-      );
-      AdMobInterstitial.addEventListener('adClosed',
-        () => {
-          console.log('AdMobInterstitial => adClosed');
-          AdMobInterstitial.requestAd().catch(error => console.warn(error));
-        }
-      );
-      AdMobInterstitial.addEventListener('adLeftApplication',
-        () => console.log('AdMobInterstitial => adLeftApplication')
-      );
-
-      AdMobInterstitial.requestAd().catch(error => console.warn(error));
-    });
+    AdMobInterstitial.show();
   }
   addScreenViewCnt = async() => {
     const storKey = "@"+Moment(new Date()).format('YYMMDD')+"SCREEN";
@@ -289,6 +227,7 @@ class Footer extends React.Component {
     var currentScreenViewCnt = await AsyncStorage.getItem(storKey);
     currentScreenViewCnt = Number(currentScreenViewCnt);
     var maxSreenViewCnt = this.props.TIMESTAMP.screenViewCnt?this.props.TIMESTAMP.screenViewCnt: 5;
+    console.log(currentScreenViewCnt+"vs"+maxSreenViewCnt);
     if(currentScreenViewCnt>maxSreenViewCnt){
       const storKey = "@"+Moment(new Date()).format('YYMMDD')+"SCREEN";
       var screenViewCnt = await AsyncStorage.getItem(storKey);
@@ -298,7 +237,12 @@ class Footer extends React.Component {
       }
       screenViewCnt = 0;
       await AsyncStorage.setItem(storKey, screenViewCnt.toString());
-      AdMobInterstitial.showAd().catch(error => console.warn(error));
+      if (AdMobInterstitial.isLoaded()) {
+        AdMobInterstitial.show();
+      } else {
+        await AdMobInterstitial.loadAd(request.build());
+        AdMobInterstitial.show();
+      }
     }
   }
   
@@ -400,7 +344,7 @@ class Footer extends React.Component {
                           style: 'cancel',
                         },
                         {text: '광고보기', onPress: async() => {
-                          AdMobRewarded.addEventListener('rewarded',
+                          AdMobRewarded.on('onRewarded',
                             async(reward) => {
                               console.log('rewarded;');
                               const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
@@ -415,7 +359,7 @@ class Footer extends React.Component {
                               await AsyncStorage.setItem(viewAdStorKey, viewAdCnt.toString());
                             }
                           );
-                          AdMobRewarded.addEventListener('adClosed',
+                          AdMobRewarded.on('onAdClosed',
                             async() => {
                               console.log('adClosed');
                               const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
@@ -426,14 +370,14 @@ class Footer extends React.Component {
                               }else{
                                 Alert.alert("광고를 끝까지 봐주셔야 해요!");
                               }
-                              AdMobRewarded.requestAd().catch(error => console.warn(error));
+                              AdMobRewarded.loadAd(request.build());
                             }
                           );
-                          //await AdMobRewarded.showAd().catch(error => console.warn(error));
                           if (AdMobRewarded.isLoaded()) {
-                            await AdMobRewarded.show().catch(error => console.warn(error));;
-                          }else{
-                            console.log('ad not loaded');
+                            AdMobRewarded.show();
+                          } else {
+                            await AdMobRewarded.loadAd(request.build());
+                            AdMobRewarded.show();
                           }
                           }
                         }

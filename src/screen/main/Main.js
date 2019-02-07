@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import {Alert, AsyncStorage, Dimensions, StyleSheet, Text, View, PixelRatio, TouchableHighlight, TouchableOpacity, Modal, ScrollView} from 'react-native';
+import {AsyncStorage, Dimensions, StyleSheet, Text, View, PixelRatio, TouchableHighlight, TouchableOpacity, Modal, ScrollView} from 'react-native';
 import DrawerWrapped from "@drawer";
 import { connect } from "react-redux";
 import ActionCreator from "@redux-yrseo/actions";
@@ -23,7 +23,6 @@ import { withNavigationFocus } from 'react-navigation';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Guide from '../guide/Guide'
 import Images from "@assets/Images";
-//import { AdMobRewarded } from 'react-native-admob';
 import firebase from 'react-native-firebase';
 
 const {width, height} = Dimensions.get("window");
@@ -73,9 +72,6 @@ class Main extends Component {
     }
     componentDidMount = async() => {
 
-      //AdMobRewarded.setTestDevices([AdMobRewarded.simulatorId]);
-      //AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/5224354917');
-
       AdMobRewarded.loadAd(request.build());
       AdMobRewarded.on('onAdLoaded',
         () => console.log('AdMobRewarded => adLoaded')
@@ -92,26 +88,6 @@ class Main extends Component {
       AdMobRewarded.on('onAdLeftApplication',
         () => console.log('AdMobRewarded => adLeftApplication')
       );
-  
-      /*
-      AdMobRewarded.addEventListener('adLoaded',
-        () => console.log('AdMobRewarded => adLoaded')
-      );
-      AdMobRewarded.addEventListener('adFailedToLoad',
-        (error) => console.warn(error)
-      );
-      AdMobRewarded.addEventListener('adOpened',
-        () => console.log('AdMobRewarded => adOpened')
-      );
-      AdMobRewarded.addEventListener('videoStarted',
-        () => console.log('AdMobRewarded => videoStarted')
-      );
-      AdMobRewarded.addEventListener('adLeftApplication',
-        () => console.log('AdMobRewarded => adLeftApplication')
-      );
-
-      AdMobRewarded.requestAd().catch(error => console.warn(error));
-      */
       await this.callbackFnc();
     }
 
@@ -159,47 +135,41 @@ class Main extends Component {
     viewAd = async() =>{
       AdMobRewarded.on('onRewarded',
       async(reward) => {
-        console.log('rewarded;');
-        const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
-        var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
-        viewAdCnt = Number(viewAdCnt);
-        if(viewAdCnt){
-          await AsyncStorage.removeItem(viewAdStorKey);
-        }else{
-          viewAdCnt = 0;
+          console.log('rewarded;');
+          const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
+          var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
+          viewAdCnt = Number(viewAdCnt);
+          if(viewAdCnt){
+            await AsyncStorage.removeItem(viewAdStorKey);
+          }else{
+            viewAdCnt = 0;
+          }
+          viewAdCnt += 1;
+          await AsyncStorage.setItem(viewAdStorKey, viewAdCnt.toString());
+          this.setState({
+            viewAdCnt:viewAdCnt
+          })
         }
-        viewAdCnt += 1;
-        await AsyncStorage.setItem(viewAdStorKey, viewAdCnt.toString());
-        this.setState({
-          viewAdCnt:viewAdCnt
-        })
-      }
-    );
-    AdMobRewarded.on('onAdClosed',
-      async() => {
-        console.log('adClosed');
-        const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
-        var afterViewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
-        console.log(this.state.viewAdCnt+"vs"+afterViewAdCnt);
-        if(afterViewAdCnt>this.state.viewAdCnt){
-        }else{
+      );
+      AdMobRewarded.on('onAdClosed',
+        async() => {
+          console.log('adClosed');
+          const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
+          var afterViewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
+          console.log(this.state.viewAdCnt+"vs"+afterViewAdCnt);
+          if(afterViewAdCnt>this.state.viewAdCnt){
+          }else{
+          }
+          AdMobRewarded.loadAd(request.build());
         }
-        AdMobRewarded.loadAd(request.build());
-        //AdMobRewarded.requestAd().catch(error => console.warn(error));
-      }
-    );
-    
-    if (AdMobRewarded.isLoaded()) {
-      AdMobRewarded.show();
-    } else {
-      await AdMobRewarded.loadAd(request.build());
-      AdMobRewarded.show();
-    }
-    /*
-    AdMobRewarded.showAd().catch(async(error) => {
+      );
       
-    });
-    */
+      if (AdMobRewarded.isLoaded()) {
+        AdMobRewarded.show();
+      } else {
+        await AdMobRewarded.loadAd(request.build());
+        AdMobRewarded.show();
+      }
     }
 
     getMainIntakestatus = async () => {
