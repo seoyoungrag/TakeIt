@@ -93,6 +93,8 @@ class Main extends Component {
 
     componentWillUnmount() {
       //AdMobRewarded.removeAllListeners();
+      this.notificationDisplayedListener();
+      this.notificationListener();
     }
     callbackFnc = async() => {
       this.setState({spinnerVisible:true}) 

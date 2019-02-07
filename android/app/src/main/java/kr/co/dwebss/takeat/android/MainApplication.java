@@ -16,6 +16,9 @@ import io.invertase.firebase.auth.RNFirebaseAuthPackage; // <-- firebase auth �
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage; // <-- firebase message 관련 추가
 import io.invertase.firebase.storage.RNFirebaseStoragePackage; // <-- firebase storage 관련 추가
 import io.invertase.firebase.admob.RNFirebaseAdMobPackage; // <-- admob 제거하고 firebase admob 추가
+//import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;  // <--- react native noti 추가
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage; // <-- firebase notification 관련 추가
+
 
 
 import com.facebook.react.ReactNativeHost;
@@ -58,6 +61,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNFirebaseNotificationsPackage(), //<-- fireabse notification 추가
+            //new ReactNativePushNotificationPackage(), // <---- react native noti 추가
             new RNFirebaseAdMobPackage(), // <-- admob 제거하고 firebase admob 추가
             new RNCameraPackage(),
             new SvgPackage(),
