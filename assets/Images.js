@@ -52,7 +52,9 @@ const Images = {
   WorkoutLogHealthInfoGraphMain: require("./img/workoutlog_health_info_graph_main.png"),
   WorkoutLogHealthInfoGraphSubLeft: require("./img/workoutlog_health_info_graph_sub_left.png"),
   WorkoutLogHealthInfoGraphSubRight: require("./img/workoutlog_health_info_graph_sub_right.png"),
-  WorkoutLogHealthInfoGraphBack: require("./img/workoutlog_health_info_graph_back.png")
+  WorkoutLogHealthInfoGraphBack: require("./img/workoutlog_health_info_graph_back.png"),
+  graphIcon: require("./img/graph/graph_icon_4.png"),
+  analsysIcon: require("./img/graph/graph_icon_5.png")
 }
 
 export default Images;

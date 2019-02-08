@@ -9,6 +9,10 @@ const APIS = {
     //url: "posts",
     method: 'GET',
   },
+  GET_USER_INBODY_INFO: {
+    url: '/inbody/info/',
+    method: 'GET',
+  },
   GET_CODE: {
     url: '/code',
     method: 'GET',
