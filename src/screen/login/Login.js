@@ -18,7 +18,7 @@ import { withNavigationFocus } from 'react-navigation';
 
 GoogleSignin.configure({
   webClientId:
-    '1054963004334-2dtvq3rdi93u85er7gnh12v9vt2j3jl3.apps.googleusercontent.com',
+    '850330784808-63uerqkqf44m25c84ard50adamjsmqu4.apps.googleusercontent.com',
 });
 
 function isEmpty(obj) {

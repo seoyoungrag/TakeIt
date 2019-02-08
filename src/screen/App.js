@@ -1,3 +1,8 @@
+/**
+ * 
+ * @format
+ * @flow
+ */
 import React from 'react';
 
 import { NativeModules, StatusBar, View } from 'react-native';
@@ -9,6 +14,8 @@ import MainTabNavigator from '@common/Routes';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import reducers from '@redux-yrseo/reducers';
+import firebase from 'react-native-firebase';
+import type { Notification, NotificationOpen } from 'react-native-firebase';
 
 const UIManager = NativeModules.UIManager;
 
@@ -66,6 +73,14 @@ const uiTheme = {
     },
   },
 };
+/*
+const channel = new firebase.notifications.Android.Channel(
+  "TAKEAT",
+  "찍먹",
+  firebase.notifications.Android.Importance.Max
+).setDescription("notification channel of TAKEAT");
+firebase.notifications().android.createChannel(channel);
+*/
 class App extends React.Component {
   static configureScene(route) {
     return route.animationType || Navigator.SceneConfigs.FloatFromRight;
@@ -77,10 +92,90 @@ class App extends React.Component {
       </Container>
     );
   }
+  componentDidMount = async() => {
+    firebase.messaging().hasPermission()
+    .then(enabled => {
+      if (enabled) {
+        console.log('User enabled authorised firebase.messaging');
+      } else {
+        firebase.messaging().requestPermission()
+        .then(() => {
+          console.log('User has authorised firebase.messaging');
+        })
+        .catch(error => {
+          console.log('User has rejected permissions firebase.messaging');
+          console.log(error);
+        });
+      } 
+    });
+    const notificationOpen: NotificationOpen = await firebase.notifications().getInitialNotification();
+    if (notificationOpen) {
+        const action = notificationOpen.action;
+        const notification: Notification = notificationOpen.notification;
+        var seen = [];
+        /*
+        alert(JSON.stringify(notification.data, function(key, val) {
+            if (val != null && typeof val == "object") {
+                if (seen.indexOf(val) >= 0) {
+                    return;
+                }
+                seen.push(val);
+            }
+            return val;
+        }));
+        */
+       this.navigation.navigate("Main")
+    } 
+    const channel = new firebase.notifications.Android.Channel('takeat-channel', 'Takeat Channel', firebase.notifications.Android.Importance.Max)
+            .setDescription('My apps test channel');
+// Create the channel
+    firebase.notifications().android.createChannel(channel);
+    this.notificationDisplayedListener = firebase.notifications().onNotificationDisplayed((notification: Notification) => {
+        // Process your notification as required
+        // ANDROID: Remote notifications do not contain the channel ID. You will have to specify this manually if you'd like to re-display the notification.
+    });
+    this.notificationListener = firebase.notifications().onNotification((notification: Notification) => {
+      // Process your notification as required
+      notification
+        .android.setChannelId('test-channel')
+        .android.setSmallIcon('ic_launcher')
+        .android.setPriority(firebase.notifications.Android.Priority.Max)
+        .setSound('default')
+      firebase.notifications()
+        .displayNotification(notification)
+        
+    });
+    this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen: NotificationOpen) => {
+        // Get the action triggered by the notification being opened
+        const action = notificationOpen.action;
+        // Get information about the notification that was opened
+        const notification: Notification = notificationOpen.notification;
+        var seen = [];
+        /*
+        alert(JSON.stringify(notification.data, function(key, val) {
+            if (val != null && typeof val == "object") {
+                if (seen.indexOf(val) >= 0) {
+                    return;
+                }
+                seen.push(val);
+            }
+            return val;
+        }));
+        */
+        this.navigation.navigate("Main")
+        firebase.notifications().removeDeliveredNotification(notification.notificationId);
+        
+    });
+  }
   componentWillMount() {
     if (UIManager.setLayoutAnimationEnabledExperimental) {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
+  }
+  componentWillUnmount(){
+    this.notificationDisplayedListener();
+    this.notificationListener();
+    this.notificationOpenedListener();
   }
   render() {
     return (
