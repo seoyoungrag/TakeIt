@@ -394,7 +394,7 @@ class Footer extends React.Component {
           }}
       >
         <View style={styles.footerIconContainer}>
-          <Image style={styles.footerIcon} source={this.props.navigation.state.routeName=='TakePhotoFood' ? Images.Footer_img_btn_active_home:Images.Footer_img_btn_photo} />
+          <Image style={styles.footerIcon} source={this.props.navigation.state.routeName=='TakePhotoFood' ? Images.Footer_img_btn_active_photo:Images.Footer_img_btn_photo} />
           <Image style={styles.footerText} source={this.props.navigation.state.routeName=='TakePhotoFood' ? Images.Footer_txt_btn_active_photo:Images.Footer_txt_btn_photo} />
         </View>
       </TouchableOpacity>
@@ -410,7 +410,7 @@ class Footer extends React.Component {
         }}
       >
         <View style={styles.footerIconContainer}>
-          <Image style={styles.footerIcon} source={this.props.navigation.state.routeName=='TakePhotoInbody' ? Images.Footer_img_btn_active_home:Images.Footer_img_btn_inbody} />
+          <Image style={styles.footerIcon} source={this.props.navigation.state.routeName=='TakePhotoInbody' ? Images.Footer_img_btn_active_inbody:Images.Footer_img_btn_inbody} />
           <Image style={styles.footerText} source={this.props.navigation.state.routeName=='TakePhotoInbody' ? Images.Footer_txt_btn_active_inbody:Images.Footer_txt_btn_inbody} />
         </View>
       </TouchableOpacity>
@@ -424,7 +424,7 @@ class Footer extends React.Component {
         }}
       >
         <View style={styles.footerIconContainer}>
-          <Image style={styles.footerIcon} source={this.props.navigation.state.routeName=='Diary' ? Images.Footer_img_btn_active_home:Images.Footer_img_btn_diary} />
+          <Image style={styles.footerIcon} source={this.props.navigation.state.routeName=='Diary' ? Images.Footer_img_btn_active_diary:Images.Footer_img_btn_diary} />
           <Image style={styles.footerText} source={this.props.navigation.state.routeName=='Diary' ? Images.Footer_txt_btn_active_diary:Images.Footer_txt_btn_diary} />
         </View>
       </TouchableOpacity>
@@ -437,7 +437,7 @@ class Footer extends React.Component {
           }}
       >
         <View style={styles.footerIconContainer}>
-          <Image style={styles.footerIcon} source={this.props.navigation.state.routeName=='Graph' ? Images.Footer_img_btn_active_home:Images.Footer_img_btn_graph} />
+          <Image style={styles.footerIcon} source={this.props.navigation.state.routeName=='Graph' ? Images.Footer_img_btn_active_graph:Images.Footer_img_btn_graph} />
           <Image style={styles.footerText} source={this.props.navigation.state.routeName=='Graph' ? Images.Footer_txt_btn_active_graph:Images.Footer_txt_btn_graph} />
         </View>
       </TouchableOpacity>
