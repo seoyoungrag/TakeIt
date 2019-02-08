@@ -222,7 +222,12 @@ class Loading extends React.Component {
           userInfo.userEmail = SNSEmailOrUid;
           userInfo.id = SNSEmailOrUid; //기본은 email, 전화번호로 로그인한 경우에는 providerData의 uid가 입력된다.
           //console.log("loading.js: firebase auth check end");
-        
+          //sns 인증만하고 회원가입정보 입력하지 않은 사용자가 다시 앱을 켰을 때 아래 정보들이 빠져 있음.
+          userInfo.userNm = user.providerData[0].displayName;
+          userInfo.userSnsPhoto = user.providerData[0].photoURL;
+          if(user.providerData[0].phoneNumber){
+            userInfo.userPhone = user.providerData[0].phoneNumber;
+          }
       var token = await this.checkPushToken();
       //console.log("loading.js: pushToken: " + token);
       //console.log("loading.js: push perm check end");
@@ -241,6 +246,8 @@ class Loading extends React.Component {
               JSON.parse(JSON.stringify(userInfo)),
               res
             );
+            console.warn('userNm is Merging? :');
+            console.warn(userInfo);
             userInfo.pushToken = pushToken;
             //console.log("loading.js: for update token AFTER GET_USER_BY_EMAIL");
             //console.log("loading.js: userInfo AFTER GET_USER_BY_EMAIL: "+JSON.stringify(userInfo));

@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   Dimensions,
   ImageBackground,
-  PixelRatio
+  PixelRatio,
+  Picker
 } from "react-native";
 import Images from "@assets/Images";
 import { TextField } from "react-native-material-textfield";
@@ -21,6 +22,7 @@ import ActionCreator from "@redux-yrseo/actions";
 import cFetch from "@common/network/CustomFetch";
 import APIS from "@common/network/APIS";
 import { GoogleSignin,statusCodes } from "react-native-google-signin";
+import { Dropdown } from 'react-native-material-dropdown';
 
 function mapStateToProps(state) {
   return {
@@ -64,12 +66,14 @@ class UserRegist extends Component {
     this.onSubmitPersonHeight = this.onSubmitPersonHeight.bind(this);
     this.onSubmitPersonWeight = this.onSubmitPersonWeight.bind(this);
     this.onSubmitUserEmail = this.onSubmitUserEmail.bind(this);
+    this.onSubmitUserAgeRange = this.onSubmitUserAgeRange.bind(this);
 
     this.userNmRef = this.updateRef.bind(this, "userNm");
     this.personSexRef = this.updateRef.bind(this, "personSex");
     this.personHeightRef = this.updateRef.bind(this, "personHeight");
     this.personWeightRef = this.updateRef.bind(this, "personWeight");
     this.userEmailRef = this.updateRef.bind(this, "userEmail");
+    this.userAgeRangeRef = this.updateRef.bind(this, "userAgeRange");
 
     this.state = {
       //사용자정보
@@ -92,13 +96,52 @@ class UserRegist extends Component {
         personWeight:
         this.props.USER_INFO.userWeight != undefined
           ? String(this.props.USER_INFO.userWeight)
-          : ""
+          : "",
+        userAgeRange:
+        this.props.USER_INFO.userAgeRange != undefined
+          ? this.state.ageRange[this.state.ageRange.findIndex(x => {return x.value == String(this.props.USER_INFO.userAgeRange);})].value
+          : "20대",
+        ageRange:[ 
+          {
+            key: '0',
+            value: '10대 미만'
+          }, {
+            key: '10',
+            value: '10대'
+          }, {
+            key: '20',
+            value: '20대'
+          }, {
+            key: '30',
+            value: '30대'
+          }, {
+            key: '40',
+            value: '40대'
+          }, {
+            key: '50',
+            value: '50대'
+          }, {
+            key: '60',
+            value: '60대'
+          }, {
+            key: '70',
+            value: '70대'
+          }, {
+            key: '80',
+            value: '80대'
+          }, {
+            key: '90',
+            value: '90대'
+          }, {
+            key: '100',
+            value: '100대'
+          }]
     };
   }
 
   onFocus() {
     let { errors = {} } = this.state;
-        let ref = null;
+    let ref = null;
     for (let name in errors) {
         ref = this[name];
     }
@@ -110,9 +153,11 @@ class UserRegist extends Component {
   }
 
   onChangeText(text) {
-    ["userNm", "personSex","personHeight","personWeight","userEmail"]
+    ["userNm", "personSex","userAgeRange","personHeight","personWeight","userEmail"]
       .map(name => ({ name, ref: this[name] }))
       .forEach(({ name, ref }) => {
+        //let value = this[name].value();//현재 선택되기 전의 값을 가지고 옴
+        //text가 현재 선택한 값
         if (ref.isFocused()) {
           this.setState({ [name]: text });
         }
@@ -120,14 +165,15 @@ class UserRegist extends Component {
   }
 
   onSubmitUserNm() {this.personHeight.focus();}
-  onSubmitPersonSex() {this.personHeight.focus();}
+  onSubmitPersonSex() {this.userAgeRange.focus();}
+  onSubmitUserAgeRange() {this.personHeight.focus();}
   onSubmitPersonHeight() {this.personWeight.focus();}
   onSubmitPersonWeight() {this.userEmail.focus();}
   onSubmitUserEmail() {this.userEmail.blur();}
   
   saveBtnPressed() {
     let errors = {};
-    ["userNm", "personSex","personHeight","personWeight","userEmail"]
+    ["userNm", "personSex","userAgeRange","personHeight","personWeight","userEmail"]
     .forEach((name) => {
       let value = this[name].value();
 
@@ -155,9 +201,16 @@ class UserRegist extends Component {
     data.userWeight = this.state.personWeight;
     data.userEmail = this.state.userEmail;
 
+    let foundIndex = this.state.ageRange.findIndex(
+      x => {
+        return x.value == this.state.userAgeRange;
+      }
+    );
+
+    data.userAgeRange = this.state.ageRange[foundIndex].key
+
     var body = JSON.stringify(data);
     const PROPS = this.props;
-    const COM = this;
     if (!data.userNm || !data.userSex || !data.userHeight || !data.userWeight || !data.userEmail) {
       //alert("미입력된 정보가 있습니다. 확인해주세요.");
     } else {
@@ -191,8 +244,7 @@ class UserRegist extends Component {
   }
   componentDidMount() {
     //BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
-    const COM = this;
-    this.userNm.focus();
+    this.userNm && this.userNm.focus && this.userNm.focus();
   }
 
   render() {
@@ -278,7 +330,6 @@ class UserRegist extends Component {
                   fontSize={styles.textFieldFontSize}
                   containerStyle={[styles.textFieldContainerStyle, { flex: 1 }]}
                   labelHeight={styles.textFieldLabelHeight}
-                  
                   ref={this.userNmRef}
                   value={data.userNm}
                   autoCorrect={false}
@@ -318,6 +369,29 @@ class UserRegist extends Component {
                     error={errors.personSex}
                   />
                 </TouchableOpacity>
+                <Dropdown
+                    textColor="rgba(255,255,255,1)"
+                    baseColor="rgba(255,255,255,1)"
+                    tintColor="rgba(255,255,255,.9)"
+                    itemColor="rgba(255,255,255,.54)"
+                    selectedItemColor="rgba(255,255,255,.87)"
+                    disabledItemColor="rgba(255,255,255,.38)"
+                    pickerStyle={{backgroundColor:"black", borderWidth:1, borderColor:"white"}}
+                    fontSize={styles.textFieldFontSize}
+                    containerStyle={[styles.textFieldContainerStyle, { flex: 1 }]}
+                    labelHeight={styles.textFieldLabelHeight}
+                    ref={this.userAgeRangeRef}
+                    value={data.userAgeRange}
+                    data={this.state.ageRange}
+                    autoCorrect={false}
+                    enablesReturnKeyAutomatically={true}
+                    onFocus={this.onFocus}
+                    onChangeText={this.onChangeText}
+                    onSubmitEditing={this.onSubmitUserAgeRange}
+                    returnKeyType="next"
+                    label='연령대'
+                    error={errors.userAgeRange}
+                />
               </View>
 
               <View
@@ -461,7 +535,7 @@ let styles = {
     width: 80,
     marginTop: 0,
     marginBottom: 0,
-    paddingTop: 0
+    paddingTop: 0,
   },
   textFieldLabelStyle: {
     width: 80,
