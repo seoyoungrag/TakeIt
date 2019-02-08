@@ -282,7 +282,7 @@ class TakeFoodPic extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 3,
+    flex: 5,
     flexDirection: 'column',
     backgroundColor: 'black',
   },
