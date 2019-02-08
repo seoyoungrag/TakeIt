@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Alert,ImageBackground, PixelRatio, Dimensions, StyleSheet, Text, TouchableOpacity, View, Image, AsyncStorage} from 'react-native';
+import { Modal, Alert, PixelRatio, Dimensions, StyleSheet, Text, TouchableOpacity, View, Image, AsyncStorage} from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { connect } from "react-redux";
 import ActionCreator from "@redux-yrseo/actions";
@@ -7,7 +7,6 @@ import Container from '@container/Container';
 import firebase from "react-native-firebase";
 import cFetch from "@common/network/CustomFetch";
 import APIS from "@common/network/APIS";
-import Images from "@assets/Images";
 import Moment from "moment";
 import Spinner from 'react-native-loading-spinner-overlay';
 import ImageViewer from 'react-native-image-zoom-viewer';
@@ -15,6 +14,9 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import Entypo from 'react-native-vector-icons/Entypo'
 import { withNavigationFocus } from 'react-navigation';
 import { COLOR } from 'react-native-material-ui';
+
+import { FlatGrid } from 'react-native-super-grid';
+import FastImage from 'react-native-fast-image'
 
 const {width, height} = Dimensions.get("window");
 
@@ -43,7 +45,8 @@ class TakeFoodPic extends Component {
       image: null,
       spinnerVisible: false,
       modalVisible: false,
-      pending: false
+      pending: false,
+      images: []
     };
   }
   componentDidMount = async() => {
@@ -51,11 +54,16 @@ class TakeFoodPic extends Component {
   renderImage(image) {
     var images = [{url:image.uri, width:image.width, height: image.height}];
     return (
-      <View
-        style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}
-      >
-      <Modal animationType="fade" hardwareAccelerated={true} visible={this.state.modalVisible} transparent={true} onRequestClose={() => this.setState({ modalVisible: false })}>
-      <ImageViewer imageUrls={images} 
+      <View style={{flexDirection:"row",position:"absolute",width:width,height:0,top:0,left:0,backgroundColor:'rgba(0,0,0,0)',zIndex:1,padding:10}}>
+        <Modal animationType="fade" hardwareAccelerated={true} visible={this.state.modalVisible} transparent={true} onRequestClose={() => this.setState({ modalVisible: false })}>
+        
+          <View style={{position:"absolute",width:width,top:0,left:0,backgroundColor:'rgba(0,0,0,0)',zIndex:1,padding:10}}>
+            <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0}}}>
+              <Entypo name="image" color="#ffffff" size={FONT_BACK_LABEL*1.2}/>
+              &nbsp; 클릭하면 창이 닫힙니다.
+              </Text>
+          </View>
+          <ImageViewer imageUrls={images} 
             onSwipeDown={() => {
               this.setState({ modalVisible: false })
             }}
@@ -64,39 +72,23 @@ class TakeFoodPic extends Component {
             }}
             renderIndicator={() => {}}
             renderHeader={(curidx, allsize) => {
-              return (
-                <View style={styles.container}>
-                  <View style={styles.ViewForTitleStyle}>
-                    <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0}}}>
-                    <Entypo name="image" color="#ffffff" size={FONT_BACK_LABEL*1.2}/>
-                      클릭하면 창이 닫힙니다.
-                    </Text>
-                  </View>
-              </View>
-              )
+              return null
             }}
             enableSwipeDown={true} />
-      </Modal>
-      <TouchableOpacity style={{ flex: 1}} onPress={() => this.setState({ modalVisible: true })}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height:'100%', backgroundColor:'rgba(0,0,0,0)'}}>
-          <Image
-            style={{ flex: 1, height:"100%", resizeMode: "contain" }}
-            source={image}
-          />
-      </View>
-      </TouchableOpacity>
-      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-        <TouchableOpacity onPress={() => this.savePicture()} 
-        style={[styles.analysis,
-              {elevation:5,shadowColor:COLOR.grey900,
-              shadowOffset: { width: 0, height: 0 },
-              shadowOpacity: 0.8,
-              shadowRadius: 2}]}>
-              <Text style={{ fontSize: FONT_BACK_LABEL,color:COLOR.pink500 }}> 
-              분석해드릴까요?
-              </Text>
-        </TouchableOpacity>
-      </View>
+            <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems:"center", position:'absolute', width:width, zIndex:10,bottom:0 }}>
+              <TouchableOpacity 
+                onPress={() => this.savePicture()} 
+                style={[styles.analysis,
+                    {elevation:5,shadowColor:COLOR.grey900,
+                    shadowOffset: { width: 0, height: 0 },
+                    shadowOpacity: 0.8,
+                    shadowRadius: 2}]}>
+                  <Text style={{ fontSize: FONT_BACK_LABEL,color:COLOR.pink500 }}> 
+                    분석해드릴까요?
+                  </Text>
+              </TouchableOpacity>
+            </View>
+        </Modal>
       </View>
     );
   }
@@ -105,17 +97,11 @@ class TakeFoodPic extends Component {
   }
   renderEmpty() {
     return (
-      <ImageBackground
-        style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}
-        source={Images.loginLoadingBack}
-      >
-      <View style={{position:"absolute",width:width,height:height,top:0,left:0,backgroundColor:'rgba(0,0,0,0.9)',zIndex:0}}/>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%'}}>
+      <View style={{position:"absolute",width:width,top:0,left:0,backgroundColor:'rgba(0,0,0,0)',zIndex:1,padding:10}}>
         <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0}}}>
         {this.state.pending ? "사진 권한이 필요합니다." : "사진을 촬영해 주세요."}
         </Text>
       </View>
-      </ImageBackground>
     );
   }
 
@@ -142,7 +128,7 @@ class TakeFoodPic extends Component {
     const content = (
       <Container
         title="인바디 사진 찍기!"
-        toolbarDisplay={true}
+        toolbarDisplay={false}
         navigation={this.props.navigation}>
         <View
           style={{
@@ -150,11 +136,8 @@ class TakeFoodPic extends Component {
             flexDirection: "column"
           }}
         >
-          <View style={{flex:1}}>
-              {this.state.image ? this.renderAsset(this.state.image) : this.renderEmpty()}
-          </View>
-            
           <View style={styles.container}>
+              {this.state.image ? this.renderAsset(this.state.image) : this.renderEmpty()}
           {shouldRenderCamera ? (
             <RNCamera
               style={styles.preview}
@@ -178,6 +161,25 @@ class TakeFoodPic extends Component {
             </RNCamera>
           ):null}
           </View>
+          {this.state.image ? (
+          <View style={{flex:1, width:width, backgroundColor:"black"}}>
+            <FlatGrid
+                    horizontal
+                    spacing={0}
+                    items={this.state.images}
+                    style={{flex:0,height:"100%",width:width}}
+                    renderItem={({ item, section, index }) => (
+                      <TouchableOpacity style={{ height:"100%", width:100}} onPress={() => this.setState({ image:item, modalVisible: true })}>
+                        <FastImage
+                          style={{height:"100%",width:100}}
+                          source={item}
+                          resizeMode={FastImage.resizeMode.cover}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  />
+          </View>
+          ) : null}
         </View>
       <Spinner
         visible={this.state.spinnerVisible}
@@ -235,7 +237,8 @@ class TakeFoodPic extends Component {
                   });
                   await COM.setState({
                     image:null,
-                    spinnerVisible:false
+                    spinnerVisible:false,
+                    modalVisible: false
                   })
                   if(isSended){
                     const storKey = "@"+Moment(new Date()).format('YYMMDD')+"INBODY";
@@ -248,7 +251,7 @@ class TakeFoodPic extends Component {
                     }
                     inbodyUpCnt += 1;
                     await AsyncStorage.setItem(storKey, inbodyUpCnt.toString());
-                    Alert.alert('분석이 끝나면 알림을 보내드릴게요.\n잠시 후에 확인해주세요.');
+                    Alert.alert('분석이 끝나면 알림을 보내드릴게요.','잠시 후에 확인해주세요.');
                     setTimeout(function(){ 
                       PROPS.forceRefreshMain(true);
                       PROPS.navigation.navigate("Main"); 
@@ -266,14 +269,14 @@ class TakeFoodPic extends Component {
   }
   takePicture = async function(camera) {
     this.setState({spinnerVisible:true});
-    const options = { quality: 0.1, exif: false, base64: false, fixOrientation: true,
-      //skipProcessing: true 
-    };
+    const options = { quality: 0.5, width:1280/2,height:720/2, exif: false, base64: false, fixOrientation: true};
     const image = await camera.takePictureAsync(options);
-    this.setState({
+    this.setState(prevState => ({
       image: { uri: image.uri, width: image.width, height: image.height },
+      images: [...prevState.images, image],
       spinnerVisible: false
-    });
+      })
+    );
   };
 }
 

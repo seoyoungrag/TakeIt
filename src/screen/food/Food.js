@@ -97,15 +97,35 @@ class TakeFoodPic extends Component {
         >
           <View style={{ flex: 1, alignContent:"center" }}>
             <View style={{flex:2}}>
-              <View style={{position:"absolute", height:"100%",width:"100%",zIndex:1,alignItems:"center",justifyContent:"center"}}>
-                <Text style={{color:"white",fontSize:FONT_BACK_LABEL*2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0},textAlign:"center",textAlignVertical:"center"}}>
+              <View style={{position:"absolute", height:"100%",width:"100%",zIndex:1,alignItems:"center",justifyContent:"center",flexDirection:"row"}}>
+              <Text style={{
+                color:"white",
+                fontSize:FONT_BACK_LABEL*2.2,
+                textShadowRadius:10,
+                textShadowColor:'#000000',
+                textShadowOffset:{width:0, height:0},
+                textAlign:"center",
+                textAlignVertical:"center"
+                }}>&nbsp;
                 <Ionicons
                   name="ios-clock"
-                  color="#ffffff"
-                  size={FONT_BACK_LABEL*2}
+                  color={"#ffffff"}
+                  size={FONT_BACK_LABEL*4}
                   borderWidth={0}/>
                   &nbsp;
-                {this.state.food.registTime&&this.state.food.registTime.toString().length==13 ? Moment(this.state.food.registTime).format('YYYY-MM-DD HH:mm:ss'): this.state.food.registTime}
+              </Text>
+              <Text style={{
+                color:"white",
+                fontSize:FONT_BACK_LABEL*2.2,
+                textShadowRadius:10,
+                textShadowColor:'#000000',
+                textShadowOffset:{width:0, height:0},
+                textAlign:"center",
+                textAlignVertical:"center"}}>
+                {this.state.food.registTime&&this.state.food.registTime.toString().length==13 ? 
+                  Moment(this.state.food.registTime).format('YYYY-MM-DD HH:mm:ss').substring(0,10)+"\n"+Moment(this.state.food.registTime).format('YYYY-MM-DD HH:mm:ss').substring(10,19)
+                  : 
+                  this.state.food.registTime.substring(0,10)+"\n"+this.state.food.registTime.substring(10,19)}
                 </Text>
               </View>
               <FastImage

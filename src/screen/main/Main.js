@@ -97,7 +97,7 @@ class Main extends Component {
       this.notificationListener();
     }
     callbackFnc = async() => {
-      this.setState({spinnerVisible:true})
+      //this.setState({spinnerVisible:true})
 
       const foodStorKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
       var foodUpCnt = await AsyncStorage.getItem(foodStorKey);
@@ -132,7 +132,7 @@ class Main extends Component {
         //spinnerVisible: false
       });
       const COM = this;
-      await setTimeout(async()=>{ await COM.setState({spinnerVisible:false}) }, 100);
+      //await setTimeout(async()=>{ await COM.setState({spinnerVisible:false}) }, 100);
     }
     viewAd = async() =>{
       AdMobRewarded.on('onRewarded',

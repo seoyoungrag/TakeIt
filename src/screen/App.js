@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { NativeModules, StatusBar, View } from 'react-native';
+import { NativeModules, BackHandler} from 'react-native';
 
 import { COLOR, ThemeContext, getTheme } from 'react-native-material-ui';
 import Container from '@container/Container';
@@ -93,6 +93,7 @@ class App extends React.Component {
     );
   }
   componentDidMount = async() => {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     firebase.messaging().hasPermission()
     .then(enabled => {
       if (enabled) {
@@ -173,10 +174,16 @@ class App extends React.Component {
     }
   }
   componentWillUnmount(){
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
     this.notificationDisplayedListener();
     this.notificationListener();
     this.notificationOpenedListener();
   }
+
+  handleBackButton() {
+    return true;
+}
+
   render() {
     return (
       <Provider store={createStore(reducers)}>

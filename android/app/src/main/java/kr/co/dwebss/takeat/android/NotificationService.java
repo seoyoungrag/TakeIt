@@ -10,12 +10,15 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.NotificationChannel;
 import android.graphics.Color;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import io.invertase.firebase.R;
+import android.view.View;
+
 
 import com.facebook.react.HeadlessJsTaskService;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -54,6 +57,8 @@ public class NotificationService extends FirebaseMessagingService {
 
         notificationBuilder = new NotificationCompat.Builder(this, message.getData().get("android_channel_id"))
                 .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(),
+                        R.mipmap.ic_launcher))
                 .setContentTitle(message.getData().get("title"))
                 .setContentText(message.getData().get("body"))
                 .setAutoCancel(true)
@@ -64,6 +69,8 @@ public class NotificationService extends FirebaseMessagingService {
       } else {
         notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(),
+                        R.mipmap.ic_launcher))
                 .setContentTitle(message.getData().get("title"))
                 .setContentText(message.getData().get("body"))
                 .setAutoCancel(true)
@@ -73,7 +80,13 @@ public class NotificationService extends FirebaseMessagingService {
                 .setContentText(message.getData().get("body"));
       }
 
-      notificationManager.notify(0, notificationBuilder.build());
+      Notification notification = notificationBuilder.build();
+      int smallIconId = getResources().getIdentifier("right_icon", "id", android.R.class.getPackage().getName());
+      if (smallIconId != 0) { 
+          if (notification.contentView!=null)
+              notification.contentView.setViewVisibility(smallIconId, View.INVISIBLE);
+      }
+      notificationManager.notify(0, notification);
     } catch (Exception e) {
       Log.d(TAG, "Error ", e);
     }
