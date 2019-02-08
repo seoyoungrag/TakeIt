@@ -97,7 +97,7 @@ class Main extends Component {
       this.notificationListener();
     }
     callbackFnc = async() => {
-      this.setState({spinnerVisible:true}) 
+      this.setState({spinnerVisible:true})
 
       const foodStorKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
       var foodUpCnt = await AsyncStorage.getItem(foodStorKey);
@@ -165,7 +165,7 @@ class Main extends Component {
           AdMobRewarded.loadAd(request.build());
         }
       );
-      
+
       if (AdMobRewarded.isLoaded()) {
         AdMobRewarded.show();
       } else {
@@ -278,9 +278,9 @@ class Main extends Component {
 
                 <View style={[styles.seeAdBtn,{ flex: 1, flexDirection: 'row', justifyContent: 'flex-start', alignSelf:"center",borderWidth:0 }]}>
                   <Text style={{color:COLOR.pink500, fontSize:FONT_BACK_LABEL*0.9}}>
-                  <MaterialCommunityIcons 
-                      name="ticket" 
-                      color={COLOR.pink500} 
+                  <MaterialCommunityIcons
+                      name="ticket"
+                      color={COLOR.pink500}
                       size={FONT_BACK_LABEL*0.9}/>
                       &nbsp;
                       찍먹티켓
@@ -298,15 +298,15 @@ class Main extends Component {
                         this.state.viewAdCnt-(this.state.foodUpCnt-this.state.maxCnt) || 0 : this.state.viewAdCnt
                         }
                     </Text>
-                  </Text>                
+                  </Text>
                 </View>
 
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignSelf:"center" }}>
                   <TouchableOpacity onPress={() => this.viewAd()} style={[styles.seeAdBtn,{/*elevation:5*/}]}>
                   <Text style={{color:COLOR.pink500, fontSize:FONT_BACK_LABEL*0.9}}>
-                    <MaterialCommunityIcons 
-                      name="television-classic" 
-                      color={COLOR.pink500} 
+                    <MaterialCommunityIcons
+                      name="television-classic"
+                      color={COLOR.pink500}
                       size={FONT_BACK_LABEL*0.9}/>
                       &nbsp;
                       광고보고 충전하기
@@ -402,14 +402,14 @@ class Main extends Component {
                     <BoxShadow setting={shadowOpt}>
                     <View style={{height:width/2*(this.state.isEmptyPhotos? 2:1)}}>
                       <View style={{
-                        position:"absolute", 
+                        position:"absolute",
                         height:"100%",width:"100%",
                         zIndex:1,
                         alignItems:"center",
                         justifyContent:"center",
                         flexDirection:"row"
                         }}>
-                        {item.firebaseDownloadUrl !="" ? 
+                        {item.firebaseDownloadUrl !="" ?
                         (<Text style={{
                             color:"white",
                             fontSize:FONT_BACK_LABEL*1.2,
@@ -427,7 +427,7 @@ class Main extends Component {
                               &nbsp;
                           </Text>
                         ):null}
-                          {item.firebaseDownloadUrl !="" ? 
+                          {item.firebaseDownloadUrl !="" ?
                           (<Text style={{
                             color:"white",
                             fontSize:FONT_BACK_LABEL*1.2,
@@ -436,8 +436,8 @@ class Main extends Component {
                             textShadowOffset:{width:0, height:0},
                             textAlign:"center",
                             textAlignVertical:"center"}}>
-                            {item.registTime.substring(0,10)}{"\n"}{item.registTime.substring(10,19)} 
-                          </Text> ) 
+                            {item.registTime.substring(0,10)}{"\n"}{item.registTime.substring(10,19)}
+                          </Text> )
                           : null}
                       </View>
                       <FastImage
@@ -458,7 +458,7 @@ class Main extends Component {
                 />
               </ScrollView>
               </View>
-            
+
             {/*
             <TouchableOpacity
               onPress={() => { Alert.alert(
@@ -539,7 +539,7 @@ const styles = StyleSheet.create({
     profileUserEmail: {
       fontSize: FONT_BACK_LABEL*1.2,
       color:"rgba(0,0,0,1)"
-    }, 
+    },
     profileWiseSaying: {
       fontSize: FONT_BACK_LABEL*0.8
     },
@@ -571,7 +571,7 @@ const styles = StyleSheet.create({
       color: COLOR.grey800,
       padding: 10,
       paddingBottom: 15
-    }, 
+    },
     seeAdBtn: {
       flex: 0,
       alignSelf: 'center',
