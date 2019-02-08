@@ -31,6 +31,10 @@ Moment.locale('ko');
 import Spinner from 'react-native-loading-spinner-overlay';
 import Images from '../../../assets/Images';
 
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {BoxShadow} from 'react-native-shadow';
+import { COLOR } from 'react-native-material-ui';
+
 const { width, height } = Dimensions.get('window');
 
 
@@ -45,16 +49,19 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {};
 }
+var FONT_BACK_LABEL   = 16;
+
 class Diary extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       title: this.props.title,
-      startDate: new Date(Date.now() + -7* 24 * 3600 * 1000),
+      // startDate: new Date(Date.now() + -7* 24 * 3600 * 1000),
+      startDate: new Date(Date.now() + -30* 24 * 3600 * 1000),
       endDate: new Date(Date.now() + 0 * 24 * 3600 * 1000),
       selectedDate: this.props.endDateForDiary,
       calendarVisible: false,
-      range: {'startDate' : new Date(Date.now() + -7* 24 * 3600 * 1000),  'endDate':
+      range: {'startDate' : new Date(Date.now() + -30* 24 * 3600 * 1000),  'endDate':
         new Date(Date.now() + 0 * 24 * 3600 * 1000)},
       resultData : [],
       spinnerDiaryVisible: true,
@@ -89,8 +96,8 @@ class Diary extends React.Component {
       APIS.GET_USER_FOOD_PHOTO,
       [
         //전달 값
-         this.props.USER_INFO.userId,
-        //10,
+        //  this.props.USER_INFO.userId,
+        16,
         Moment(startDate).format('YYYY-MM-DD'),
         Moment(endDate).format('YYYY-MM-DD'),
       ],
@@ -149,7 +156,6 @@ class Diary extends React.Component {
     }
     console.log('render33 start');
     console.log(DAY_RANGE_INFO);
-
     const content = (
       <Container
         title={DAY_RANGE_INFO}
@@ -197,6 +203,7 @@ class Diary extends React.Component {
                 ref={calendar => {
                   this.calendar = calendar;
                 }}
+                startingMonth="2019-01-01"
                 style={{
                   width: '200%',
                 }}
@@ -243,67 +250,82 @@ class Diary extends React.Component {
               {(this.state.resultData.length  > 0)  ?  this.state.resultData.map(data => {
                 return (
                   <View key={data.registTime} style={[styles.child]}>
-
-
                   <TouchableHighlight onPress={()=>{this.props.navigation.navigate("DayDiary",
                    {inqueryDate:Moment(data.registD).format('YYYY-MM-DD')})}}>
-                  <View style={[styles.leftInfo]}>
+                  <View style={[styles.topInfo]}>
                   <Text style={styles.day}>
                     {Moment(data.registD).format('DD') }
                   </Text>
                   <Text style={styles.dayko}>
-                    {Moment(data.registD).format('ddd') }
+                    ({Moment(data.registD).format('ddd') })
                   </Text>
                   <Text style={styles.kcal}>
                     {data.kilocalorie} kcal
                   </Text>
                   </View>
                   </TouchableHighlight>
-              <View style={[styles.rightPhoto]}>
-                <SectionGrid
-                itemDimension={width/3}
-                fixed
+
+              <View style={[styles.bottomPhoto]}>
+                <FlatGrid
+                horizontal
                 spacing={1}
-                sections={[
-                  {
-                    title: 'Today - 2019.01.21',
-                    data: data.photoArr.slice(0, 4),
-                  },
-                ]}
+                items={data.photoArr}
                 style={styles.gridView}
                 renderItem={({ item, section, index }) => (
                   <View>
                   {item.firebaseDownloadUrl!=null &&
                     <TouchableHighlight onPress=
-                    {()=> {
-                      (index==3) ?
-                      this.props.navigation.navigate("DayDiary", {inqueryDate:Moment(data.registD).format('YYYY-MM-DD')})
-                      :
-                      this.props.navigation.navigate("Food", {food:item} )
-                    }}
+                    {()=> this.props.navigation.navigate("Food", {food:item} )}
                     >
+                    <View>
+                    <View style={{
+                      position:"absolute",
+                      height:"100%",width:"100%",
+                      zIndex:1,
+                      alignItems:"center",
+                      justifyContent:"center",
+                      flexDirection:"row"
+                      }}>
+                    <Text style={{
+                      color:"white",
+                      fontSize:FONT_BACK_LABEL*1.2,
+                      textShadowRadius:10,
+                      textShadowColor:'#000000',
+                      textShadowOffset:{width:0, height:0},
+                      textAlign:"center",
+                      textAlignVertical:"center"
+                      }}>&nbsp;
+                      <Ionicons
+                        name="ios-clock"
+                        color={"#ffffff"}
+                        size={FONT_BACK_LABEL*1.2}
+                        borderWidth={0}/>
+                        &nbsp;
+                    </Text>
+                    <Text style={{
+                      color:"white",
+                      fontSize:FONT_BACK_LABEL*1.2,
+                      textShadowRadius:10,
+                      textShadowColor:'#000000',
+                      textShadowOffset:{width:0, height:0},
+                      textAlign:"center",
+                      textAlignVertical:"center"}}>
+                      {Moment(item.registTime).format('HH:mm')}
+                    </Text>
+                    </View>
                   <FastImage
-                  style=
-                  { (data.photoArr.length==1) ? styles.imageStyle1:
-                    (data.photoArr.length==2) ? styles.imageStyle2:
-                    (data.photoArr.length==3) ? styles.imageStyle3:
-                    styles.imageStyle4 }
-                    source={ (index!=3) ?
-                      {
+                  style={styles.imageStyle}
+                    source={{
                       uri: item.firebaseDownloadUrl,
                       priority: FastImage.priority.low,
-                    }: Images.DiaryMore
-                  }
+                    }}
                     resizeMode={FastImage.resizeMode.cover}
                   />
+                  </View>
                   </TouchableHighlight>
                 }
                 </View>
-
                   )}
-                // renderSectionHeader={({ section }) => (
-                //   <Text style={styles.sectionHeader}>{section.title}</Text>
-                // )}
               />
               </View>
             </View>
@@ -318,9 +340,7 @@ class Diary extends React.Component {
                     </Text>
                     </View>
                 </View>
-
               }
-
             </ScrollView>
         </View>
         <Spinner
@@ -360,7 +380,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     alignItems:'center',
     justifyContent: 'center',
-     flexDirection: 'row',
+    //  flexDirection: 'row',
     //섀도우 android
     elevation: 2,
   },
@@ -380,17 +400,21 @@ const styles = StyleSheet.create({
     // backgroundColor: '#F5FCFF',
     height: height*0.3,
   },
-  leftInfo: {
-    justifyContent: 'center',
-    width: width*0.25,
+  topInfo: {
+    // flex: 1,
+    //  justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    width: width*0.95,
     // backgroundColor: '#F5FCFF',
-    height: height*0.3,
+    height: height*0.3*0.3,
   },
-  rightPhoto: {
+  bottomPhoto: {
     // justifyContent: 'flex-end',
-    width: width*0.70,
+    flex:1,
+    width: width*0.95,
     // backgroundColor: '#7F7F7F',
-    height: height*0.3,
+    height: height*0.3*0.7,
   },
   itemContainer: {
     // justifyContent: 'flex-end',
@@ -398,44 +422,29 @@ const styles = StyleSheet.create({
     height: height*0.3*0.5,
   },
   day: {
+    paddingLeft: width * 0.0225,
     fontSize: 25,
-    textAlign: 'center',
-
+    textAlign: 'auto',
   },
   dayko: {
+    paddingLeft: width * 0.0125,
     fontSize: 18,
-    textAlign: 'center',
-    marginBottom: '20%',
+    textAlign: 'auto',
+    // marginBottom: '20%',
   },
   kcal: {
-    fontSize: 12,
-    textAlign: 'center',
+    paddingRight: width * 0.0225,
+    fontSize: 18,
+    marginLeft: 'auto',
   },
   gridView: {
-    flex: 1,
-    // backgroundColor: '#7F7F7F',
+    flex:0,
+    height:"100%",
+    width: width*0.95,
   },
-  imageStyle4: {
-    // justifyContent: 'flex-end',
-    width: width*0.70*0.5,
-    height: height*0.3*0.5,
-  },
-  imageStyle3: {
-    // justifyContent: 'flex-end',
-    width: width*0.70*0.493,
-    height: height*0.3*0.5,
-    // width: '50%',
-    // height: '50%',
-  },
-  imageStyle2: {
-    // justifyContent: 'flex-end',
-    width: width*0.70*0.5,
-    height: height*0.3,
-  },
-  imageStyle1: {
-    // justifyContent: 'flex-end',
-    width: width*0.70,
-    height: height*0.3,
+  imageStyle: {
+    width: width*0.95*0.33,
+    height: width*0.95*0.33,
   },
 });
 

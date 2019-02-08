@@ -12,6 +12,7 @@ import {
   Button,
   Animated,
   ImageBackground,
+  Alert,
 } from 'react-native';
 
 import PopupDialog, { DialogTitle,  DialogContent } from 'react-native-popup-dialog';
@@ -66,13 +67,14 @@ class Log extends React.Component {
       clickEvent: false, //테스트용
       selectedDateTerm:
         Moment(new Date(Date.now() + -1 * 24 * 3600 * 1000)).diff(
-          Moment(new Date(Date.now() + -100 * 24 * 3600 * 1000)),
+          Moment(new Date(Date.now() + -7 * 24 * 3600 * 1000)),
           'days'
         ) + 1,
       selectedDateHpList: [],
       rWeight: 0.0,
       rFat: 0.0,
       rMuscle: 0.0,
+      rBmi: 0.0,
       rCount: 0,
       rHealthPoint: 0,
       leftRatioTitle: 'BMI',
@@ -130,14 +132,22 @@ class Log extends React.Component {
   // getUserHealth() => {
   getUserHealth() {
     LogComponent = this;
+    let startDate = LogComponent.state.range.startDate;
+    let endDate =  LogComponent.state.range.endDate;
+
+    if(endDate==null){
+      alert("기간으로 검색해주세요");
+      return;
+    }
+    LogComponent.setState({ calendarVisible: false });
     console.log('getUserHealth start');
     return cFetch(
       APIS.GET_USER_INBODY_INFO,
       [
-        // this.props.USER_INFO.userId,
-        15,
-        Moment(this.state.startDate).format('YYYY-MM-DD'),
-        Moment(this.state.endDate).format('YYYY-MM-DD'),
+        this.props.USER_INFO.userId,
+        // 15,
+        Moment(startDate).format('YYYY-MM-DD'),
+        Moment(endDate).format('YYYY-MM-DD'),
       ],
       {},
       {
@@ -145,35 +155,39 @@ class Log extends React.Component {
           console.log("====================================================================================");
           console.log(res);
           let rCount = 0;
-          if (res.inbodyInfoList[0].weight - res.inbodyInfoList[1].weight < 0)
-            rCount += 1;
-          if (res.inbodyInfoList[0].fat - res.inbodyInfoList[1].fat < 0)
-            rCount += 1;
-          if (res.inbodyInfoList[0].muscle - res.inbodyInfoList[1].muscle > 0)
-            rCount += 1;
+          let rWeight = 0;
+          let rFat = 0;
+          let rMuscle = 0;
+          let rBmi = 0;
+          let rHealthPoint = 0;
+          if(res.inbodyInfoList.length >1){
+            rWeight = res.inbodyInfoList[0].weight - res.inbodyInfoList[1].weight;
+            rFat = res.inbodyInfoList[0].fat - res.inbodyInfoList[1].fat ;
+            rMuscle = res.inbodyInfoList[0].muscle - res.inbodyInfoList[1].muscle;
+            rBmi =  res.inbodyInfoList[0].bmi - res.inbodyInfoList[1].bmi;
+              if (rWeight< 0)
+                rCount += 1;
+              if (rFat < 0)
+                rCount += 1;
+              if (rMuscle> 0)
+                rCount += 1;
+          }
           console.log('rCOUNT : ' + rCount);
           let selectedDateHpList = [];
           for (let i = 0; i < res.userAnalyze.length; i++) {
-            console.log('rCOUNT2 : ' + res.userAnalyze[i].healthPoint);
-            selectedDateHpList.push(res.userAnalyze[i].healthPoint);
+            console.log('rCOUNT2 : ' + res.userAnalyze[i].takeItPoint);
+            selectedDateHpList.push(res.userAnalyze[i].takeItPoint);
           }
-
           console.log('최고점수 ' + Math.max(...selectedDateHpList));
-
+          if(res.userAnalyze.length >1){
+            rHealthPoint = Math.max(...selectedDateHpList) -selectedDateHpList[res.userAnalyze.length - 1];
+          }
           LogComponent.setState({
-            rWeight: (
-              res.inbodyInfoList[0].weight - res.inbodyInfoList[1].weight
-            ).toFixed(2),
-            rFat: (
-              res.inbodyInfoList[0].fat - res.inbodyInfoList[1].fat
-            ).toFixed(2),
-            rMuscle: (
-              res.inbodyInfoList[0].muscle - res.inbodyInfoList[1].muscle
-            ).toFixed(2),
-            rHealthPoint: (
-              Math.max(...selectedDateHpList) -
-              selectedDateHpList[res.userAnalyze.length - 1]
-            ).toFixed(2),
+            rWeight: (rWeight).toFixed(2),
+            rFat: (rFat).toFixed(2),
+            rMuscle: (rMuscle).toFixed(2),
+            rBmi: (rBmi).toFixed(2),
+            rHealthPoint: (rHealthPoint).toFixed(2),
             rCount: rCount,
             leftRatio: res.userBmiPercent, //BMI %
             centerRatio: res.userMusclePercent, //골격근량 %
@@ -187,6 +201,9 @@ class Log extends React.Component {
             graphCenterHeight: res.userMusclePercent,
             graphRightHeight: res.userFatPercent,
             selectedDateHpList: selectedDateHpList,
+
+            startDate: startDate,
+            endDate: endDate,
           });
           return res;
         },
@@ -276,8 +293,6 @@ class Log extends React.Component {
   render() {
     let selectDateTouchableWidth = (width * 2) / 5;
     let { graphCenterHeight, graphLeftHeight, graphRightHeight } = this.state;
-
-
     const USER_INFO = this.props.USER_INFO;
     let color = {
       mainColor: '#f4f4f6',
@@ -325,7 +340,7 @@ class Log extends React.Component {
           <View style={[styles.popupButton]}>
             <Text
               style={{ fontSize: 20, marginLeft: 200, right: 0,color:'#E91E63' }}
-              onPress={this.getFoodPhotoList}>
+              onPress={this.getUserHealth}>
               선택
             </Text>
             <Text
@@ -339,6 +354,9 @@ class Log extends React.Component {
               ref={calendar => {
                 this.calendar = calendar;
               }}
+              startingMonth="2019-01-01"
+              startDate={(Moment(this.state.startDate).format('YYYY-MM-DD'))}
+              endDate={(Moment(this.state.endDate).format('YYYY-MM-DD'))}
               style={{
                 width: width,
               }}
@@ -353,15 +371,10 @@ class Log extends React.Component {
         flexDirection: 'column',
         backgroundColor: 'white',
       }}>
-        {/* 체중감량방식 시작 */}
+        {/* 결과 시작 */}
         <View
-          style={{
-            flex: 18,
-            // backgroundColor: '#fcfcff',
-            paddingLeft: width * 0.0625,
-            paddingRight: width * 0.0625,
-            justifyContent: 'center',
-          }}>
+          style={styles.resultFlex}
+          >
         {this.state.selectedDateHpList.length <= 1 ? (
          <Text> 측정된 인바디 결과내용이 {this.state.selectedDateHpList.length}개 입니다. 분석을 위해서는 2개 이상의 날짜별 인바디 사진정보가 필요합니다! </Text>
           ) : (
@@ -421,17 +434,14 @@ class Log extends React.Component {
             {this.state.rMuscle < 0 ? '늘었어요' : '줄었어요'}.{' \n'}
             {this.state.rCount < 2
               ? '좋은 식습관과 운동습관을 유지하고 있습니다. '
-              : '권장 칼로리보다 많이 섭취 하고있습니다!'}
+              : '섭취칼로리를 줄일 필요가 있어요!'}
           </Text>
           </Text>)}
         </View>
         {/* 체중감량방식 끝 */}
         {/* 건강 분포도 시작*/}
         <View
-          style={{
-            flex: 27,
-          }}>
-
+          style={styles.graphFlex}>
           <Image style={{
             top: 13.5,
             zIndex: 10,
@@ -615,11 +625,7 @@ class Log extends React.Component {
         {/* 건강 분포도 세부 시작 */}
         <ImageBackground
           source={Images.WorkoutLogHealthInfoDetail}
-          style={{
-            flex: 24,
-            backgroundColor: 'white',
-          }}>
-
+          style={styles.tableFlex}>
          <Image style={{
           top: 13.5,
           left: width * 0.0495, width: 10, height: 12,marginRight:0 }} source={Images.analsysIcon} />
@@ -780,19 +786,53 @@ class Log extends React.Component {
               { (this.state.userRightInfo !=  [])  ? this.state.userRightInfo.fat + "kg" : ""}
               </Text>
             </ImageBackground>
+
+            <ImageBackground
+            source={Images.WorkoutLogHealthInfoDetailRow}
+            style={{
+              flex: 20,
+              height: '100%',
+              width: width,
+              flexDirection: 'row',
+              paddingLeft: width * 0.0625,
+              paddingRight: width * 0.0625,
+            }}
+            resizeMode="stretch">
+            <Text
+              style={[
+                styles.healthInfoDetailItemsText,
+                {
+                  textAlign: 'left',
+                  left: 12,
+                  fontWeight: '600',
+                },
+              ]}>
+              평균섭취Kcal
+            </Text>
+            <Text style={styles.healthInfoDetailItemsText}>
+            { (this.state.userLeftInfo.avlKcal !=  undefined)  ? this.state.userLeftInfo.avlKcal + "kcal" : ""}
+            </Text>
+            <Text
+              style={[
+                styles.healthInfoDetailItemsText,
+                { fontWeight: '600', color: '#e9597b' },
+              ]}>
+              { (this.state.userCenterInfo.avlKcal !=  undefined)  ? this.state.userCenterInfo.avlKcal + "kcal" : ""}
+            </Text>
+            <Text style={styles.healthInfoDetailItemsText}>
+            { (this.state.userRightInfo.avlKcal !=  undefined)  ? this.state.userRightInfo.avlKcal + "kcal" : ""}
+            </Text>
+          </ImageBackground>
+
+
+
             <View flex={6} />
           </View>
         </ImageBackground>
         {/* 건강 분포도 세부 끝 */}
         {/* 분석  시작 */}
         <View
-          style={{
-            flex: 16,
-            // backgroundColor: 'white',
-            paddingLeft: width * 0.0625,
-            paddingRight: width * 0.0625,
-            justifyContent: 'center',
-          }}>
+          style={styles.analFlex}>
                 {this.state.selectedDateHpList.length <= 1 ? (
                   <Text> </Text>
                 ) : (
@@ -817,7 +857,8 @@ class Log extends React.Component {
                 <Text style={{ fontWeight: '600' }}>
                   {this.state.selectedDateHpList[0]}점
                 </Text>
-                입니다.{' '}
+                입니다.
+                {"\n"}
                 <Text style={{ fontWeight: '600' }}>
                   {this.state.selectedDateTerm}
                 </Text>
@@ -829,10 +870,12 @@ class Log extends React.Component {
                 <Text style={{ fontWeight: '600' }}>
                   {Math.min(...this.state.selectedDateHpList)}점
                 </Text>
-                입니다{' '}
+                입니다.{' '}
+                {"\n"}
                 {this.state.rHealthPoint > 0
                   ? '이 기간동안 찍먹포인트가 점차 증가하고 있습니다. '
                   : '이 기간동안 찍먹포인트가 점차 감소하고 있습니다.  '}
+                  {"\n"}
                 현재 찍먹포인트 상위 {this.state.userCenterInfo.percent}
                 %이며
                 {this.state.userCenterInfo.percent > 80
@@ -899,6 +942,30 @@ let styles = {
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 40,
+  },
+  resultFlex: {
+    flex: 8,
+    // backgroundColor: '#fcfcff',
+    paddingTop: height * 0.0225,
+    paddingLeft: width * 0.0625,
+    paddingRight: width * 0.0625,
+    paddingBottom: height * -0.0425,
+    // justifyContent: 'center',
+  },
+  graphFlex: {
+    flex: 16,
+    // paddingTop: height * 0.0125,
+  },
+  tableFlex: {
+    flex: 15,
+    // paddingTop: height * 0.0125,
+    backgroundColor: 'white',
+  },
+  analFlex: {
+    flex: 18,
+    paddingLeft: width * 0.0625,
+    paddingRight: width * 0.0625,
+    paddingTop: height * 0.0155,
   },
 };
 export default connect(
