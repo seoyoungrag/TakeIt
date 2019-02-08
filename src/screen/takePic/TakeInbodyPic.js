@@ -51,9 +51,8 @@ class TakeFoodPic extends Component {
   renderImage(image) {
     var images = [{url:image.uri, width:image.width, height: image.height}];
     return (
-      <View
-        style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}
-      >
+      <View style={{flexDirection:"row",position:"absolute",width:width,height:height/6,top:0,left:0,backgroundColor:'rgba(0,0,0,0)',zIndex:1,padding:10}}>
+        
       <Modal animationType="fade" hardwareAccelerated={true} visible={this.state.modalVisible} transparent={true} onRequestClose={() => this.setState({ modalVisible: false })}>
       <ImageViewer imageUrls={images} 
             onSwipeDown={() => {
@@ -77,16 +76,16 @@ class TakeFoodPic extends Component {
             }}
             enableSwipeDown={true} />
       </Modal>
-      <TouchableOpacity style={{ flex: 1}} onPress={() => this.setState({ modalVisible: true })}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height:'100%', backgroundColor:'rgba(0,0,0,0)'}}>
+      
+      <TouchableOpacity style={{ alignItems: 'flex-start', flex: 1}} onPress={() => this.setState({ modalVisible: true })}>
+          
           <Image
-            style={{ flex: 1, height:"100%", resizeMode: "contain" }}
+            style={{ flex: 1, height:"100%", width:"50%", resizeMode: "contain", borderColor:COLOR.grey700, borderWidth:1 }}
             source={image}
           />
-      </View>
       </TouchableOpacity>
-      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-        <TouchableOpacity onPress={() => this.savePicture()} 
+      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
+      <TouchableOpacity onPress={() => this.savePicture()} 
         style={[styles.analysis,
               {elevation:5,shadowColor:COLOR.grey900,
               shadowOffset: { width: 0, height: 0 },
@@ -105,17 +104,11 @@ class TakeFoodPic extends Component {
   }
   renderEmpty() {
     return (
-      <ImageBackground
-        style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}
-        source={Images.loginLoadingBack}
-      >
-      <View style={{position:"absolute",width:width,height:height,top:0,left:0,backgroundColor:'rgba(0,0,0,0.9)',zIndex:0}}/>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%'}}>
+      <View style={{position:"absolute",width:width,top:0,left:0,backgroundColor:'rgba(0,0,0,0)',zIndex:1,padding:10}}>
         <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0}}}>
         {this.state.pending ? "사진 권한이 필요합니다." : "사진을 촬영해 주세요."}
         </Text>
       </View>
-      </ImageBackground>
     );
   }
 
@@ -142,7 +135,7 @@ class TakeFoodPic extends Component {
     const content = (
       <Container
         title="인바디 사진 찍기!"
-        toolbarDisplay={true}
+        toolbarDisplay={false}
         navigation={this.props.navigation}>
         <View
           style={{
@@ -150,11 +143,8 @@ class TakeFoodPic extends Component {
             flexDirection: "column"
           }}
         >
-          <View style={{flex:1}}>
-              {this.state.image ? this.renderAsset(this.state.image) : this.renderEmpty()}
-          </View>
-            
           <View style={styles.container}>
+              {this.state.image ? this.renderAsset(this.state.image) : this.renderEmpty()}
           {shouldRenderCamera ? (
             <RNCamera
               style={styles.preview}
