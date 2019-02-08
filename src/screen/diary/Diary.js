@@ -266,27 +266,16 @@ class Diary extends React.Component {
                   </TouchableHighlight>
 
               <View style={[styles.bottomPhoto]}>
-                <SectionGrid
-                itemDimension={width/5}
-                fixed
+                <FlatGrid
+                horizontal
                 spacing={1}
-                sections={[
-                  {
-                    title: 'Today - 2019.01.21',
-                    data: data.photoArr.slice(0, 4),
-                  },
-                ]}
+                items={data.photoArr}
                 style={styles.gridView}
                 renderItem={({ item, section, index }) => (
                   <View>
                   {item.firebaseDownloadUrl!=null &&
                     <TouchableHighlight onPress=
-                    {()=> {
-                      (index==3) ?
-                      this.props.navigation.navigate("DayDiary", {inqueryDate:Moment(data.registD).format('YYYY-MM-DD')})
-                      :
-                      this.props.navigation.navigate("Food", {food:item} )
-                    }}
+                    {()=> this.props.navigation.navigate("Food", {food:item} )}
                     >
                     <View>
                     <View style={{
@@ -309,7 +298,7 @@ class Diary extends React.Component {
                       <Ionicons
                         name="ios-clock"
                         color={"#ffffff"}
-                        size={FONT_BACK_LABEL*2}
+                        size={FONT_BACK_LABEL*1.2}
                         borderWidth={0}/>
                         &nbsp;
                     </Text>
@@ -321,18 +310,16 @@ class Diary extends React.Component {
                       textShadowOffset:{width:0, height:0},
                       textAlign:"center",
                       textAlignVertical:"center"}}>
-                      111
+                      {Moment(item.registTime).format('HH:mm')}
                     </Text>
                     </View>
                   <FastImage
                   style={styles.imageStyle}
-                    source={ (index!=3) ?
-                      {
+                    source={{
                       uri: item.firebaseDownloadUrl,
                       priority: FastImage.priority.low,
-                    }: Images.DiaryMore
-                  }
-                    resizeMode={FastImage.resizeMode.center}
+                    }}
+                    resizeMode={FastImage.resizeMode.cover}
                   />
                   </View>
                   </TouchableHighlight>
@@ -424,6 +411,7 @@ const styles = StyleSheet.create({
   },
   bottomPhoto: {
     // justifyContent: 'flex-end',
+    flex:1,
     width: width*0.95,
     // backgroundColor: '#7F7F7F',
     height: height*0.3*0.7,
@@ -450,13 +438,13 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
   },
   gridView: {
-    // flex: 0,
-    // backgroundColor: '#7F7F7F',
+    flex:0,
+    height:"100%",
+    width: width*0.95,
   },
   imageStyle: {
-    // justifyContent: 'flex-end',
-    width: width*0.95*0.2,
-    height: height*0.3*0.5,
+    width: width*0.95*0.33,
+    height: width*0.95*0.33,
   },
 });
 
