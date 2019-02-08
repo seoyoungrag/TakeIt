@@ -96,8 +96,8 @@ class Diary extends React.Component {
       APIS.GET_USER_FOOD_PHOTO,
       [
         //전달 값
-        //  this.props.USER_INFO.userId,
-        16,
+         this.props.USER_INFO.userId,
+        // 16,
         Moment(startDate).format('YYYY-MM-DD'),
         Moment(endDate).format('YYYY-MM-DD'),
       ],
