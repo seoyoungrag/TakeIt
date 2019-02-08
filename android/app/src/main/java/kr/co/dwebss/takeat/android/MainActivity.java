@@ -5,6 +5,7 @@ package kr.co.dwebss.takeat.android;
 */
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import com.facebook.react.ReactActivity;
 /* react-native-gesture-handler related react-navigation added by yrseo start */
@@ -44,5 +45,12 @@ public class MainActivity extends ReactActivity {
             return new RNGestureHandlerEnabledRootView(MainActivity.this);
             }
         };
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
+
     }
 }

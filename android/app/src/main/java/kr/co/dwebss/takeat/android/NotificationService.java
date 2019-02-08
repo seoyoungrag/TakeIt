@@ -2,6 +2,7 @@ package kr.co.dwebss.takeat.android;
 
 import android.content.Intent;
 import android.content.Context;
+import android.os.PowerManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -35,26 +36,33 @@ import org.json.JSONException;
 
 import kr.co.dwebss.takeat.android.MainActivity;
 
+import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+
 public class NotificationService extends FirebaseMessagingService {
 
   private static final String TAG = "NotificationService";
   public static final String REMOTE_NOTIFICATION_EVENT = "notifications-remote-notification";
+  PowerManager powerManager;
+  PowerManager.WakeLock wakeLock;
 
   @Override
   public void onMessageReceived(RemoteMessage message) {
     Log.d(TAG, "onMessageReceived event received in NotificationService");
     try {
+      powerManager = (PowerManager)getSystemService(Context.POWER_SERVICE);
+      wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "takeat: WAKELOCK");
+
       Intent intent = new Intent(this, MainActivity.class);
       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
       PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
       Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
       NotificationCompat.Builder notificationBuilder;
       NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
+      wakeLock.acquire();
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
         notificationBuilder = new NotificationCompat.Builder(this, message.getData().get("android_channel_id"))
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(),
@@ -87,6 +95,8 @@ public class NotificationService extends FirebaseMessagingService {
               notification.contentView.setViewVisibility(smallIconId, View.INVISIBLE);
       }
       notificationManager.notify(0, notification);
+      //getApplicationContext().startActivity(intent);
+      wakeLock.release();
     } catch (Exception e) {
       Log.d(TAG, "Error ", e);
     }
