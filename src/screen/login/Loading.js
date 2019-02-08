@@ -255,7 +255,7 @@ class Loading extends React.Component {
               PROPS.setIsFromLogin(false);
               //PROPS.setIsFromLoading(true);
               PROPS.navigation.navigate("Login");
-            }else if(res.userSex == null|| res.userEmail == null|| res.userHeight == null|| res.userWeight == null) {
+            }else if(res.userSex == null|| res.userEmail == null|| res.userHeight == null|| res.userWeight == null|| res.userAgeRange == null) {
               PROPS.setIsFromLogin(false);
               PROPS.navigation.navigate("Regist");
             } else {

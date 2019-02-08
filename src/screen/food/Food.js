@@ -100,7 +100,7 @@ class TakeFoodPic extends Component {
               <View style={{position:"absolute", height:"100%",width:"100%",zIndex:1,alignItems:"center",justifyContent:"center",flexDirection:"row"}}>
               <Text style={{
                 color:"white",
-                fontSize:FONT_BACK_LABEL*1.2,
+                fontSize:FONT_BACK_LABEL*2.2,
                 textShadowRadius:10,
                 textShadowColor:'#000000',
                 textShadowOffset:{width:0, height:0},
@@ -110,13 +110,13 @@ class TakeFoodPic extends Component {
                 <Ionicons
                   name="ios-clock"
                   color={"#ffffff"}
-                  size={FONT_BACK_LABEL*2}
+                  size={FONT_BACK_LABEL*4}
                   borderWidth={0}/>
                   &nbsp;
               </Text>
               <Text style={{
                 color:"white",
-                fontSize:FONT_BACK_LABEL*1.2,
+                fontSize:FONT_BACK_LABEL*2.2,
                 textShadowRadius:10,
                 textShadowColor:'#000000',
                 textShadowOffset:{width:0, height:0},
