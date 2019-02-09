@@ -65,11 +65,6 @@ class Log extends React.Component {
     super(props, context);
     this.state = {
       clickEvent: false, //테스트용
-      selectedDateTerm:
-        Moment(new Date(Date.now() + -1 * 24 * 3600 * 1000)).diff(
-          Moment(new Date(Date.now() + -7 * 24 * 3600 * 1000)),
-          'days'
-        ) + 1,
       selectedDateHpList: [],
       rWeight: 0.0,
       rFat: 0.0,
@@ -103,9 +98,14 @@ class Log extends React.Component {
       graphCenterHeight: new Animated.Value(0),
       graphLeftHeight: new Animated.Value(0),
       graphRightHeight: new Animated.Value(0),
-      startDate: new Date(Date.now() + -7* 24 * 3600 * 1000),
+      selectedDateTerm:
+        Moment(new Date(Date.now() + 0 * 24 * 3600 * 1000)).diff(
+          Moment(new Date(Date.now() + -6 * 24 * 3600 * 1000)),
+          'days'
+        ) + 1,
+      startDate: new Date(Date.now() + -6* 24 * 3600 * 1000),
       endDate: new Date(Date.now() + 0 * 24 * 3600 * 1000),
-      range: {'startDate' : new Date(Date.now() + -7* 24 * 3600 * 1000),  'endDate':
+      range: {'startDate' : new Date(Date.now() + -6* 24 * 3600 * 1000),  'endDate':
         new Date(Date.now() + 0 * 24 * 3600 * 1000)},
       calendarVisible: false,
     };
@@ -143,7 +143,7 @@ class Log extends React.Component {
     //   return;
     // }
     LogComponent.setState({ calendarVisible: false });
-    console.log('getUserHealth start');
+    // console.log('getUserHealth start');
     return cFetch(
       APIS.GET_USER_INBODY_INFO,
       [
@@ -155,8 +155,8 @@ class Log extends React.Component {
       {},
       {
         responseProc: function(res) {
-          console.log("====================================================================================");
-          console.log(res);
+          // console.log("====================================================================================");
+          // console.log(res);
           let rCount = 0;
           let rWeight = 0;
           let rFat = 0;
@@ -175,13 +175,13 @@ class Log extends React.Component {
               if (rMuscle> 0)
                 rCount += 1;
           }
-          console.log('rCOUNT : ' + rCount);
+          // console.log('rCOUNT : ' + rCount);
           let selectedDateHpList = [];
           for (let i = 0; i < res.userAnalyze.length; i++) {
-            console.log('rCOUNT2 : ' + res.userAnalyze[i].takeItPoint);
+            // console.log('rCOUNT2 : ' + res.userAnalyze[i].takeItPoint);
             selectedDateHpList.push(res.userAnalyze[i].takeItPoint);
           }
-          console.log('최고점수 ' + Math.max(...selectedDateHpList));
+          // console.log('최고점수 ' + Math.max(...selectedDateHpList));
           if(res.userAnalyze.length >1){
             rHealthPoint = Math.max(...selectedDateHpList) -selectedDateHpList[res.userAnalyze.length - 1];
           }
@@ -207,6 +207,11 @@ class Log extends React.Component {
 
             startDate: startDate,
             endDate: endDate,
+            selectedDateTerm:
+            Moment(endDate).diff(
+              Moment(startDate),
+              'days'
+            ) + 1,
           });
           return res;
         },
