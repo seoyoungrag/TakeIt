@@ -301,10 +301,10 @@ class Log extends React.Component {
       selectColor: '#c4c4c4',
     };
     let DAY_RANGE_INFO = '';
-    if(this.state.range.endDate==null){
-      DAY_RANGE_INFO = Moment(this.state.range.startDate).format('YY.MM.DD').toString();
+    if(this.state.endDate==null){
+      DAY_RANGE_INFO = Moment(this.state.startDate).format('YY.MM.DD').toString();
     }else{
-      DAY_RANGE_INFO = Moment(this.state.range.startDate).format('YY.MM.DD').toString() + ' ~ ' + Moment(this.state.range.endDate).format('YY.MM.DD').toString();
+      DAY_RANGE_INFO = Moment(this.state.startDate).format('YY.MM.DD').toString() + ' ~ ' + Moment(this.state.endDate).format('YY.MM.DD').toString();
     }
 
     const content = (
@@ -375,10 +375,10 @@ class Log extends React.Component {
         <View
           style={styles.resultFlex}
           >
+          <View>
         {this.state.selectedDateHpList.length <= 1 ? (
          <Text> 측정된 인바디 결과내용이 {this.state.selectedDateHpList.length}개 입니다. 분석을 위해서는 2개 이상의 날짜별 인바디 사진정보가 필요합니다! </Text>
           ) : (
-        <Text>
           <Text
             style={{
               fontFamily: 'NotoSans-Regular',
@@ -394,49 +394,56 @@ class Log extends React.Component {
                   ? '유지중입니다!'
                   : '나빠지고있어요.'}
           </Text>
-          {"\n"}
+          )}
+          </View>
+          <View>
+        {this.state.selectedDateHpList.length <= 1 ? (
+          <Text></Text>
+        ) :(
+          <Text
+          style={{
+            fontFamily: 'NotoSans-Regular',
+            fontSize: 12,
+            color: 'black',
+            marginTop:10,
+          }}>
+          <Text style={{ fontWeight: '600' }}>
+            {this.state.selectedDateTerm}
+          </Text>
+          일 동안 체중은{' '}
           <Text
             style={{
-              fontFamily: 'NotoSans-Regular',
-              fontSize: 12,
-              color: 'black',
+              color: this.state.rWeight < 0 ? 'blue' : '#E91E63',
+              fontWeight: '600',
             }}>
-            <Text style={{ fontWeight: '600' }}>
-              {this.state.selectedDateTerm}
-            </Text>
-            일 동안 체중은{' '}
-            <Text
-              style={{
-                color: this.state.rWeight < 0 ? 'blue' : 'red',
-                fontWeight: '600',
-              }}>
-              {Math.abs(this.state.rWeight)}
-              kg
-            </Text>{' '}
-            {this.state.rWeight < 0 ? '늘었어며' : '줄었어며'} , 체지방은{' '}
-            <Text
-              style={{
-                color: this.state.rFat < 0 ? 'blue' : 'red',
-                fontWeight: '600',
-              }}>
-              {Math.abs(this.state.rFat)}
-              kg
-            </Text>{' '}
-            {this.state.rFat < 0 ? '늘었고' : '줄었어고'}, 근육량은{' '}
-            <Text
-              style={{
-                color: this.state.rMuscle < 0 ? 'red' : 'blue',
-                fontWeight: '600',
-              }}>
-              {Math.abs(this.state.rMuscle)}
-              kg
-            </Text>{' '}
-            {this.state.rMuscle < 0 ? '늘었어요' : '줄었어요'}.{' \n'}
-            {this.state.rCount < 2
-              ? '좋은 식습관과 운동습관을 유지하고 있습니다. '
-              : '섭취칼로리를 줄일 필요가 있어요!'}
-          </Text>
-          </Text>)}
+            {Math.abs(this.state.rWeight)}
+            kg
+          </Text>{' '}
+          {this.state.rWeight < 0 ? '늘었어며' : '줄었어며'} , 체지방은{' '}
+          <Text
+            style={{
+              color: this.state.rFat < 0 ? 'blue' : '#E91E63',
+              fontWeight: '600',
+            }}>
+            {Math.abs(this.state.rFat)}
+            kg
+          </Text>{' '}
+          {this.state.rFat < 0 ? '늘었고' : '줄었어고'}, 근육량은{' '}
+          <Text
+            style={{
+              color: this.state.rMuscle < 0 ? '#E91E63' : 'blue',
+              fontWeight: '600',
+            }}>
+            {Math.abs(this.state.rMuscle)}
+            kg
+          </Text>{' '}
+          {this.state.rMuscle < 0 ? '늘었어요' : '줄었어요'}.{' \n'}
+          {this.state.rCount < 2
+            ? '좋은 식습관과 운동습관을 유지하고 있습니다. '
+            : '섭취칼로리를 줄일 필요가 있어요!'}
+        </Text>)}
+
+        </View>
         </View>
         {/* 체중감량방식 끝 */}
         {/* 건강 분포도 시작*/}
@@ -810,17 +817,17 @@ class Log extends React.Component {
               평균섭취Kcal
             </Text>
             <Text style={styles.healthInfoDetailItemsText}>
-            { (this.state.userLeftInfo.avlKcal !=  undefined)  ? this.state.userLeftInfo.avlKcal + "kcal" : ""}
+            { (this.state.userLeftInfo.avgKcal !=  undefined)  ? this.state.userLeftInfo.avgKcal + "kcal" : ""}
             </Text>
             <Text
               style={[
                 styles.healthInfoDetailItemsText,
                 { fontWeight: '600', color: '#e9597b' },
               ]}>
-              { (this.state.userCenterInfo.avlKcal !=  undefined)  ? this.state.userCenterInfo.avlKcal + "kcal" : ""}
+              { (this.state.userCenterInfo.avgKcal !=  undefined)  ? this.state.userCenterInfo.avgKcal + "kcal" : ""}
             </Text>
             <Text style={styles.healthInfoDetailItemsText}>
-            { (this.state.userRightInfo.avlKcal !=  undefined)  ? this.state.userRightInfo.avlKcal + "kcal" : ""}
+            { (this.state.userRightInfo.avgKcal !=  undefined)  ? this.state.userRightInfo.avgKcal + "kcal" : ""}
             </Text>
           </ImageBackground>
 
@@ -833,51 +840,54 @@ class Log extends React.Component {
         {/* 분석  시작 */}
         <View
           style={styles.analFlex}>
+                <View>
                 {this.state.selectedDateHpList.length <= 1 ? (
                   <Text> </Text>
                 ) : (
-              <Text>
-              <Text
-              style={{
-                fontFamily: 'NotoSans-Regular',
-                fontSize: 14,
-                color: 'black',
-                fontWeight: '600',
-              }}>
-              분석
-            </Text>
-            {"\n"}
+                  <Text
+                  style={{
+                    fontFamily: 'NotoSans-Regular',
+                    fontSize: 14,
+                    color: 'black',
+                    fontWeight: '600',
+                  }}>
+                  분석
+                </Text>
+                )}
+                </View>
+                <View style={{marginTop:10}}>
+                {this.state.selectedDateHpList.length <= 1 ? (
+                  <Text> </Text>
+                ) : (
                 <Text
                   style={{
                     fontFamily: 'NotoSans-Regular',
                     fontSize: 12,
                     color: 'black',
                   }}>
-                이 기간의 첫 찍먹 포인트는{' '}
+                이 기간의 첫 건강 포인트는{' '}
                 <Text style={{ fontWeight: '600' }}>
                   {this.state.selectedDateHpList[0]}점
                 </Text>
                 입니다.
-                {"\n"}
                 <Text style={{ fontWeight: '600' }}>
                   {this.state.selectedDateTerm}
                 </Text>
                 일 동안 최고{' '}
-                <Text style={{ fontWeight: '600' }}>
+                <Text style={{ fontWeight: '600',color:'#E91E63' }}>
                   {Math.max(...this.state.selectedDateHpList)}점
                 </Text>
                 , 최저{' '}
-                <Text style={{ fontWeight: '600' }}>
+                <Text style={{ fontWeight: '600' ,color:'blue'}}>
                   {Math.min(...this.state.selectedDateHpList)}점
                 </Text>
                 입니다.{' '}
                 {"\n"}
                 {this.state.rHealthPoint > 0
-                  ? '이 기간동안 찍먹포인트가 점차 증가하고 있습니다. '
-                  : '이 기간동안 찍먹포인트가 점차 감소하고 있습니다.  '}
-                  {"\n"}
-                현재 찍먹포인트 상위 {this.state.userCenterInfo.percent}
-                %이며
+                  ? '이 기간동안 건강포인트가 점차 증가하고 있습니다. '
+                  : '이 기간동안 건강포인트가 점차 감소하고 있습니다.  '}
+                현재 건강포인트 상위 {this.state.userCenterInfo.percent}
+                %이네요!
                 {this.state.userCenterInfo.percent > 80
                   ? '매우 정진하셔야됩니다. 할수있습니다!'
                   : this.state.userCenterInfo.percent > 60
@@ -888,8 +898,8 @@ class Log extends React.Component {
                         ? '대한민국 최상위권 몸매입니다. '
                         : '운동선수이신가요?!! 직업이 의심됩니다!'}
               </Text>
-              </Text>
             )}
+              </View>
             </View>
         {/* 분석끝 */}
       </View>
@@ -944,7 +954,7 @@ let styles = {
     marginTop: 40,
   },
   resultFlex: {
-    flex: 8,
+    flex: 10,
     // backgroundColor: '#fcfcff',
     paddingTop: height * 0.0225,
     paddingLeft: width * 0.0625,

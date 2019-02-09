@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * @format
  * @flow
  */
@@ -107,7 +107,7 @@ class App extends React.Component {
           console.log('User has rejected permissions firebase.messaging');
           console.log(error);
         });
-      } 
+      }
     });
     const notificationOpen: NotificationOpen = await firebase.notifications().getInitialNotification();
     if (notificationOpen) {
@@ -126,7 +126,7 @@ class App extends React.Component {
         }));
         */
        this.navigation.navigate("Main")
-    } 
+    }
     const channel = new firebase.notifications.Android.Channel('takeat-channel', 'Takeat Channel', firebase.notifications.Android.Importance.Max)
             .setDescription('My apps test channel');
 // Create the channel
@@ -144,7 +144,7 @@ class App extends React.Component {
         .setSound('default')
       firebase.notifications()
         .displayNotification(notification)
-        
+
     });
     this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen: NotificationOpen) => {
         // Get the action triggered by the notification being opened
@@ -165,7 +165,7 @@ class App extends React.Component {
         */
         this.navigation.navigate("Main")
         firebase.notifications().removeDeliveredNotification(notification.notificationId);
-        
+
     });
   }
   componentWillMount() {
