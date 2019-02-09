@@ -19,7 +19,7 @@ import Moment from "moment";
 const AdMobRewarded = firebase.admob().rewarded('ca-app-pub-3705279151918090/3468709592');
 const AdMobInterstitial = firebase.admob().interstitial('ca-app-pub-3705279151918090/4058315659');
 const AdRequest = firebase.admob.AdRequest;
-const request = new AdRequest();
+const request = new AdRequest().addTestDevice("6F2BDD38BF3D428D623F0AFEDACB3F06");
 
 const { height, width } = Dimensions.get("window");
 let styles = {
