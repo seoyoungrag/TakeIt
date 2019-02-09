@@ -65,11 +65,6 @@ class Log extends React.Component {
     super(props, context);
     this.state = {
       clickEvent: false, //테스트용
-      selectedDateTerm:
-        Moment(new Date(Date.now() + -1 * 24 * 3600 * 1000)).diff(
-          Moment(new Date(Date.now() + -7 * 24 * 3600 * 1000)),
-          'days'
-        ) + 1,
       selectedDateHpList: [],
       rWeight: 0.0,
       rFat: 0.0,
@@ -103,9 +98,14 @@ class Log extends React.Component {
       graphCenterHeight: new Animated.Value(0),
       graphLeftHeight: new Animated.Value(0),
       graphRightHeight: new Animated.Value(0),
-      startDate: new Date(Date.now() + -7* 24 * 3600 * 1000),
+      selectedDateTerm:
+        Moment(new Date(Date.now() + 0 * 24 * 3600 * 1000)).diff(
+          Moment(new Date(Date.now() + -6 * 24 * 3600 * 1000)),
+          'days'
+        ) + 1,
+      startDate: new Date(Date.now() + -6* 24 * 3600 * 1000),
       endDate: new Date(Date.now() + 0 * 24 * 3600 * 1000),
-      range: {'startDate' : new Date(Date.now() + -7* 24 * 3600 * 1000),  'endDate':
+      range: {'startDate' : new Date(Date.now() + -6* 24 * 3600 * 1000),  'endDate':
         new Date(Date.now() + 0 * 24 * 3600 * 1000)},
       calendarVisible: false,
     };
@@ -136,11 +136,14 @@ class Log extends React.Component {
     let endDate =  LogComponent.state.range.endDate;
 
     if(endDate==null){
-      alert("기간으로 검색해주세요");
-      return;
+      endDate = startDate;
     }
+    // if(endDate==null){
+    //   alert("기간으로 검색해주세요");
+    //   return;
+    // }
     LogComponent.setState({ calendarVisible: false });
-    console.log('getUserHealth start');
+    // console.log('getUserHealth start');
     return cFetch(
       APIS.GET_USER_INBODY_INFO,
       [
@@ -152,8 +155,8 @@ class Log extends React.Component {
       {},
       {
         responseProc: function(res) {
-          console.log("====================================================================================");
-          console.log(res);
+          // console.log("====================================================================================");
+          // console.log(res);
           let rCount = 0;
           let rWeight = 0;
           let rFat = 0;
@@ -172,13 +175,13 @@ class Log extends React.Component {
               if (rMuscle> 0)
                 rCount += 1;
           }
-          console.log('rCOUNT : ' + rCount);
+          // console.log('rCOUNT : ' + rCount);
           let selectedDateHpList = [];
           for (let i = 0; i < res.userAnalyze.length; i++) {
-            console.log('rCOUNT2 : ' + res.userAnalyze[i].takeItPoint);
+            // console.log('rCOUNT2 : ' + res.userAnalyze[i].takeItPoint);
             selectedDateHpList.push(res.userAnalyze[i].takeItPoint);
           }
-          console.log('최고점수 ' + Math.max(...selectedDateHpList));
+          // console.log('최고점수 ' + Math.max(...selectedDateHpList));
           if(res.userAnalyze.length >1){
             rHealthPoint = Math.max(...selectedDateHpList) -selectedDateHpList[res.userAnalyze.length - 1];
           }
@@ -204,6 +207,11 @@ class Log extends React.Component {
 
             startDate: startDate,
             endDate: endDate,
+            selectedDateTerm:
+            Moment(endDate).diff(
+              Moment(startDate),
+              'days'
+            ) + 1,
           });
           return res;
         },
@@ -301,7 +309,7 @@ class Log extends React.Component {
       selectColor: '#c4c4c4',
     };
     let DAY_RANGE_INFO = '';
-    if(this.state.endDate==null){
+    if(this.state.endDate==this.state.startDate){
       DAY_RANGE_INFO = Moment(this.state.startDate).format('YY.MM.DD').toString();
     }else{
       DAY_RANGE_INFO = Moment(this.state.startDate).format('YY.MM.DD').toString() + ' ~ ' + Moment(this.state.endDate).format('YY.MM.DD').toString();
@@ -869,7 +877,7 @@ class Log extends React.Component {
                 <Text style={{ fontWeight: '600' }}>
                   {this.state.selectedDateHpList[0]}점
                 </Text>
-                입니다.
+                입니다.{' '}
                 <Text style={{ fontWeight: '600' }}>
                   {this.state.selectedDateTerm}
                 </Text>
@@ -882,21 +890,19 @@ class Log extends React.Component {
                   {Math.min(...this.state.selectedDateHpList)}점
                 </Text>
                 입니다.{' '}
-                {"\n"}
                 {this.state.rHealthPoint > 0
                   ? '이 기간동안 건강포인트가 점차 증가하고 있습니다. '
                   : '이 기간동안 건강포인트가 점차 감소하고 있습니다.  '}
-                현재 건강포인트 상위 {this.state.userCenterInfo.percent}
-                %이네요!
+                현재 건강포인트 상위 {this.state.userCenterInfo.percent}%이네요!
                 {this.state.userCenterInfo.percent > 80
-                  ? '매우 정진하셔야됩니다. 할수있습니다!'
+                  ? ' 매우 정진하셔야됩니다. 할수있습니다!'
                   : this.state.userCenterInfo.percent > 60
-                    ? '조금만 하면 대한민국 평균 몸매를 만들수 있습니다. 힘내세요!'
+                    ? ' 조금만 하면 대한민국 평균 몸매를 만들수 있습니다. 힘내세요!'
                     : this.state.userCenterInfo.percent > 40
-                      ? '상위권입니다! 앞으로 더 정진하시면됩니다.'
+                      ? ' 상위권입니다! 앞으로 더 정진하시면됩니다.'
                       : this.state.userCenterInfo.percent > 20
-                        ? '대한민국 최상위권 몸매입니다. '
-                        : '운동선수이신가요?!! 직업이 의심됩니다!'}
+                        ? ' 대한민국 최상위권 몸매입니다. '
+                        : ' 운동선수이신가요?!! 직업이 의심됩니다!'}
               </Text>
             )}
               </View>
@@ -963,11 +969,11 @@ let styles = {
     // justifyContent: 'center',
   },
   graphFlex: {
-    flex: 16,
+    flex: 17,
     // paddingTop: height * 0.0125,
   },
   tableFlex: {
-    flex: 15,
+    flex: 16,
     // paddingTop: height * 0.0125,
     backgroundColor: 'white',
   },
