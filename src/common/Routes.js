@@ -19,6 +19,12 @@ import Graph from '@screens/graph';
 
 const RootStack = createStackNavigator(
   {
+    RefreshMain: {
+      screen: Main,
+      navigationOptions: ({ navigation }) => ({
+        header: null,
+      }),
+    },
     Loading: {
       screen: Loading,
       navigationOptions: ({ navigation }) => ({

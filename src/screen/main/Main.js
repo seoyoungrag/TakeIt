@@ -130,7 +130,19 @@ class Main extends Component {
         this.props.setAdmobRewarded(AdMobRewarded);
       await this.callbackFnc();
     }
-
+    componentWillReceiveProps(nextProps) {
+      console.log(nextProps.navigation.state.params);
+      if(nextProps.navigation.state.params&&nextProps.navigation.state.params.refresh){
+        this.callbackFnc();
+      }
+      if (nextProps.navigation.state.params && nextProps.navigation.state.params.routeName=="RefreshMain") {
+        console.warn('1');
+        this.props.forceRefreshMain(true);
+      }else if(nextProps.navigation.state.params=='dummy'){
+        console.warn('2');
+        this.callbackFnc();
+      }
+    }
     componentWillUnmount() {
       //AdMobRewarded.removeAllListeners();
       this.notificationDisplayedListener();
