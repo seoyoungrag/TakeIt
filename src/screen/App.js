@@ -88,7 +88,7 @@ class App extends React.Component {
   static renderScene(route, navigator) {
     return (
       <Container>
-        <route.Page route={route} navigator={navigator} />
+      <route.Page route={route} navigator={navigator} />
       </Container>
     );
   }

@@ -29,7 +29,7 @@ const {width, height} = Dimensions.get("window");
 
 const AdMobRewarded = firebase.admob().rewarded('ca-app-pub-3705279151918090/3468709592');
 const AdRequest = firebase.admob.AdRequest;
-const request = new AdRequest().addTestDevice("6F2BDD38BF3D428D623F0AFEDACB3F06");
+const request = new AdRequest().addTestDevice("6F2BDD38BF3D428D623F0AFEDACB3F06").addTestDevice("A160612144C9D8EA8260E79A412D6FC0");
 
 function mapStateToProps(state) {
   return {
@@ -88,6 +88,43 @@ class Main extends Component {
       AdMobRewarded.on('onAdLeftApplication',
         () => console.log('AdMobRewarded => adLeftApplication')
       );
+
+      AdMobRewarded.on('onRewarded',
+      async(reward) => {
+          console.log('rewarded;');
+          const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
+          var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
+          viewAdCnt = Number(viewAdCnt);
+          if(viewAdCnt){
+            await AsyncStorage.removeItem(viewAdStorKey);
+          }else{
+            viewAdCnt = 0;
+          }
+          viewAdCnt += 1;
+          await AsyncStorage.setItem(viewAdStorKey, viewAdCnt.toString());
+          this.setState({
+            viewAdCnt:viewAdCnt
+          })
+        }
+      );
+      AdMobRewarded.on('onAdClosed',
+        async() => {
+          console.log('adClosed');
+          const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
+          var afterViewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
+          afterViewAdCnt = Number(afterViewAdCnt);
+          if(!afterViewAdCnt){
+            afterViewAdCnt=0;
+          }
+          console.log(this.state.viewAdCnt+"vs"+afterViewAdCnt);
+          if(afterViewAdCnt>this.state.viewAdCnt){
+          }else{
+          }
+          AdMobRewarded.loadAd(request.build());
+        }
+      );
+
+
       await this.callbackFnc();
     }
 
@@ -135,37 +172,6 @@ class Main extends Component {
       //await setTimeout(async()=>{ await COM.setState({spinnerVisible:false}) }, 100);
     }
     viewAd = async() =>{
-      AdMobRewarded.on('onRewarded',
-      async(reward) => {
-          console.log('rewarded;');
-          const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
-          var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
-          viewAdCnt = Number(viewAdCnt);
-          if(viewAdCnt){
-            await AsyncStorage.removeItem(viewAdStorKey);
-          }else{
-            viewAdCnt = 0;
-          }
-          viewAdCnt += 1;
-          await AsyncStorage.setItem(viewAdStorKey, viewAdCnt.toString());
-          this.setState({
-            viewAdCnt:viewAdCnt
-          })
-        }
-      );
-      AdMobRewarded.on('onAdClosed',
-        async() => {
-          console.log('adClosed');
-          const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
-          var afterViewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
-          console.log(this.state.viewAdCnt+"vs"+afterViewAdCnt);
-          if(afterViewAdCnt>this.state.viewAdCnt){
-          }else{
-          }
-          AdMobRewarded.loadAd(request.build());
-        }
-      );
-
       if (AdMobRewarded.isLoaded()) {
         AdMobRewarded.show();
       } else {
@@ -244,7 +250,7 @@ class Main extends Component {
         }
         PROPS = this.props;
         const content = (
-          <Container navigation={this.props.navigation}>
+          <Container navigation={this.props.navigation} adMobRewarded={AdMobRewarded}>
             <Modal animationType="fade" hardwareAccelerated={true} visible={this.state.guideYn=="N"} transparent={true} onRequestClose={() => {}}>
               <Guide onCompleteGuide={()=>{
                 var copy = this.props.USER_INFO.constructor()

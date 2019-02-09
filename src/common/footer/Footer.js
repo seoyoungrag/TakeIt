@@ -16,10 +16,9 @@ import { COLOR } from 'react-native-material-ui';
 import firebase from 'react-native-firebase';
 import Moment from "moment";
 
-const AdMobRewarded = firebase.admob().rewarded('ca-app-pub-3705279151918090/3468709592');
 const AdMobInterstitial = firebase.admob().interstitial('ca-app-pub-3705279151918090/4058315659');
 const AdRequest = firebase.admob.AdRequest;
-const request = new AdRequest().addTestDevice("6F2BDD38BF3D428D623F0AFEDACB3F06");
+const request = new AdRequest().addTestDevice("6F2BDD38BF3D428D623F0AFEDACB3F06").addTestDevice("A160612144C9D8EA8260E79A412D6FC0");
 
 const { height, width } = Dimensions.get("window");
 let styles = {
@@ -175,22 +174,6 @@ class Footer extends React.Component {
       () => console.log('AdMobInterstitial => adLeftApplication')
     );
 
-    AdMobRewarded.loadAd(request.build());
-    AdMobRewarded.on('onAdLoaded',
-      () => console.log('AdMobRewarded => adLoaded')
-    );
-    AdMobRewarded.on('onAdFailedToLoad',
-      (error) => console.warn(error)
-    );
-    AdMobRewarded.on('onAdOpened',
-      () => console.log('AdMobRewarded => adOpened')
-    );
-    AdMobRewarded.on('onRewardedVideoStarted',
-      () => console.log('AdMobRewarded => videoStarted')
-    );
-    AdMobRewarded.on('onAdLeftApplication',
-      () => console.log('AdMobRewarded => adLeftApplication')
-    );
   }
   componentWillUnmount(){
     //AdMobRewarded.removeAllListeners();
@@ -336,53 +319,18 @@ class Footer extends React.Component {
                   if(cnt>=maxCnt+viewAdCnt){
                     Alert.alert(
                       '오늘 '+cnt+'번 찍먹하셨네요!',
-                      '일일 찍먹 횟수가 '+maxCnt+'를 초과하면 광고를 봐주셔야 이용하실 수 있어요.',
+                      '일일 찍먹 횟수가 '+maxCnt+'를 초과하면 찍먹티켓을 충전해주셔야 이용하실 수 있어요.'/*,
                       [
                         {
-                          text: '취소',
-                          onPress: () => {/*console.log('Cancel Pressed')*/},
+                          text: '확인',
+                          onPress: () => {/*console.log('Cancel Pressed')},
                           style: 'cancel',
-                        },
-                        {text: '광고보기', onPress: async() => {
-                          AdMobRewarded.on('onRewarded',
-                            async(reward) => {
-                              console.log('rewarded;');
-                              const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
-                              var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
-                              viewAdCnt = Number(viewAdCnt);
-                              if(viewAdCnt){
-                                await AsyncStorage.removeItem(viewAdStorKey);
-                              }else{
-                                viewAdCnt = 0;
-                              }
-                              viewAdCnt += 1;
-                              await AsyncStorage.setItem(viewAdStorKey, viewAdCnt.toString());
-                            }
-                          );
-                          AdMobRewarded.on('onAdClosed',
-                            async() => {
-                              console.log('adClosed');
-                              const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
-                              var afterViewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
-                              console.log(viewAdCnt+"vs"+afterViewAdCnt);
-                              if(afterViewAdCnt>viewAdCnt){
-                                this.props.navigation.navigate("TakePhotoFood");
-                              }else{
-                                Alert.alert("광고를 끝까지 봐주셔야 해요!");
-                              }
-                              AdMobRewarded.loadAd(request.build());
-                            }
-                          );
-                          if (AdMobRewarded.isLoaded()) {
-                            AdMobRewarded.show();
-                          } else {
-                            await AdMobRewarded.loadAd(request.build());
-                            AdMobRewarded.show();
-                          }
-                          }
+                        }
+                        ,
+                        {text: '확인', onPress: async() => {}
                         }
                       ],
-                      {cancelable: false},
+                      {cancelable: false},*/
                     )
                   }else{
                     this.props.navigation.navigate("TakePhotoFood");
