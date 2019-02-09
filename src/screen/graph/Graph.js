@@ -415,7 +415,7 @@ class Log extends React.Component {
             color: 'black',
             marginTop:10,
           }}>
-          <Text style={{ fontWeight: '600' }}>
+          {' '}<Text style={{ fontWeight: '600' }}>
             {this.state.selectedDateTerm}
           </Text>
           일 동안 체중은{' '}
@@ -873,7 +873,7 @@ class Log extends React.Component {
                     fontSize: 12,
                     color: 'black',
                   }}>
-                이 기간의 첫 건강 포인트는{' '}
+                  {' '}이 기간의 첫 건강 포인트는{' '}
                 <Text style={{ fontWeight: '600' }}>
                   {this.state.selectedDateHpList[0]}점
                 </Text>
@@ -892,8 +892,11 @@ class Log extends React.Component {
                 입니다.{' '}
                 {this.state.rHealthPoint > 0
                   ? '이 기간동안 건강포인트가 점차 증가하고 있습니다. '
+                  : this.state.rHealthPoint == 0
+                  ? '이 기간동안 건강포인트가 유지되고 있습니다. '
                   : '이 기간동안 건강포인트가 점차 감소하고 있습니다.  '}
-                현재 건강포인트 상위 {this.state.userCenterInfo.percent}%이네요!
+                  {'\n'}
+                  현재 건강포인트 상위 {this.state.userCenterInfo.percent}%이네요!
                 {this.state.userCenterInfo.percent > 80
                   ? ' 매우 정진하셔야됩니다. 할수있습니다!'
                   : this.state.userCenterInfo.percent > 60
