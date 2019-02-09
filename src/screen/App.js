@@ -138,7 +138,7 @@ class App extends React.Component {
     });
     this.notificationListener = firebase.notifications().onNotification((notification: Notification) => {
       console.warn(notification);
-      console.warn(MainTabNavigator);
+      this.navigator._navigation.navigate("RefreshMain", { refresh: "dummy"});
       //MainTabNavigator.navigation.navigate("Main")
       // Process your notification as required
       /*
