@@ -42,6 +42,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
+    setAdmobRewarded: ad => {
+      dispatch(ActionCreator.setAdmobRewarded(ad));
+    },
     setUserInfo: user => {
       dispatch(ActionCreator.setUserInfo(user));
     },
@@ -124,7 +127,7 @@ class Main extends Component {
         }
       );
 
-
+        this.props.setAdmobRewarded(AdMobRewarded);
       await this.callbackFnc();
     }
 

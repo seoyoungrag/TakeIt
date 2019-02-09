@@ -111,7 +111,7 @@ class TakeFoodPic extends Component {
                       shadowOpacity: 0.8,
                       shadowRadius: 2}]}>
                     <Text style={{ fontSize: FONT_BACK_LABEL,color:COLOR.pink500 }}> 
-                    찍먹
+                    먹자!
                     </Text>
                 </TouchableOpacity>
               </View>
@@ -203,7 +203,7 @@ class TakeFoodPic extends Component {
                 return (
                   <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
                     <TouchableOpacity onPress={() => this.takePicture(camera)} style={styles.capture}>
-                      <Text style={{ fontSize: FONT_BACK_LABEL }}> 찍고 먹기! </Text>
+                      <Text style={{ fontSize: FONT_BACK_LABEL,color:COLOR.pink500 }}> 찍고! </Text>
                     </TouchableOpacity>
                   </View>
                 );

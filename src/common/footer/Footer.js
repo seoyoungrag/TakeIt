@@ -134,6 +134,7 @@ async function requestCameraPermission(){
 
 function mapStateToProps(state) {
   return {
+    AdMobRewarded: state.REDUCER_CONSTANTS.adMobRewarded,
     TIMESTAMP: state.REDUCER_CONSTANTS.timestamp,
     ACTIVE_BTN : state.REDUCER_CONSTANTS.activeFooterBtn,
     FORCE_REFRESH_MAIN : state.REDUCER_CONSTANTS.forceRefreshMain
@@ -319,18 +320,18 @@ class Footer extends React.Component {
                   if(cnt>=maxCnt+viewAdCnt){
                     Alert.alert(
                       '오늘 '+cnt+'번 찍먹하셨네요!',
-                      '일일 찍먹 횟수가 '+maxCnt+'를 초과하면 찍먹티켓을 충전해주셔야 이용하실 수 있어요.'/*,
+                      '일일 찍먹 횟수가 '+maxCnt+'를 초과하면 찍먹티켓을 충전해주셔야 이용하실 수 있어요.',
                       [
                         {
-                          text: '확인',
-                          onPress: () => {/*console.log('Cancel Pressed')},
+                          text: '취소',
+                          onPress: () => {/*console.log('Cancel Pressed')*/},
                           style: 'cancel',
                         }
                         ,
-                        {text: '확인', onPress: async() => {}
+                        {text: '광고보기', onPress: async() => {this.props.AdMobRewarded.show()}
                         }
                       ],
-                      {cancelable: false},*/
+                      {cancelable: false},
                     )
                   }else{
                     this.props.navigation.navigate("TakePhotoFood");

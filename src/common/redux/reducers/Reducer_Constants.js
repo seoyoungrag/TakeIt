@@ -5,12 +5,18 @@ const isFromLoading = false;
 const activeFooterBtn = "HOME";
 const forceRefreshMain = false;
 const timestamp = 0;
+const adMobRewarded = {};
 
 export default (
   state = {
-    isFromLogin, isFromLoading, activeFooterBtn:"HOME", forceRefreshMain, timestamp
+    isFromLogin, isFromLoading, activeFooterBtn:"HOME", forceRefreshMain, timestamp, adMobRewarded
   }, action) => {
   switch (action.type) {
+    case types.SET_ADMOBREWARDED:
+      return {
+        ...state,
+        adMobRewarded: action.payload
+      }
     case types.SET_TIMESTAMP:
       return {
         ...state,
