@@ -56,12 +56,11 @@ class Diary extends React.Component {
     super(props);
     this.state = {
       title: this.props.title,
-      // startDate: new Date(Date.now() + -7* 24 * 3600 * 1000),
-      startDate: new Date(Date.now() + -30* 24 * 3600 * 1000),
+      startDate: new Date(Date.now() + -7* 24 * 3600 * 1000),
       endDate: new Date(Date.now() + 0 * 24 * 3600 * 1000),
       selectedDate: this.props.endDateForDiary,
       calendarVisible: false,
-      range: {'startDate' : new Date(Date.now() + -30* 24 * 3600 * 1000),  'endDate':
+      range: {'startDate' : new Date(Date.now() + -7* 24 * 3600 * 1000),  'endDate':
         new Date(Date.now() + 0 * 24 * 3600 * 1000)},
       resultData : [],
       spinnerDiaryVisible: true,
@@ -147,12 +146,11 @@ class Diary extends React.Component {
     let selectDateTouchableWidth = (width * 2) / 5;
     const USER_INFO = this.props.USER_INFO;
     let DAY_RANGE_INFO = '';
-
-    if(this.state.range.endDate==null){
-      DAY_RANGE_INFO = Moment(this.state.range.startDate).format('YY.MM.DD').toString();
+    if(this.state.endDate==null){
+      DAY_RANGE_INFO = Moment(this.state.startDate).format('YY.MM.DD').toString();
     }else{
       console.log('rd endDate else');
-      DAY_RANGE_INFO = Moment(this.state.range.startDate).format('YY.MM.DD').toString() + ' ~ ' + Moment(this.state.range.endDate).format('YY.MM.DD').toString();
+      DAY_RANGE_INFO = Moment(this.state.startDate).format('YY.MM.DD').toString() + ' ~ ' + Moment(this.state.endDate).format('YY.MM.DD').toString();
     }
     console.log('render33 start');
     console.log(DAY_RANGE_INFO);
@@ -204,6 +202,8 @@ class Diary extends React.Component {
                   this.calendar = calendar;
                 }}
                 startingMonth="2019-01-01"
+                startDate={(Moment(this.state.startDate).format('YYYY-MM-DD'))}
+                endDate={(Moment(this.state.endDate).format('YYYY-MM-DD'))}
                 style={{
                   width: '200%',
                 }}
@@ -246,7 +246,7 @@ class Diary extends React.Component {
           </PopupDialog>
         </View>
         <View style={[styles.parent]}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={true} >
               {(this.state.resultData.length  > 0)  ?  this.state.resultData.map(data => {
                 return (
                   <View key={data.registTime} style={[styles.child]}>
@@ -254,7 +254,7 @@ class Diary extends React.Component {
                    {inqueryDate:Moment(data.registD).format('YYYY-MM-DD')})}}>
                   <View style={[styles.topInfo]}>
                   <Text style={styles.day}>
-                    {Moment(data.registD).format('DD') }
+                    {Moment(data.registD).format('MM.DD') }
                   </Text>
                   <Text style={styles.dayko}>
                     ({Moment(data.registD).format('ddd') })
@@ -268,7 +268,7 @@ class Diary extends React.Component {
               <View style={[styles.bottomPhoto]}>
                 <FlatGrid
                 horizontal
-                spacing={1}
+                spacing={3}
                 items={data.photoArr}
                 style={styles.gridView}
                 renderItem={({ item, section, index }) => (
@@ -314,7 +314,9 @@ class Diary extends React.Component {
                     </Text>
                     </View>
                   <FastImage
-                  style={styles.imageStyle}
+                  style=
+                  { (data.photoArr.length>3) ? styles.imageStyle1:
+                     styles.imageStyle2}
                     source={{
                       uri: item.firebaseDownloadUrl,
                       priority: FastImage.priority.low,
@@ -407,14 +409,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: width*0.95,
     // backgroundColor: '#F5FCFF',
-    height: height*0.3*0.3,
+    height: height*0.3*0.31,
   },
   bottomPhoto: {
     // justifyContent: 'flex-end',
     flex:1,
     width: width*0.95,
     // backgroundColor: '#7F7F7F',
-    height: height*0.3*0.7,
+    height: height*0.3*0.69,
   },
   itemContainer: {
     // justifyContent: 'flex-end',
@@ -442,7 +444,11 @@ const styles = StyleSheet.create({
     height:"100%",
     width: width*0.95,
   },
-  imageStyle: {
+  imageStyle1: {
+    width: width*0.95*0.305,
+    height: width*0.95*0.305,
+  },
+  imageStyle2: {
     width: width*0.95*0.33,
     height: width*0.95*0.33,
   },

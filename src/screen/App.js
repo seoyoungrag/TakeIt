@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * @format
  * @flow
  */
@@ -107,7 +107,7 @@ class App extends React.Component {
           console.log('User has rejected permissions firebase.messaging');
           console.log(error);
         });
-      } 
+      }
     });
     const notificationOpen: NotificationOpen = await firebase.notifications().getInitialNotification();
     if (notificationOpen) {
@@ -172,7 +172,7 @@ class App extends React.Component {
         */
        //MainTabNavigator.navigation.navigate("Main")
         firebase.notifications().removeDeliveredNotification(notification.notificationId);
-        
+
     });
   }
   componentWillMount() {
