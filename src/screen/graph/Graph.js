@@ -964,11 +964,11 @@ let styles = {
     // justifyContent: 'center',
   },
   graphFlex: {
-    flex: 16,
+    flex: 17,
     // paddingTop: height * 0.0125,
   },
   tableFlex: {
-    flex: 15,
+    flex: 16,
     // paddingTop: height * 0.0125,
     backgroundColor: 'white',
   },
