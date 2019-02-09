@@ -27,6 +27,7 @@ if (PixelRatio.get() <= 2) {
 
 function mapStateToProps(state) {
   return {
+    AdMobRewarded: state.REDUCER_CONSTANTS.adMobRewarded,
     USER_INFO: state.REDUCER_USER.user
   };
 }
@@ -50,6 +51,7 @@ class TakeFoodPic extends Component {
     };
   }
   componentDidMount = async() => {
+    console.warn(this.props.AdMobRewarded);
   }
   renderImage(image) {
     var images = [{url:image.uri, width:image.width, height: image.height}];

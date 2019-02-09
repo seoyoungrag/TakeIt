@@ -4,6 +4,12 @@ import exerciseTypes from "./Types_Exercise";
 import codeTypes from "./Types_Code";
 import constants from "./Types_Constants";
 
+export function setAdmobRewarded(data) {
+  return {
+    type: constants.SET_ADMOBREWARDED,
+    payload: data
+  };
+}
 export function setTimestamp(data) {
   return {
     type: constants.SET_TIMESTAMP,

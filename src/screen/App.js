@@ -111,6 +111,7 @@ class App extends React.Component {
     });
     const notificationOpen: NotificationOpen = await firebase.notifications().getInitialNotification();
     if (notificationOpen) {
+      console.warn(notificationOpen);
         const action = notificationOpen.action;
         const notification: Notification = notificationOpen.notification;
         var seen = [];
@@ -125,8 +126,8 @@ class App extends React.Component {
             return val;
         }));
         */
-       this.navigation.navigate("Main")
-    }
+       //MainTabNavigator.navigation.navigate("Main")
+    } 
     const channel = new firebase.notifications.Android.Channel('takeat-channel', 'Takeat Channel', firebase.notifications.Android.Importance.Max)
             .setDescription('My apps test channel');
 // Create the channel
@@ -136,7 +137,11 @@ class App extends React.Component {
         // ANDROID: Remote notifications do not contain the channel ID. You will have to specify this manually if you'd like to re-display the notification.
     });
     this.notificationListener = firebase.notifications().onNotification((notification: Notification) => {
+      console.warn(notification);
+      console.warn(MainTabNavigator);
+      //MainTabNavigator.navigation.navigate("Main")
       // Process your notification as required
+      /*
       notification
         .android.setChannelId('test-channel')
         .android.setSmallIcon('ic_launcher')
@@ -144,9 +149,11 @@ class App extends React.Component {
         .setSound('default')
       firebase.notifications()
         .displayNotification(notification)
-
+        */
+        
     });
     this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen: NotificationOpen) => {
+      console.warn(notificationOpen);
         // Get the action triggered by the notification being opened
         const action = notificationOpen.action;
         // Get information about the notification that was opened
@@ -163,7 +170,7 @@ class App extends React.Component {
             return val;
         }));
         */
-        this.navigation.navigate("Main")
+       //MainTabNavigator.navigation.navigate("Main")
         firebase.notifications().removeDeliveredNotification(notification.notificationId);
 
     });
