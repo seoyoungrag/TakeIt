@@ -12,6 +12,7 @@ import {
 
 import Images from '@assets/Images';
 import Footer from "@footer";
+import firebase from 'react-native-firebase';
 
 const propTypes = {
   children: PropTypes.node.isRequired,
@@ -28,11 +29,10 @@ class Container extends Component {
       : false,
     };
   }
-
   render() {
     const toolbarDisplay = this.props.toolbarDisplay;
     const navigation = this.props.navigation;
-    const footer = <Footer navigation={this.props.navigation}/>;
+    const footer = <Footer adMobRewarded={this.props.adMobRewarded} navigation={this.props.navigation}/>;
     const calendarBtn = (
       <TouchableHighlight onPress={this.props.openCalendar}>
         <Image style={{ width: 22, height: 20,marginRight:7 }} source={Images.CalendarBtn} />
