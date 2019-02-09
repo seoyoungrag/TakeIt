@@ -872,7 +872,7 @@ class Log extends React.Component {
                 <Text style={{ fontWeight: '600' }}>
                   {this.state.selectedDateHpList[0]}점
                 </Text>
-                입니다.
+                입니다.{' '}
                 <Text style={{ fontWeight: '600' }}>
                   {this.state.selectedDateTerm}
                 </Text>
@@ -885,21 +885,19 @@ class Log extends React.Component {
                   {Math.min(...this.state.selectedDateHpList)}점
                 </Text>
                 입니다.{' '}
-                {"\n"}
                 {this.state.rHealthPoint > 0
                   ? '이 기간동안 건강포인트가 점차 증가하고 있습니다. '
                   : '이 기간동안 건강포인트가 점차 감소하고 있습니다.  '}
-                현재 건강포인트 상위 {this.state.userCenterInfo.percent}
-                %이네요!
+                현재 건강포인트 상위 {this.state.userCenterInfo.percent}%이네요!
                 {this.state.userCenterInfo.percent > 80
-                  ? '매우 정진하셔야됩니다. 할수있습니다!'
+                  ? ' 매우 정진하셔야됩니다. 할수있습니다!'
                   : this.state.userCenterInfo.percent > 60
-                    ? '조금만 하면 대한민국 평균 몸매를 만들수 있습니다. 힘내세요!'
+                    ? ' 조금만 하면 대한민국 평균 몸매를 만들수 있습니다. 힘내세요!'
                     : this.state.userCenterInfo.percent > 40
-                      ? '상위권입니다! 앞으로 더 정진하시면됩니다.'
+                      ? ' 상위권입니다! 앞으로 더 정진하시면됩니다.'
                       : this.state.userCenterInfo.percent > 20
-                        ? '대한민국 최상위권 몸매입니다. '
-                        : '운동선수이신가요?!! 직업이 의심됩니다!'}
+                        ? ' 대한민국 최상위권 몸매입니다. '
+                        : ' 운동선수이신가요?!! 직업이 의심됩니다!'}
               </Text>
             )}
               </View>
