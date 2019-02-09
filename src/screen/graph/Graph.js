@@ -136,9 +136,12 @@ class Log extends React.Component {
     let endDate =  LogComponent.state.range.endDate;
 
     if(endDate==null){
-      alert("기간으로 검색해주세요");
-      return;
+      endDate = startDate;
     }
+    // if(endDate==null){
+    //   alert("기간으로 검색해주세요");
+    //   return;
+    // }
     LogComponent.setState({ calendarVisible: false });
     console.log('getUserHealth start');
     return cFetch(
@@ -301,7 +304,7 @@ class Log extends React.Component {
       selectColor: '#c4c4c4',
     };
     let DAY_RANGE_INFO = '';
-    if(this.state.endDate==null){
+    if(this.state.endDate==this.state.startDate){
       DAY_RANGE_INFO = Moment(this.state.startDate).format('YY.MM.DD').toString();
     }else{
       DAY_RANGE_INFO = Moment(this.state.startDate).format('YY.MM.DD').toString() + ' ~ ' + Moment(this.state.endDate).format('YY.MM.DD').toString();

@@ -146,7 +146,7 @@ class Diary extends React.Component {
     let selectDateTouchableWidth = (width * 2) / 5;
     const USER_INFO = this.props.USER_INFO;
     let DAY_RANGE_INFO = '';
-    if(this.state.endDate==null){
+    if(this.state.endDate==this.state.startDate){
       DAY_RANGE_INFO = Moment(this.state.startDate).format('YY.MM.DD').toString();
     }else{
       console.log('rd endDate else');
