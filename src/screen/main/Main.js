@@ -30,7 +30,8 @@ const {width, height} = Dimensions.get("window");
 
 const AdMobRewarded = firebase.admob().rewarded('ca-app-pub-3705279151918090/3468709592');
 const AdRequest = firebase.admob.AdRequest;
-const request = new AdRequest().addTestDevice("6F2BDD38BF3D428D623F0AFEDACB3F06").addTestDevice("A160612144C9D8EA8260E79A412D6FC0");
+//const request = new AdRequest().addTestDevice("6F2BDD38BF3D428D623F0AFEDACB3F06").addTestDevice("A160612144C9D8EA8260E79A412D6FC0");
+const request = new AdRequest();
 
 function mapStateToProps(state) {
   return {

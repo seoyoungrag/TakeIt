@@ -18,7 +18,8 @@ import Moment from "moment";
 
 const AdMobInterstitial = firebase.admob().interstitial('ca-app-pub-3705279151918090/4058315659');
 const AdRequest = firebase.admob.AdRequest;
-const request = new AdRequest().addTestDevice("6F2BDD38BF3D428D623F0AFEDACB3F06").addTestDevice("A160612144C9D8EA8260E79A412D6FC0");
+//const request = new AdRequest().addTestDevice("6F2BDD38BF3D428D623F0AFEDACB3F06").addTestDevice("A160612144C9D8EA8260E79A412D6FC0");
+const request = new AdRequest();
 
 const { height, width } = Dimensions.get("window");
 let styles = {
@@ -210,7 +211,7 @@ class Footer extends React.Component {
     const storKey = "@"+Moment(new Date()).format('YYMMDD')+"SCREEN";
     var currentScreenViewCnt = await AsyncStorage.getItem(storKey);
     currentScreenViewCnt = Number(currentScreenViewCnt);
-    var maxSreenViewCnt = this.props.TIMESTAMP.screenViewCnt?this.props.TIMESTAMP.screenViewCnt: 5;
+    var maxSreenViewCnt = this.props.TIMESTAMP.screenViewCnt?this.props.TIMESTAMP.screenViewCnt: 10;
     console.log(currentScreenViewCnt+"vs"+maxSreenViewCnt);
     if(currentScreenViewCnt>maxSreenViewCnt){
       const storKey = "@"+Moment(new Date()).format('YYMMDD')+"SCREEN";
