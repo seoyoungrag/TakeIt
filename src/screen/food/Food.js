@@ -88,7 +88,7 @@ class TakeFoodPic extends Component {
         width:width*0.082
       }
     ];
-    
+
     console.log(this.state.food);
     const content = (
       <Container
@@ -128,9 +128,9 @@ class TakeFoodPic extends Component {
                 textShadowOffset:{width:0, height:0},
                 textAlign:"center",
                 textAlignVertical:"center"}}>
-                {this.state.food.registTime&&this.state.food.registTime.toString().length==13 ? 
+                {this.state.food.registTime&&this.state.food.registTime.toString().length==13 ?
                   Moment(this.state.food.registTime).format('YYYY-MM-DD HH:mm:ss').substring(0,10)+"\n"+Moment(this.state.food.registTime).format('YYYY-MM-DD HH:mm:ss').substring(10,19)
-                  : 
+                  :
                   this.state.food.registTime.substring(0,10)+"\n"+this.state.food.registTime.substring(10,19)}
                 </Text>
               </View>
@@ -144,7 +144,7 @@ class TakeFoodPic extends Component {
                         />
               </View>
             <View style={{flex:1,padding:width*0.05, justifyContent:"center", alignItems:"center"}}>
-              <Table height={height/3-height*0.105} columns={columns} 
+              <Table height={height/3-height*0.105} columns={columns}
               /* columnWidth={width*0.145} */
               dataSource={this.state.food.foodAnalysisInfo ? this.state.food.foodAnalysisInfo: this.state.food.foodList} />
             </View>
