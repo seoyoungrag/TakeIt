@@ -75,6 +75,9 @@ class Table extends Component {
             if(rowData.foodId==4909&&col.dataIndex=="foodNm"){
               data="잘모르겠어요";
             }
+            if(col.dataIndex=="foodNm"&&rowData.amountDish>1){
+              var data = rowData[col.dataIndex]+'x'+rowData.amountDish;
+            }
             return(renderCell(data, col))
           })
         }

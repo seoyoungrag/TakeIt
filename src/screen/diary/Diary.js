@@ -201,7 +201,7 @@ class Diary extends React.Component {
                 ref={calendar => {
                   this.calendar = calendar;
                 }}
-                startingMonth="2019-01-01"
+                startingMonth="2019-02-11"
                 startDate={(Moment(this.state.startDate).format('YYYY-MM-DD'))}
                 endDate={(Moment(this.state.endDate).format('YYYY-MM-DD'))}
                 style={{

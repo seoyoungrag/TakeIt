@@ -362,7 +362,7 @@ class Log extends React.Component {
               ref={calendar => {
                 this.calendar = calendar;
               }}
-              startingMonth="2019-01-01"
+              startingMonth="2019-02-11"
               startDate={(Moment(this.state.startDate).format('YYYY-MM-DD'))}
               endDate={(Moment(this.state.endDate).format('YYYY-MM-DD'))}
               style={{
@@ -373,6 +373,29 @@ class Log extends React.Component {
           </View>
         </PopupDialog>
       </View>
+
+      {(this.state.selectedDateHpList.length <1)?
+        (
+      <View
+      style={{
+        flex: 1,
+        flexDirection: 'column',
+        backgroundColor: 'white',
+      }}>
+      <View
+        style={styles.resultFlex}
+        >
+         <Text style={{
+          fontFamily: 'NotoSans-Regular',
+          fontSize: 14,
+          color: 'black',
+          fontWeight: '300',
+        }}>해당 기간에 측정된 인바디 결과가 {this.state.selectedDateHpList.length}개 입니다. 통계를 위해서는 2개 이상의 인바디 사진정보가 필요합니다! </Text>
+         </View>
+      </View>
+      ):(
+
+
       <View
       style={{
         flex: 1,
@@ -384,9 +407,6 @@ class Log extends React.Component {
           style={styles.resultFlex}
           >
           <View>
-        {this.state.selectedDateHpList.length <= 1 ? (
-         <Text> 측정된 인바디 결과내용이 {this.state.selectedDateHpList.length}개 입니다. 분석을 위해서는 2개 이상의 날짜별 인바디 사진정보가 필요합니다! </Text>
-          ) : (
           <Text
             style={{
               fontFamily: 'NotoSans-Regular',
@@ -402,12 +422,8 @@ class Log extends React.Component {
                   ? '유지중입니다!'
                   : '나빠지고있어요.'}
           </Text>
-          )}
           </View>
           <View>
-        {this.state.selectedDateHpList.length <= 1 ? (
-          <Text></Text>
-        ) :(
           <Text
           style={{
             fontFamily: 'NotoSans-Regular',
@@ -446,10 +462,13 @@ class Log extends React.Component {
             kg
           </Text>{' '}
           {this.state.rMuscle < 0 ? '늘었어요' : '줄었어요'}.{' \n'}
+          {'\n'}
+          <Text style={{ fontWeight: '800' }}>
           {this.state.rCount < 2
             ? '좋은 식습관과 운동습관을 유지하고 있습니다. '
             : '섭취칼로리를 줄일 필요가 있어요!'}
-        </Text>)}
+            </Text>
+        </Text>
 
         </View>
         </View>
@@ -468,7 +487,7 @@ class Log extends React.Component {
               zIndex: 10,
               top: 12,
               // left: width * 0.0625,
-              left: width * 0.0825,
+              left: width * 0.0865,
               fontFamily: 'NotoSans-Regular',
               fontSize: 10,
               // color: '#c0b8ae',
@@ -481,10 +500,10 @@ class Log extends React.Component {
           <ImageBackground
             style={{
               position: 'absolute',
-              width: '100%',
+              width: width,
               height: '100%',
             }}
-            resizeMode="contain"
+            resizeMode="stretch"
             source={Images.WorkoutLogHealthInfoGraphBack}
           />
           {/* 건강 분포도 그래프 배경  끝 */}
@@ -495,7 +514,7 @@ class Log extends React.Component {
               position: 'absolute',
               width: '100%',
               minHeight: '30%',
-              height: graphLeftHeight,
+              height: this.state.graphLeftHeight,
             }}>
             <ImageBackground
               style={{
@@ -544,7 +563,7 @@ class Log extends React.Component {
               position: 'absolute',
               width: '100%',
               minHeight: '30%',
-              height: graphCenterHeight,
+              height: this.state.graphCenterHeight,
             }}>
             <ImageBackground
               style={{
@@ -593,7 +612,7 @@ class Log extends React.Component {
               position: 'absolute',
               width: '100%',
               minHeight: '30%',
-              height: graphRightHeight,
+              height: this.state.graphRightHeight,
             }}>
             <ImageBackground
               style={{
@@ -839,19 +858,14 @@ class Log extends React.Component {
             </Text>
           </ImageBackground>
 
-
-
-            <View flex={6} />
-          </View>
+        <View flex={6} />
+        </View>
         </ImageBackground>
         {/* 건강 분포도 세부 끝 */}
         {/* 분석  시작 */}
         <View
           style={styles.analFlex}>
                 <View>
-                {this.state.selectedDateHpList.length <= 1 ? (
-                  <Text> </Text>
-                ) : (
                   <Text
                   style={{
                     fontFamily: 'NotoSans-Regular',
@@ -861,12 +875,8 @@ class Log extends React.Component {
                   }}>
                   분석
                 </Text>
-                )}
                 </View>
                 <View style={{marginTop:10}}>
-                {this.state.selectedDateHpList.length <= 1 ? (
-                  <Text> </Text>
-                ) : (
                 <Text
                   style={{
                     fontFamily: 'NotoSans-Regular',
@@ -896,6 +906,8 @@ class Log extends React.Component {
                   ? '이 기간동안 건강포인트가 유지되고 있습니다. '
                   : '이 기간동안 건강포인트가 점차 감소하고 있습니다.  '}
                   {'\n'}
+                  {'\n'}
+                  <Text style={{ fontWeight: '800' }}>
                   현재 건강포인트 상위 {this.state.userCenterInfo.percent}%이네요!
                 {this.state.userCenterInfo.percent > 80
                   ? ' 매우 정진하셔야됩니다. 할수있습니다!'
@@ -906,12 +918,16 @@ class Log extends React.Component {
                       : this.state.userCenterInfo.percent > 20
                         ? ' 대한민국 최상위권 몸매입니다. '
                         : ' 운동선수이신가요?!! 직업이 의심됩니다!'}
+                        </Text>
               </Text>
-            )}
               </View>
+
+
+
             </View>
         {/* 분석끝 */}
       </View>
+      )}
       </Container>
     );
     return (
@@ -963,7 +979,7 @@ let styles = {
     marginTop: 40,
   },
   resultFlex: {
-    flex: 10,
+    flex: 11,
     // backgroundColor: '#fcfcff',
     paddingTop: height * 0.0225,
     paddingLeft: width * 0.0625,
@@ -972,11 +988,11 @@ let styles = {
     // justifyContent: 'center',
   },
   graphFlex: {
-    flex: 17,
+    flex: 14,
     // paddingTop: height * 0.0125,
   },
   tableFlex: {
-    flex: 16,
+    flex: 14,
     // paddingTop: height * 0.0125,
     backgroundColor: 'white',
   },
