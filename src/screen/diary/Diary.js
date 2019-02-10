@@ -409,14 +409,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: width*0.95,
     // backgroundColor: '#F5FCFF',
-    height: height*0.3*0.31,
+    height: height*0.3*0.3,
   },
   bottomPhoto: {
     // justifyContent: 'flex-end',
     flex:1,
     width: width*0.95,
     // backgroundColor: '#7F7F7F',
-    height: height*0.3*0.69,
+    height: height*0.3*0.7,
   },
   itemContainer: {
     // justifyContent: 'flex-end',
@@ -449,8 +449,8 @@ const styles = StyleSheet.create({
     height: width*0.95*0.305,
   },
   imageStyle2: {
-    width: width*0.95*0.33,
-    height: width*0.95*0.33,
+    width: width*0.95*0.323,
+    height: width*0.95*0.323,
   },
 });
 
