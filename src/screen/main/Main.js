@@ -24,6 +24,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import Guide from '../guide/Guide'
 import Images from "@assets/Images";
 import firebase from 'react-native-firebase';
+import PTRView from "react-native-pull-to-refresh";
 
 const {width, height} = Dimensions.get("window");
 
@@ -42,6 +43,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
+    setTimestamp: timestamp => {
+      dispatch(ActionCreator.setTimestamp(timestamp));
+    },
     setAdmobRewarded: ad => {
       dispatch(ActionCreator.setAdmobRewarded(ad));
     },
@@ -131,15 +135,7 @@ class Main extends Component {
       await this.callbackFnc();
     }
     componentWillReceiveProps(nextProps) {
-      console.log(nextProps.navigation.state.params);
-      if(nextProps.navigation.state.params&&nextProps.navigation.state.params.refresh){
-        this.callbackFnc();
-      }
-      if (nextProps.navigation.state.params && nextProps.navigation.state.params.routeName=="RefreshMain") {
-        console.warn('1');
-        this.props.forceRefreshMain(true);
-      }else if(nextProps.navigation.state.params=='dummy'){
-        console.warn('2');
+      if(nextProps.navigation.state&&nextProps.navigation.state.params&&nextProps.navigation.state.params.refresh){
         this.callbackFnc();
       }
     }
@@ -148,9 +144,25 @@ class Main extends Component {
       this.notificationDisplayedListener();
       this.notificationListener();
     }
+    getSystemTimestamp = async () => {
+      var serverTimestamp;
+      await cFetch(
+        APIS.GET_SERVER_TIMESTMAP,
+        [],
+        {},
+        {
+          responseProc: async (res) => {
+            serverTimestamp = res;
+          }
+        }
+      );
+      this.props.setTimestamp(serverTimestamp);
+      return serverTimestamp;
+    }
+
     callbackFnc = async() => {
       //this.setState({spinnerVisible:true})
-
+      await this.getSystemTimestamp();
       const foodStorKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
       var foodUpCnt = await AsyncStorage.getItem(foodStorKey);
       foodUpCnt = Number(foodUpCnt);
@@ -266,6 +278,10 @@ class Main extends Component {
         PROPS = this.props;
         const content = (
           <Container navigation={this.props.navigation} adMobRewarded={AdMobRewarded}>
+          <PTRView
+            style={{ width: "100%", height: "100%" }}
+            onRefresh={this.callbackFnc}
+          >
             <Modal animationType="fade" hardwareAccelerated={true} visible={this.state.guideYn=="N"} transparent={true} onRequestClose={() => {}}>
               <Guide onCompleteGuide={()=>{
                 var copy = this.props.USER_INFO.constructor()
@@ -513,6 +529,7 @@ class Main extends Component {
               textContent={'잠시만 기다려 주세요...'}
               textStyle={{color: '#FFF'}}
             />
+            </PTRView>
           </Container>
           );
           return (
