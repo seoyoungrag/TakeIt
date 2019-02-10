@@ -74,7 +74,8 @@ class Main extends Component {
           spinnerVisible: false,
           guideYn: "Y",
           maxCnt : 0,
-          viewAdCnt: 0
+          viewAdCnt: 0,
+          notificationId: ""
         }
     }
     componentDidMount = async() => {
@@ -135,8 +136,16 @@ class Main extends Component {
       await this.callbackFnc();
     }
     componentWillReceiveProps(nextProps) {
-      if(nextProps.navigation.state&&nextProps.navigation.state.params&&nextProps.navigation.state.params.refresh){
-        this.callbackFnc();
+      console.warn(this.state.notificationId);
+      console.warn(nextProps.navigation.state.params);
+      if(nextProps.navigation.state&&nextProps.navigation.state.params&&nextProps.navigation.state.params.notificationId){
+        console.warn(this.state.notificationId!=nextProps.navigation.state.params.notificationId);
+        if(this.state.notificationId!=nextProps.navigation.state.params.notificationId){
+          this.setState({notificationId:nextProps.navigation.state.params.notificationId});
+          this.callbackFnc();
+        }
+        //COM.props.forceRefreshMain(false);
+        //this.callbackFnc();
       }
     }
     componentWillUnmount() {
@@ -161,42 +170,58 @@ class Main extends Component {
     }
 
     callbackFnc = async() => {
-      //this.setState({spinnerVisible:true})
-      await this.getSystemTimestamp();
-      const foodStorKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
-      var foodUpCnt = await AsyncStorage.getItem(foodStorKey);
-      foodUpCnt = Number(foodUpCnt);
-      const inbodyStorKey = "@"+Moment(new Date()).format('YYMMDD')+"INBODY";
-      var inbodyUpCnt = await AsyncStorage.getItem(inbodyStorKey);
-      inbodyUpCnt = Number(inbodyUpCnt);
-      const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
-      var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
-      viewAdCnt = Number(viewAdCnt);
-      var maxCnt = this.props.TIMESTAMP.foodupcnt?this.props.TIMESTAMP.foodupcnt: 3;
-      const foodList = await this.getFoodDiary();
-      const statuses = await this.getMainIntakestatus();
-      await this.setState({
-        photos:
-        foodList.length > 0
-            ? foodList
-            : [
-                {
-                  firebaseDownloadUrl:"",
-                  registTime: "촬영한 사진이 없네요."
-                }
-              ],
-        isEmptyPhotos: !foodList.length > 0 ,
-        intakeStatuses: statuses.intakeStats,
-        calorie: statuses.calorie,
-        guideYn: this.props.USER_INFO.guideYn,
-        maxCnt : maxCnt,
-        viewAdCnt : viewAdCnt,
-        foodUpCnt: foodUpCnt,
-        inbodyUpCnt: inbodyUpCnt
-        //spinnerVisible: false
-      });
-      const COM = this;
-      //await setTimeout(async()=>{ await COM.setState({spinnerVisible:false}) }, 100);
+      if(Number(this.props.USER_INFO.authCd)==400004){
+        Alert.alert(
+          "블랙리스트 사용자입니다.",
+          "관리자에게 문의해주세요.\ncontact@dwebss.co.kr",
+          [
+            {
+              text: "확인",
+              onPress: () => {
+                BackAndroid.exitApp();
+              }
+            }
+          ],
+          { cancelable: false }
+        );
+      }else{
+        //this.setState({spinnerVisible:true})
+        await this.getSystemTimestamp();
+        const foodStorKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
+        var foodUpCnt = await AsyncStorage.getItem(foodStorKey);
+        foodUpCnt = Number(foodUpCnt);
+        const inbodyStorKey = "@"+Moment(new Date()).format('YYMMDD')+"INBODY";
+        var inbodyUpCnt = await AsyncStorage.getItem(inbodyStorKey);
+        inbodyUpCnt = Number(inbodyUpCnt);
+        const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
+        var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
+        viewAdCnt = Number(viewAdCnt);
+        var maxCnt = this.props.TIMESTAMP.foodupcnt?this.props.TIMESTAMP.foodupcnt: 3;
+        const foodList = await this.getFoodDiary();
+        const statuses = await this.getMainIntakestatus();
+        await this.setState({
+          photos:
+          foodList.length > 0
+              ? foodList
+              : [
+                  {
+                    firebaseDownloadUrl:"",
+                    registTime: "촬영한 사진이 없네요."
+                  }
+                ],
+          isEmptyPhotos: !foodList.length > 0 ,
+          intakeStatuses: statuses.intakeStats,
+          calorie: statuses.calorie,
+          guideYn: this.props.USER_INFO.guideYn,
+          maxCnt : maxCnt,
+          viewAdCnt : viewAdCnt,
+          foodUpCnt: foodUpCnt,
+          inbodyUpCnt: inbodyUpCnt
+          //spinnerVisible: false
+        });
+        const COM = this;
+        //await setTimeout(async()=>{ await COM.setState({spinnerVisible:false}) }, 100);
+      }
     }
     viewAd = async() =>{
       if (AdMobRewarded.isLoaded()) {
@@ -236,9 +261,9 @@ class Main extends Component {
     }
     render() {
       COM = this;
+      COM.props.forceRefreshMain(false);
       setTimeout(function(){
         if(COM.props.isFocused&&COM.props.FORCE_REFRESH_MAIN){
-          COM.props.forceRefreshMain(false);
           COM.callbackFnc();
         }
       }, 100);

@@ -8,7 +8,8 @@ import {
   Alert,
   Linking,
   PixelRatio,
-  Dimensions
+  Dimensions,
+  BackAndroid
 } from "react-native";
 
 import Images from "@assets/Images";
@@ -246,8 +247,7 @@ class Loading extends React.Component {
               JSON.parse(JSON.stringify(userInfo)),
               res
             );
-            console.warn('userNm is Merging? :');
-            console.warn(userInfo);
+            console.log(userInfo);
             userInfo.pushToken = pushToken;
             //console.log("loading.js: for update token AFTER GET_USER_BY_EMAIL");
             //console.log("loading.js: userInfo AFTER GET_USER_BY_EMAIL: "+JSON.stringify(userInfo));
@@ -258,8 +258,22 @@ class Loading extends React.Component {
             }else if(res.userSex == null|| res.userEmail == null|| res.userHeight == null|| res.userWeight == null|| res.userAgeRange == null) {
               PROPS.setIsFromLogin(false);
               PROPS.navigation.navigate("Regist");
+            //} else if(userInfo.blackCount && Number(userInfo.blackCount) >0 ){
+            } else if(Number(userInfo.authCd)==400004){
+              Alert.alert(
+                "블랙리스트 사용자입니다.",
+                "관리자에게 문의해주세요.\ncontact@dwebss.co.kr",
+                [
+                  {
+                    text: "확인",
+                    onPress: () => {
+                      BackAndroid.exitApp();
+                    }
+                  }
+                ],
+                { cancelable: false }
+              );
             } else {
-
               var yesterDay = new Date();
               yesterDay.setDate(yesterDay.getDate() - 1);
               var dayBeforeYesterday = new Date();

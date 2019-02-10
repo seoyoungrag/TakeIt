@@ -39,7 +39,7 @@ class Table extends Component {
     let style = {width: col.width || this.props.columnWidth || DEFAULT_COLUMN_WIDTH, borderLeftWidth: col.isFirst? 1: 0, borderLeftColor:"#dfdfdf"};
     return (
       <View key={col.dataIndex} style={[styles.cell, style]}>
-        <Text style={{fontSize:FONT_BACK_LABEL*0.6}}>{cellData}{col.lastTxt && col.lastTxt}</Text>
+        <Text style={{fontSize:FONT_BACK_LABEL*0.6}}>{cellData=="확인불가"?"잘모르겠어요":cellData}{col.lastTxt && col.lastTxt}</Text>
       </View>
     )
   }
@@ -69,7 +69,13 @@ class Table extends Component {
       <View key={index} style={[styles.row,{borderBottomColor:isLast? "#000000":"#dfdfdf"}]}>
         {
           columns.map((col,idx) => {
-            return(renderCell(rowData[col.dataIndex], col))
+            console.log(rowData.foodId);
+            console.log(col.dataIndex);
+            var data = rowData[col.dataIndex];
+            if(rowData.foodId==4909&&col.dataIndex=="foodNm"){
+              data="잘모르겠어요";
+            }
+            return(renderCell(data, col))
           })
         }
       </View>

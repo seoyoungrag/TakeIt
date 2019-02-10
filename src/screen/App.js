@@ -137,8 +137,8 @@ class App extends React.Component {
         // ANDROID: Remote notifications do not contain the channel ID. You will have to specify this manually if you'd like to re-display the notification.
     });
     this.notificationListener = firebase.notifications().onNotification((notification: Notification) => {
-      console.warn(notification);
-      this.navigator._navigation.navigate("Main", { refresh: "dummy"});
+      console.warn(notification._notificationId);
+      this.navigator._navigation.navigate("Main", { notificationId: notification._notificationId});
       //MainTabNavigator.navigation.navigate("Main")
       // Process your notification as required
       /*
