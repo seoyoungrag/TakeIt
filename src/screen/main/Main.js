@@ -24,6 +24,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import Guide from '../guide/Guide'
 import Images from "@assets/Images";
 import firebase from 'react-native-firebase';
+import PTRView from "react-native-pull-to-refresh";
 
 const {width, height} = Dimensions.get("window");
 
@@ -42,6 +43,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
+    setTimestamp: timestamp => {
+      dispatch(ActionCreator.setTimestamp(timestamp));
+    },
     setAdmobRewarded: ad => {
       dispatch(ActionCreator.setAdmobRewarded(ad));
     },
@@ -70,7 +74,8 @@ class Main extends Component {
           spinnerVisible: false,
           guideYn: "Y",
           maxCnt : 0,
-          viewAdCnt: 0
+          viewAdCnt: 0,
+          notificationId: ""
         }
     }
     componentDidMount = async() => {
@@ -131,16 +136,16 @@ class Main extends Component {
       await this.callbackFnc();
     }
     componentWillReceiveProps(nextProps) {
-      console.log(nextProps.navigation.state.params);
-      if(nextProps.navigation.state.params&&nextProps.navigation.state.params.refresh){
-        this.callbackFnc();
-      }
-      if (nextProps.navigation.state.params && nextProps.navigation.state.params.routeName=="RefreshMain") {
-        console.warn('1');
-        this.props.forceRefreshMain(true);
-      }else if(nextProps.navigation.state.params=='dummy'){
-        console.warn('2');
-        this.callbackFnc();
+      console.warn(this.state.notificationId);
+      console.warn(nextProps.navigation.state.params);
+      if(nextProps.navigation.state&&nextProps.navigation.state.params&&nextProps.navigation.state.params.notificationId){
+        console.warn(this.state.notificationId!=nextProps.navigation.state.params.notificationId);
+        if(this.state.notificationId!=nextProps.navigation.state.params.notificationId){
+          this.setState({notificationId:nextProps.navigation.state.params.notificationId});
+          this.callbackFnc();
+        }
+        //COM.props.forceRefreshMain(false);
+        //this.callbackFnc();
       }
     }
     componentWillUnmount() {
@@ -148,43 +153,75 @@ class Main extends Component {
       this.notificationDisplayedListener();
       this.notificationListener();
     }
-    callbackFnc = async() => {
-      //this.setState({spinnerVisible:true})
+    getSystemTimestamp = async () => {
+      var serverTimestamp;
+      await cFetch(
+        APIS.GET_SERVER_TIMESTMAP,
+        [],
+        {},
+        {
+          responseProc: async (res) => {
+            serverTimestamp = res;
+          }
+        }
+      );
+      this.props.setTimestamp(serverTimestamp);
+      return serverTimestamp;
+    }
 
-      const foodStorKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
-      var foodUpCnt = await AsyncStorage.getItem(foodStorKey);
-      foodUpCnt = Number(foodUpCnt);
-      const inbodyStorKey = "@"+Moment(new Date()).format('YYMMDD')+"INBODY";
-      var inbodyUpCnt = await AsyncStorage.getItem(inbodyStorKey);
-      inbodyUpCnt = Number(inbodyUpCnt);
-      const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
-      var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
-      viewAdCnt = Number(viewAdCnt);
-      var maxCnt = this.props.TIMESTAMP.foodupcnt?this.props.TIMESTAMP.foodupcnt: 3;
-      const foodList = await this.getFoodDiary();
-      const statuses = await this.getMainIntakestatus();
-      await this.setState({
-        photos:
-        foodList.length > 0
-            ? foodList
-            : [
-                {
-                  firebaseDownloadUrl:"",
-                  registTime: "촬영한 사진이 없네요."
-                }
-              ],
-        isEmptyPhotos: !foodList.length > 0 ,
-        intakeStatuses: statuses.intakeStats,
-        calorie: statuses.calorie,
-        guideYn: this.props.USER_INFO.guideYn,
-        maxCnt : maxCnt,
-        viewAdCnt : viewAdCnt,
-        foodUpCnt: foodUpCnt,
-        inbodyUpCnt: inbodyUpCnt
-        //spinnerVisible: false
-      });
-      const COM = this;
-      //await setTimeout(async()=>{ await COM.setState({spinnerVisible:false}) }, 100);
+    callbackFnc = async() => {
+      if(Number(this.props.USER_INFO.authCd)==400004){
+        Alert.alert(
+          "블랙리스트 사용자입니다.",
+          "관리자에게 문의해주세요.\ncontact@dwebss.co.kr",
+          [
+            {
+              text: "확인",
+              onPress: () => {
+                BackAndroid.exitApp();
+              }
+            }
+          ],
+          { cancelable: false }
+        );
+      }else{
+        //this.setState({spinnerVisible:true})
+        await this.getSystemTimestamp();
+        const foodStorKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
+        var foodUpCnt = await AsyncStorage.getItem(foodStorKey);
+        foodUpCnt = Number(foodUpCnt);
+        const inbodyStorKey = "@"+Moment(new Date()).format('YYMMDD')+"INBODY";
+        var inbodyUpCnt = await AsyncStorage.getItem(inbodyStorKey);
+        inbodyUpCnt = Number(inbodyUpCnt);
+        const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
+        var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
+        viewAdCnt = Number(viewAdCnt);
+        var maxCnt = this.props.TIMESTAMP.foodupcnt?this.props.TIMESTAMP.foodupcnt: 3;
+        const foodList = await this.getFoodDiary();
+        const statuses = await this.getMainIntakestatus();
+        await this.setState({
+          photos:
+          foodList.length > 0
+              ? foodList
+              : [
+                  {
+                    firebaseDownloadUrl:"",
+                    registTime: "촬영한 사진이 없네요."
+                  }
+                ],
+          isEmptyPhotos: !foodList.length > 0 ,
+          intakeStatuses: statuses.intakeStats,
+          calorie: statuses.calorie,
+          guideYn: this.props.USER_INFO.guideYn,
+          maxCnt : maxCnt,
+          viewAdCnt : viewAdCnt,
+          foodUpCnt: foodUpCnt,
+          inbodyUpCnt: inbodyUpCnt
+          //spinnerVisible: false
+        });
+        const COM = this;
+        //await setTimeout(async()=>{ await COM.setState({spinnerVisible:false}) }, 100);
+      }
     }
     viewAd = async() =>{
       if (AdMobRewarded.isLoaded()) {
@@ -224,9 +261,9 @@ class Main extends Component {
     }
     render() {
       COM = this;
+      COM.props.forceRefreshMain(false);
       setTimeout(function(){
         if(COM.props.isFocused&&COM.props.FORCE_REFRESH_MAIN){
-          COM.props.forceRefreshMain(false);
           COM.callbackFnc();
         }
       }, 100);
@@ -266,6 +303,10 @@ class Main extends Component {
         PROPS = this.props;
         const content = (
           <Container navigation={this.props.navigation} adMobRewarded={AdMobRewarded}>
+          <PTRView
+            style={{ width: "100%", height: "100%" }}
+            onRefresh={this.callbackFnc}
+          >
             <Modal animationType="fade" hardwareAccelerated={true} visible={this.state.guideYn=="N"} transparent={true} onRequestClose={() => {}}>
               <Guide onCompleteGuide={()=>{
                 var copy = this.props.USER_INFO.constructor()
@@ -513,6 +554,7 @@ class Main extends Component {
               textContent={'잠시만 기다려 주세요...'}
               textStyle={{color: '#FFF'}}
             />
+            </PTRView>
           </Container>
           );
           return (

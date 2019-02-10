@@ -41,9 +41,22 @@ import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 public class NotificationService extends FirebaseMessagingService {
 
   private static final String TAG = "NotificationService";
+  public static final String MESSAGE_EVENT = "messaging-message";
+  public static final String NEW_TOKEN_EVENT = "messaging-token-refresh";
   public static final String REMOTE_NOTIFICATION_EVENT = "notifications-remote-notification";
+  
   PowerManager powerManager;
   PowerManager.WakeLock wakeLock;
+
+  @Override
+  public void onNewToken(String token) {
+    Log.d(TAG, "onNewToken event received");
+
+    Intent newTokenEvent = new Intent(NEW_TOKEN_EVENT);
+    LocalBroadcastManager
+      .getInstance(this)
+      .sendBroadcast(newTokenEvent);
+  }
 
   @Override
   public void onMessageReceived(RemoteMessage message) {
@@ -100,5 +113,10 @@ public class NotificationService extends FirebaseMessagingService {
     } catch (Exception e) {
       Log.d(TAG, "Error ", e);
     }
+    Intent notificationEvent = new Intent(REMOTE_NOTIFICATION_EVENT);
+    notificationEvent.putExtra("notification", message);
+
+    // Broadcast it to the (foreground) RN Application
+    LocalBroadcastManager.getInstance(this).sendBroadcast(notificationEvent);
   }
 }
