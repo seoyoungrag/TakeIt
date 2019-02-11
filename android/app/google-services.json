@@ -31,6 +31,14 @@
           }
         },
         {
+          "client_id": "850330784808-5e8ocu45pdf402bnqjid1qpdvhp5aovr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "kr.co.dwebss.takeat.android",
+            "certificate_hash": "cbb18fe54bfcce6986f84d4dc67f7ce2511d0e93"
+          }
+        },
+        {
           "client_id": "850330784808-63uerqkqf44m25c84ard50adamjsmqu4.apps.googleusercontent.com",
           "client_type": 3
         }
