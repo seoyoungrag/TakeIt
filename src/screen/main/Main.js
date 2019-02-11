@@ -262,9 +262,9 @@ class Main extends Component {
     }
     render() {
       COM = this;
-      COM.props.forceRefreshMain(false);
       setTimeout(function(){
         if(COM.props.isFocused&&COM.props.FORCE_REFRESH_MAIN){
+          COM.props.forceRefreshMain(false);
           COM.callbackFnc();
         }
       }, 100);

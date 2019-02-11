@@ -275,6 +275,8 @@ class TakeFoodPic extends Component {
                   data.firebaseStoragePath = uploadedFile.ref;
                   data.firebaseDownloadUrl = uploadedFile.downloadURL;
                   data.deviceLocalFilePath = image.uri;
+                  data.xCoordinate = COM.state.longitude;
+                  data.yCoordinate = COM.state.latitude;
                   var body = JSON.stringify(data);
                   var isSended = false;
                   await cFetch(APIS.POST_USER_FOOD, [], body, {
@@ -323,11 +325,12 @@ class TakeFoodPic extends Component {
     );
   }
   takePicture = async function(camera) {
-    console.log("TakeFoodPic.js: componentDidMount");
+    console.warn("TakeFoodPic.js: takePicture");
     this.watchId = await navigator.geolocation.watchPosition(
       (position) => {
         this.setState({spinnerVisible:true});
-        console.log("TakeFoodPic.js: "+JSON.stringify(position));
+        console.warn("TakeFoodPic.js: "+JSON.stringify(position));
+        console.warn(position);
         this.setState({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -335,7 +338,7 @@ class TakeFoodPic extends Component {
           spinnerVisible: false
         });
       },
-      (error) => console.log("TakeFoodPic.js: "+JSON.stringify(error))
+      (error) => console.warn("TakeFoodPic.js: "+JSON.stringify(error))
     );
     console.log("TakeFoodPic.js: this.state-"+JSON.stringify(this.state));
     console.log("TakeFoodPic.js: watchId-"+this.watchId);

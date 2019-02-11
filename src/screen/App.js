@@ -132,10 +132,14 @@ class App extends React.Component {
             .setDescription('My apps test channel');
 // Create the channel
     firebase.notifications().android.createChannel(channel);
-    this.notificationDisplayedListener = firebase.notifications().onNotificationDisplayed((notification: Notification) => {
-        // Process your notification as required
-        // ANDROID: Remote notifications do not contain the channel ID. You will have to specify this manually if you'd like to re-display the notification.
-    });
+    try{
+      this.notificationDisplayedListener = firebase.notifications().onNotificationDisplayed((notification: Notification) => {
+          // Process your notification as required
+          // ANDROID: Remote notifications do not contain the channel ID. You will have to specify this manually if you'd like to re-display the notification.
+      });
+    }catch(e){
+      console.warn(e);
+    }
     this.notificationListener = firebase.notifications().onNotification((notification: Notification) => {
       console.warn(notification._notificationId);
       this.navigator._navigation.navigate("Main", { notificationId: notification._notificationId});
@@ -182,9 +186,13 @@ class App extends React.Component {
   }
   componentWillUnmount(){
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
-    this.notificationDisplayedListener();
-    this.notificationListener();
-    this.notificationOpenedListener();
+    try{
+      this.notificationDisplayedListener();
+      this.notificationListener();
+      this.notificationOpenedListener();
+    }catch(e){
+      console.warn(e);
+    }
   }
 
   handleBackButton() {
