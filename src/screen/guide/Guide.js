@@ -12,6 +12,7 @@ import {
 import Images from "@assets/Images";
 
 import Swiper from 'react-native-swiper';
+import { COLOR } from 'react-native-material-ui';
 const {width, height} = Dimensions.get("window");
  
 var FONT_BACK_LABEL   = 16;
@@ -38,7 +39,7 @@ const styles = StyleSheet.create({
     padding: 15,
     paddingHorizontal: 20,
     alignSelf: 'flex-end',
-    margin: 20,
+    marginBottom: height*1/10
   }
 })
 
@@ -76,7 +77,7 @@ export default class Guide extends Component {
         >
         <View style={{ flex: 0, flexDirection: 'column', justifyContent: 'flex-end', alignItems:"flex-end" }}>
           <TouchableOpacity onPress={() => this.props.onCompleteGuide()} style={[styles.capture]}>
-            <Text style={[styles.text,{fontSize:FONT_BACK_LABEL*3,color:"black"}]}> 찍먹 시작! </Text>
+            <Text style={[styles.text,{fontSize:FONT_BACK_LABEL*3,color:COLOR.pink500}]}> 찍먹 시작! </Text>
           </TouchableOpacity>
         </View>
         </ImageBackground>

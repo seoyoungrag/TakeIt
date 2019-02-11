@@ -36,7 +36,7 @@ class Table extends Component {
   };
 
   _renderCell(cellData, col, isLast) {
-    let style = {width: col.width || this.props.columnWidth || DEFAULT_COLUMN_WIDTH, borderLeftWidth: col.isFirst? 1: 0, borderLeftColor:"#dfdfdf"};
+    let style = {paddingLeft:col.textLeft?5:0, alignItems:col.textLeft?"flex-start":"center", width: col.width || this.props.columnWidth || DEFAULT_COLUMN_WIDTH, borderLeftWidth: col.isFirst? 1: 0, borderLeftColor:"#dfdfdf"};
     return (
       <View key={col.dataIndex} style={[styles.cell, style]}>
         <Text style={{fontSize:FONT_BACK_LABEL*0.6}}>{cellData=="확인불가"?"잘모르겠어요":cellData}{col.lastTxt && col.lastTxt}</Text>
@@ -47,10 +47,10 @@ class Table extends Component {
   _renderHeader() {
     let { columns, columnWidth } = this.props;
     return columns.map((col, index) => {
-      let style = {width: col.width || columnWidth || DEFAULT_COLUMN_WIDTH, borderLeftWidth: col.isFirst? 1: 0, borderLeftColor:"#dfdfdf"};
+      let style = {width: col.width || columnWidth || DEFAULT_COLUMN_WIDTH, borderLeftWidth: col.isFirst? 1: 0, borderLeftColor:"#dfdfdf" };
       return (
         <View key={index} style={[styles.headerItem, style]}>
-          <Text style={{textAlign:"center",fontSize:FONT_BACK_LABEL*0.8}}>{col.title}</Text>
+          <Text style={{textAlign:"center",fontSize:FONT_BACK_LABEL*0.7}}>{col.title}</Text>
         </View>
       )
     })
@@ -69,14 +69,30 @@ class Table extends Component {
       <View key={index} style={[styles.row,{borderBottomColor:isLast? "#000000":"#dfdfdf"}]}>
         {
           columns.map((col,idx) => {
-            console.log(rowData.foodId);
-            console.log(col.dataIndex);
+            //console.log(rowData.foodId);
+            //console.log(col.dataIndex);
             var data = rowData[col.dataIndex];
             if(rowData.foodId==4909&&col.dataIndex=="foodNm"){
               data="잘모르겠어요";
             }
-            if(col.dataIndex=="foodNm"&&rowData.amountDish>1){
-              var data = rowData[col.dataIndex]+'x'+rowData.amountDish;
+            //console.log(rowData);
+            if(col.dataIndex=="foodNm"&&rowData[col.dataIndex]&&rowData[col.dataIndex]!=""){
+              if(rowData.food){
+                if(rowData.food.foodCategory&&rowData.food.foodCategory!=''&&(rowData.food.foodCategory.indexOf("음료")>-1||rowData.food.foodCategory.indexOf("우유")>-1)){
+                  data +="("+rowData.food.servingSize+"ml)";
+                }else{
+                  data +="("+rowData.food.servingSize+"g)";
+                } 
+              }else{
+                if(rowData.foodCategory&&rowData.foodCategory!=''&&(rowData.foodCategory.indexOf("음료")>-1||rowData.foodCategory.indexOf("우유")>-1)){
+                  data +="("+rowData.servingSize+"ml)";
+                }else{
+                  data +="("+rowData.servingSize+"g)";
+                } 
+              }
+              if(rowData.amountDish>1){
+                data += 'x'+rowData.amountDish;
+              }
             }
             return(renderCell(data, col))
           })
