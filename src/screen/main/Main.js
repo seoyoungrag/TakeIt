@@ -86,10 +86,12 @@ class Main extends Component {
           BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
         );
     }
-    componentDidMount = async() => {
+    componentWillMount(){
       this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
         BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
       );
+    }
+    componentDidMount = async() => {
 
       AdMobRewarded.loadAd(request.build());
       AdMobRewarded.on('onAdLoaded',
@@ -150,9 +152,6 @@ class Main extends Component {
   onBackButtonPressAndroid = () => {
     BackHandler.exitApp();
   };
-
-  componentWillUnmount() {
-  }
 
     componentWillReceiveProps(nextProps) {
       //console.warn(this.state.notificationId);
