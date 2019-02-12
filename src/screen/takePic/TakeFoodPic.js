@@ -325,12 +325,12 @@ class TakeFoodPic extends Component {
     );
   }
   takePicture = async function(camera) {
-    console.warn("TakeFoodPic.js: takePicture");
+    //console.warn("TakeFoodPic.js: takePicture");
     this.watchId = await navigator.geolocation.watchPosition(
       (position) => {
         this.setState({spinnerVisible:true});
-        console.warn("TakeFoodPic.js: "+JSON.stringify(position));
-        console.warn(position);
+        //console.warn("TakeFoodPic.js: "+JSON.stringify(position));
+        //console.warn(position);
         this.setState({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,

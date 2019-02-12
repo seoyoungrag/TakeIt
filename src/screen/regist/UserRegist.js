@@ -213,7 +213,7 @@ class UserRegist extends Component {
     data.userAgeRange = this.state.ageRange[foundIndex].key
 
     var body = JSON.stringify(data);
-    console.warn(body);
+    //console.warn(body);
     const PROPS = this.props;
     if (!data.userNm || !data.userSex || !data.userHeight || !data.userWeight || !data.userEmail) {
       //alert("미입력된 정보가 있습니다. 확인해주세요.");

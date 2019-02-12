@@ -149,9 +149,9 @@ class Loading extends React.Component {
   }
   checkCacheValid(PROP, CHECKMAP, type){
     console.log("Loading.js cache check start");
-    console.log(PROP);
-    console.log(CHECKMAP);
-    console.log(type);
+    //console.log(PROP);
+    //console.log(CHECKMAP);
+    //console.log(type);
     console.log("Loading.js cache check end");
     return (!PROP || (PROP && PROP.length ==0) || (PROP && PROP.length>0 && (Math.abs(PROP.timestamp - CHECKMAP.timestamp)> type=="CODE" ? CHECKMAP.code : 60000 )) )
   }

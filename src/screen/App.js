@@ -111,7 +111,7 @@ class App extends React.Component {
     });
     const notificationOpen: NotificationOpen = await firebase.notifications().getInitialNotification();
     if (notificationOpen) {
-      console.warn(notificationOpen);
+      //console.warn(notificationOpen);
         const action = notificationOpen.action;
         const notification: Notification = notificationOpen.notification;
         var seen = [];
@@ -157,7 +157,7 @@ class App extends React.Component {
         
     });
     this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen: NotificationOpen) => {
-      console.warn(notificationOpen);
+      //console.warn(notificationOpen);
         // Get the action triggered by the notification being opened
         const action = notificationOpen.action;
         // Get information about the notification that was opened
