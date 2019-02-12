@@ -7,13 +7,14 @@ import {
   Dimensions,
   ImageBackground,
   PixelRatio,
-  Picker
+  Alert
 } from "react-native";
 import Images from "@assets/Images";
 import { TextField } from "react-native-material-textfield";
 import {
   Toolbar,
-  Button
+  Button,
+  Checkbox
 } from "react-native-material-ui";
 
 import { connect } from "react-redux";
@@ -200,6 +201,8 @@ class UserRegist extends Component {
     data.userHeight = this.state.personHeight;
     data.userWeight = this.state.personWeight;
     data.userEmail = this.state.userEmail;
+    data.agreePrivacy = this.state.agreePrivacy==true?"Y":"N";
+    data.agreeLocation = this.state.agreeLocation==true?"Y":"N";
 
     let foundIndex = this.state.ageRange.findIndex(
       x => {
@@ -210,9 +213,12 @@ class UserRegist extends Component {
     data.userAgeRange = this.state.ageRange[foundIndex].key
 
     var body = JSON.stringify(data);
+    console.warn(body);
     const PROPS = this.props;
     if (!data.userNm || !data.userSex || !data.userHeight || !data.userWeight || !data.userEmail) {
       //alert("미입력된 정보가 있습니다. 확인해주세요.");
+    } else if(!data.agreePrivacy||data.agreePrivacy!="Y"||!data.agreeLocation||data.agreeLocation!="Y"){
+      Alert.alert("미입력된 항목이 있습니다.","개인정보 및 위치정보 수집에 동의해주셔야해요.");
     } else {
       cFetch(APIS.PUT_USER_BY_EMAIL, [this.props.USER_INFO.userEmail+"/"], body, {
         responseProc: function(res) {
@@ -473,8 +479,34 @@ class UserRegist extends Component {
                   error={errors.userEmail}
                 />
                 </View>
-            </View>
-            
+                  <View style={{ flexDirection: 'row', justifyContent: 'flex-start'}}>
+                    <Checkbox
+                      style={{
+                        container:{padding:0},
+                        icon:{color:"rgba(255,255,255,1)"}, 
+                        label:{color:"rgba(255,255,255,1)",fontSize:FONT_BACK_LABEL*0.8, marginLeft:-10}
+                      }}
+                      value="Y"
+                      label = "회원님의 섭식정보 분석을 위한 개인정보수집에 동의해주세요"
+                      checked ={false}
+                      checked={this.state.agreePrivacy}
+                      onCheck={() => this.setState({ agreePrivacy: !this.state.agreePrivacy })}
+                    />
+                  </View>
+                  <View style={{ flexDirection: 'row'}}>
+                    <Checkbox
+                      style={{
+                        container:{padding:0},
+                        icon:{color:"rgba(255,255,255,1)"}, 
+                        label:{color:"rgba(255,255,255,1)",fontSize:FONT_BACK_LABEL*0.8, marginLeft:-10}
+                      }}
+                      value="Y"
+                      label = "위치제공서비스를 위한 위치정보수집에 동의해주세요"
+                      checked={this.state.agreeLocation}
+                      onCheck={() => this.setState({ agreeLocation: !this.state.agreeLocation })}
+                    />
+                  </View>
+              </View>
             <View
               style={{
                 width: "100%",
