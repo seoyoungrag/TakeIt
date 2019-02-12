@@ -189,8 +189,8 @@ class Loading extends React.Component {
   authProc = async () => {
     const CHECKMAP = await this.getSystemTimestamp();
     console.log("loading.js: authProc in Loading.js start");
-    console.warn(CHECKMAP.isService);
-    if(CHECKMAP.isService==0){
+    console.warn(CHECKMAP.isUpdating);
+    if(CHECKMAP.isUpdating==1){
       Alert.alert("찍먹 서비스를 업데이트 중입니다.","최대한 빨리 완료하도록 하겠습니다.");
     }
     /*console.log("loading.js: isFocused");
