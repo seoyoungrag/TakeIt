@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import {AsyncStorage, Dimensions, StyleSheet, Text, View, PixelRatio, TouchableHighlight, TouchableOpacity, Modal, ScrollView, Alert} from 'react-native';
+import {AsyncStorage, Dimensions, StyleSheet, Text, View, PixelRatio, TouchableHighlight, TouchableOpacity, Modal, ScrollView, Alert,BackHandler} from 'react-native';
 import DrawerWrapped from "@drawer";
 import { connect } from "react-redux";
 import ActionCreator from "@redux-yrseo/actions";
@@ -66,6 +66,9 @@ if (PixelRatio.get() <= 2) {
 }
 
 class Main extends Component {
+  _didFocusSubscription;
+  _willBlurSubscription;
+
     constructor(props){
         super(props);
         this.state = {
@@ -79,8 +82,14 @@ class Main extends Component {
           viewAdCnt: 0,
           notificationId: ""
         }
+        this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
+          BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+        );
     }
     componentDidMount = async() => {
+      this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
+        BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+      );
 
       AdMobRewarded.loadAd(request.build());
       AdMobRewarded.on('onAdLoaded',
@@ -137,6 +146,14 @@ class Main extends Component {
         this.props.setAdmobRewarded(AdMobRewarded);
       await this.callbackFnc();
     }
+
+  onBackButtonPressAndroid = () => {
+    BackHandler.exitApp();
+  };
+
+  componentWillUnmount() {
+  }
+
     componentWillReceiveProps(nextProps) {
       //console.warn(this.state.notificationId);
       //console.warn(nextProps.navigation.state.params);
@@ -151,6 +168,8 @@ class Main extends Component {
       }
     }
     componentWillUnmount() {
+      this._didFocusSubscription && this._didFocusSubscription.remove();
+      this._willBlurSubscription && this._willBlurSubscription.remove();
       //AdMobRewarded.removeAllListeners();
     }
     getSystemTimestamp = async () => {

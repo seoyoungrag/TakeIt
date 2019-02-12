@@ -93,7 +93,7 @@ class App extends React.Component {
     );
   }
   componentDidMount = async() => {
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    //BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     firebase.messaging().hasPermission()
     .then(enabled => {
       if (enabled) {
