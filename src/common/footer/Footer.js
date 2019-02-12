@@ -230,28 +230,92 @@ class Footer extends React.Component {
       }
     }
   }
-  
+  inbodyAlert= async(currentInbodyTimestamp, inbodyUpCnt, isForced)=>{
+    //0. 경고창 다시보기 체크되어있는지 체크
+    const periodInbodyAlertStorKey = "@INBODYALERTPERIOD";
+    var INBODYALERTPERIOD = await AsyncStorage.getItem(periodInbodyAlertStorKey);
+    var isShowInbodyAlert = false;
+    INBODYALERTPERIOD = Number(INBODYALERTPERIOD);
+    //0-1. 저장된 적이 없거나, 저장되었는데 1주일이 넘었으면 flag는 true로
+    if(!INBODYALERTPERIOD || Math.abs(INBODYALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7)){
+      isShowInbodyAlert = true;
+      await AsyncStorage.removeItem(periodInbodyAlertStorKey);
+    }
+    if(isShowInbodyAlert || isForced){
+      Alert.alert(
+        "인바디 측정지 촬영은 일주일 간격으로 3번씩만 찍을 수 있어요.", 
+        '기준일: '+Moment(currentInbodyTimestamp? currentInbodyTimestamp: this.props.TIMESTAMP.timestamp).format('YYYY-MM-DD').toString()+', 찍은 횟수: '+inbodyUpCnt?inbodyUpCnt:'0',
+        [
+          isForced==true ?  null:
+          {text: '일주일 뒤에 다시보기', onPress: () => 
+            {
+              AsyncStorage.setItem(periodInbodyAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
+            }
+          },
+          {text: '확인', onPress: () => isForced==true ? console.log("인바디업로드 초과함"):this.props.navigation.navigate("TakePhotoInbody")}
+        ]
+      );
+    }else{
+      this.props.navigation.navigate("TakePhotoInbody");
+    }
+  }
   compareInbodyTimestamp = async () =>{
-    //1. 인바디 타임 스탬프
-    //1-1. timestamp값이 없으면 입력 
-    //1-1. 혹은 일주일이 지난 값이면 초기화
-    const storKey = "@"+Moment(new Date()).format('YYMMDD')+"INBODYTIMESTAMP";
+    //1. 타임 스탬프
+    //1-1. timestamp값이 없으면 통과
+    const storKey = "@INBODYTIMESTAMP";
     var currentInbodyTimestamp = await AsyncStorage.getItem(storKey);
     currentInbodyTimestamp = Number(currentInbodyTimestamp);
+    if(!currentInbodyTimestamp){
+      this.inbodyAlert();
+    }else{
+      //1-2. timestamp값이 있으면 1주일이 넘었는지 체크
+      const inbodyStorKey = "@"+Moment(currentInbodyTimestamp).format('YYMMDD')+"INBODY";
+      if(Math.abs(currentInbodyTimestamp-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7)){
+        //1-2-1. 일주일이 넘었으면 타임스탬프 삭제하고 페이지 이동분기
+        await AsyncStorage.removeItem(storKey);
+        var inbodyUpCnt = await AsyncStorage.getItem(inbodyStorKey);
+        if(inbodyUpCnt){
+          await AsyncStorage.removeItem(inbodyStorKey);
+        }
+        this.inbodyAlert();
+      }else{
+        console.warn(inbodyUpCnt);
+        //1-2-2. 일주일이 안넘었으면 3회초과여부 체크
+        var inbodyUpCnt = await AsyncStorage.getItem(inbodyStorKey);
+        if(inbodyUpCnt < 3){
+          this.inbodyAlert(currentInbodyTimestamp, inbodyUpCnt);
+        }else{
+          this.inbodyAlert(currentInbodyTimestamp, inbodyUpCnt, true);
+          //이동안함.
+        }
+      }
+
+    }
+    /*
     if(!currentInbodyTimestamp || (currentInbodyTimestamp&&Math.abs(currentInbodyTimestamp-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7))){
+      
+      if(currentInbodyTimestamp){
+        await AsyncStorage.removeItem("@"+Moment(currentInbodyTimestamp).format('YYMMDD')+"INBODY");
+      }
+      
       currentInbodyTimestamp = this.props.TIMESTAMP.timestamp;
       await AsyncStorage.setItem(storKey, currentInbodyTimestamp.toString());
-    }else{
-      //1-2. 값이 일주일이 지나지 않았으면 3번 넘었는지 체크해서 분기
-      const inbodyStorKey = "@"+Moment(new Date()).format('YYMMDD')+"INBODY";
-      var inbodyUpCnt = await AsyncStorage.getItem(inbodyStorKey);
-      inbodyUpCnt = Number(inbodyUpCnt);
-      console.log("FOoter.js:"+inbodyUpCnt);
-      Alert.alert("인바디 촬영은 일주일 간격으로 3번씩만 찍을 수 있어요.", '기준일: '+Moment(currentInbodyTimestamp).format('YYYY-MM-DD').toString()+', 찍은 횟수: '+inbodyUpCnt);
-      if(inbodyUpCnt < 3){
-        this.props.navigation.navigate("TakePhotoInbody");
-      }
     }
+    //1-2. 값이 일주일이 지나지 않았으면 3번 넘었는지 체크해서 분기
+    const inbodyStorKey = "@"+Moment(currentInbodyTimestamp).format('YYMMDD')+"INBODY";
+    var inbodyUpCnt = await AsyncStorage.getItem(inbodyStorKey);
+    inbodyUpCnt = Number(inbodyUpCnt);
+    if(!inbodyUpCnt){
+      inbodyUpCnt = 0;
+      await AsyncStorage.setItem(storKey, foodUpCnt.toString());
+    }
+    console.log("Footer.js:"+inbodyUpCnt);
+    Alert.alert("인바디 측정지 촬영은 일주일 간격으로 3번씩만 찍을 수 있어요.", '기준일: '+Moment(currentInbodyTimestamp).format('YYYY-MM-DD').toString()+', 찍은 횟수: '+inbodyUpCnt);
+    if(inbodyUpCnt < 3){
+      this.props.navigation.navigate("TakePhotoInbody");
+    }
+    */
+    
   }
 
   render() {

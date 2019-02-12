@@ -27,6 +27,7 @@ if (PixelRatio.get() <= 2) {
 
 function mapStateToProps(state) {
   return {
+    TIMESTAMP: state.REDUCER_CONSTANTS.timestamp,
     AdMobRewarded: state.REDUCER_CONSTANTS.adMobRewarded,
     USER_INFO: state.REDUCER_USER.user
   };
@@ -51,7 +52,7 @@ class TakeFoodPic extends Component {
     };
   }
   componentDidMount = async() => {
-    console.warn(this.props.AdMobRewarded);
+    //console.warn(this.props.AdMobRewarded);
   }
   renderImage(image) {
     var images = [{url:image.uri, width:image.width, height: image.height}];
@@ -155,7 +156,7 @@ class TakeFoodPic extends Component {
               return (
                 <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
                   <TouchableOpacity onPress={() => this.takePicture(camera)} style={styles.capture}>
-                    <Text style={{ fontSize: FONT_BACK_LABEL }}> 인바디 찍기 </Text>
+                    <Text style={{ fontSize: FONT_BACK_LABEL }}> 인바디 측정지 찍기 </Text>
                   </TouchableOpacity>
                 </View>
               );
@@ -243,7 +244,17 @@ class TakeFoodPic extends Component {
                     modalVisible: false
                   })
                   if(isSended){
-                    const storKey = "@"+Moment(new Date()).format('YYMMDD')+"INBODY";
+                    //1. 인바디타임스탬프를 가져온다.
+                    const itStorKey = "@INBODYTIMESTAMP";
+                    var currentInbodyTimestamp = await AsyncStorage.getItem(itStorKey);
+                    currentInbodyTimestamp = Number(currentInbodyTimestamp);
+                    //2. 인바디타임스탬프값이 없는 경우
+                    if(!currentInbodyTimestamp){
+                      currentInbodyTimestamp = this.props.TIMESTAMP.timestamp;
+                      await AsyncStorage.setItem(itStorKey, currentInbodyTimestamp.toString());
+                    }
+                    //3. 인바디타임스탬프 기준 인바디 카운트를 가져와서 증가시킨다.
+                    const storKey = "@"+Moment(currentInbodyTimestamp).format('YYMMDD')+"INBODY";
                     var inbodyUpCnt = await AsyncStorage.getItem(storKey);
                     inbodyUpCnt = Number(inbodyUpCnt);
                     if(inbodyUpCnt){
