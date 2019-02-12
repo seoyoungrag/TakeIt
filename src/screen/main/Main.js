@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import {AsyncStorage, Dimensions, StyleSheet, Text, View, PixelRatio, TouchableHighlight, TouchableOpacity, Modal, ScrollView} from 'react-native';
+import {AsyncStorage, Dimensions, StyleSheet, Text, View, PixelRatio, TouchableHighlight, TouchableOpacity, Modal, ScrollView, Alert} from 'react-native';
 import DrawerWrapped from "@drawer";
 import { connect } from "react-redux";
 import ActionCreator from "@redux-yrseo/actions";
@@ -11,6 +11,7 @@ import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 import {BoxShadow} from 'react-native-shadow'
 import { COLOR } from 'react-native-material-ui';
 
@@ -137,10 +138,10 @@ class Main extends Component {
       await this.callbackFnc();
     }
     componentWillReceiveProps(nextProps) {
-      console.warn(this.state.notificationId);
-      console.warn(nextProps.navigation.state.params);
+      //console.warn(this.state.notificationId);
+      //console.warn(nextProps.navigation.state.params);
       if(nextProps.navigation.state&&nextProps.navigation.state.params&&nextProps.navigation.state.params.notificationId){
-        console.warn(this.state.notificationId!=nextProps.navigation.state.params.notificationId);
+        //console.warn(this.state.notificationId!=nextProps.navigation.state.params.notificationId);
         if(this.state.notificationId!=nextProps.navigation.state.params.notificationId){
           this.setState({notificationId:nextProps.navigation.state.params.notificationId});
           this.callbackFnc();
@@ -151,8 +152,6 @@ class Main extends Component {
     }
     componentWillUnmount() {
       //AdMobRewarded.removeAllListeners();
-      this.notificationDisplayedListener();
-      this.notificationListener();
     }
     getSystemTimestamp = async () => {
       var serverTimestamp;
@@ -502,6 +501,63 @@ class Main extends Component {
                             {item.registTime.substring(0,10)}{"\n"}{item.registTime.substring(10,19)}
                           </Text> )
                           : null}
+                      </View>
+                      <View style={{
+                        position:"absolute",
+                        height:"100%",width:"100%",
+                        zIndex:1,
+                        alignItems:"flex-start",
+                        justifyContent:"flex-end",
+                        flexDirection:"row"
+                        }}>
+                        {item.firebaseDownloadUrl !="" ?
+                        (
+                          <TouchableHighlight onPress={()=>
+                            {Alert.alert(
+                                "찍먹 삭제",
+                                "삭제하시면 복구할 수 없어요. 정말 삭제하시겠어요?",
+                                [
+                                  { text: "아니오", onPress: () => {}, style: "cancel" },
+                                  {
+                                    text: "네",
+                                    onPress: () => {
+                                        const COMP = this;
+                                        cFetch(APIS.DELETE_PHOTO, [], JSON.stringify(item), {
+                                          responseProc: function(res) {
+                                            COMP.callbackFnc();
+                                          },
+                                          responseNotFound: function(res) {
+                                            console.log("포토 삭제 에러 시작");
+                                            console.log(res);
+                                            console.log("포토 삭제 에러 끝");
+                                          }
+                                        });
+                                    }
+                                  }
+                                ],
+                                { cancelable: false }
+                              )
+                            ;
+                            }}>
+                            <Text style={{
+                                color:"white",
+                                fontSize:FONT_BACK_LABEL*1.2,
+                                textShadowRadius:10,
+                                textShadowColor:'#000000',
+                                textShadowOffset:{width:0, height:0},
+                                textAlign:"center",
+                                textAlignVertical:"center"
+                                }}>
+                                &nbsp;
+                                <Entypo
+                                  name="trash"
+                                  color={"#ffffff"}
+                                  size={FONT_BACK_LABEL*1.2}
+                                  borderWidth={0}/>
+                                  &nbsp;
+                              </Text>
+                              </TouchableHighlight>
+                        ):null}
                       </View>
                       <FastImage
                         style={{height:width/2*(this.state.isEmptyPhotos? 2:1)}}

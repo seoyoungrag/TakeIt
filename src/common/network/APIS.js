@@ -40,6 +40,10 @@ const APIS = {
   GET_MAIN_INTAKESTATUS: {
     url: "/main/intakeStatus",
     method: "GET"
+  },
+  DELETE_PHOTO: {
+    url: "/photo",
+    method: "DELETE"
   }
 };
 
