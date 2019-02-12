@@ -238,18 +238,22 @@ class Footer extends React.Component {
     INBODYALERTPERIOD = Number(INBODYALERTPERIOD);
     //0-1. 저장된 적이 없거나, 저장되었는데 1주일이 넘었으면 flag는 true로
     if(!INBODYALERTPERIOD || Math.abs(INBODYALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7)){
+    //if(!INBODYALERTPERIOD || Math.abs(INBODYALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60)){
       isShowInbodyAlert = true;
       await AsyncStorage.removeItem(periodInbodyAlertStorKey);
     }
     if(isShowInbodyAlert || isForced){
+      var time = Moment(currentInbodyTimestamp? currentInbodyTimestamp: this.props.TIMESTAMP.timestamp).format('YYYY-MM-DD').toString();
+      var cnt = inbodyUpCnt?inbodyUpCnt:'0';
       Alert.alert(
         "인바디 측정지 촬영은 일주일 간격으로 3번씩만 찍을 수 있어요.", 
-        '기준일: '+Moment(currentInbodyTimestamp? currentInbodyTimestamp: this.props.TIMESTAMP.timestamp).format('YYYY-MM-DD').toString()+', 찍은 횟수: '+inbodyUpCnt?inbodyUpCnt:'0',
+        "기준일: " +time +", 찍은 횟수: " +cnt,
         [
           isForced==true ?  null:
-          {text: '일주일 뒤에 다시보기', onPress: () => 
+          {text: '일주일간 보지않기', onPress: () => 
             {
               AsyncStorage.setItem(periodInbodyAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
+              this.props.navigation.navigate("TakePhotoInbody");
             }
           },
           {text: '확인', onPress: () => isForced==true ? console.log("인바디업로드 초과함"):this.props.navigation.navigate("TakePhotoInbody")}
@@ -416,11 +420,13 @@ class Footer extends React.Component {
         underlayColor="rgba(0,0,0,.1)"
         onPress={() => {
           //this.props.setActiveFooterBtn("INBODY")
-          if(!requestCameraPermission()){
-            Alert.alert('카메라 권한이 없으면 인바디 촬영 메뉴를 이용할 수 없어요.');
-          }else{
-            this.compareInbodyTimestamp();
-          }
+          requestCameraPermission().then(isGranted => {
+            if(!isGranted){
+              Alert.alert('카메라 권한이 없으면 찍먹의 메뉴를 이용할 수 없어요.');
+            }else{
+              this.compareInbodyTimestamp();
+            }
+          })
         }}
       >
         <View style={styles.footerIconContainer}>

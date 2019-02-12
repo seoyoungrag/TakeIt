@@ -193,92 +193,139 @@ class TakeFoodPic extends Component {
     return content;
   }
 
-  savePicture(){
+  uploadPictrue = async() =>{
+    const COM = this;
+    const PROPS = this.props;
+    COM.setState({spinnerVisible:true});
+    var dateTime = new Date();
+      let image = this.state.image;
+      //console.log("TakeInbodyPic.js: "+JSON.stringify(image));
+      firebase
+        .storage()
+        .ref("/inbody/" + PROPS.USER_INFO.userId + "/" + Moment(dateTime).format("YYYY-MM-DD") + "/" + image.uri.substr(image.uri.lastIndexOf("/") + 1) )
+        .putFile(image.uri)
+        .then(async(uploadedFile) => {
+          console.log(uploadedFile);
+          if (uploadedFile.state == "success") {
+            var data = {};
+            data.userId = PROPS.USER_INFO.userId;
+            data.registD = Moment(dateTime).format("YYYY-MM-DD");
+            data.registTime = Moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
+            data.firebaseStoragePath = uploadedFile.ref;
+            data.firebaseDownloadUrl = uploadedFile.downloadURL;
+            data.deviceLocalFilePath = image.uri;
+            var body = JSON.stringify(data);
+            var isSended = false;
+            await cFetch(APIS.POST_USER_INBODY, [], body, {
+              responseProc: async(res) => {
+                isSended = true;
+                //console.log("TakeInbodyPic.js(responseProc): "+JSON.stringify(res));
+              },
+              responseNotFound: function(res) {
+                console.log("TakeInbodyPic.js(responseNotFound): "+JSON.stringify(res));
+              },
+              responseError: function(e) {
+                console.log("TakeInbodyPic.js(responseError): "+JSON.stringify(res));
+              }
+            });
+            await COM.setState({
+              image:null,
+              spinnerVisible:false,
+              modalVisible: false
+            })
+            if(isSended){
+              //1. 인바디타임스탬프를 가져온다.
+              const itStorKey = "@INBODYTIMESTAMP";
+              var currentInbodyTimestamp = await AsyncStorage.getItem(itStorKey);
+              currentInbodyTimestamp = Number(currentInbodyTimestamp);
+              //2. 인바디타임스탬프값이 없는 경우
+              if(!currentInbodyTimestamp){
+                currentInbodyTimestamp = this.props.TIMESTAMP.timestamp;
+                await AsyncStorage.setItem(itStorKey, currentInbodyTimestamp.toString());
+              }
+              //3. 인바디타임스탬프 기준 인바디 카운트를 가져와서 증가시킨다.
+              const storKey = "@"+Moment(currentInbodyTimestamp).format('YYMMDD')+"INBODY";
+              var inbodyUpCnt = await AsyncStorage.getItem(storKey);
+              inbodyUpCnt = Number(inbodyUpCnt);
+              if(inbodyUpCnt){
+                await AsyncStorage.removeItem(storKey);
+              }else{
+                inbodyUpCnt = 0;
+              }
+              inbodyUpCnt += 1;
+              await AsyncStorage.setItem(storKey, inbodyUpCnt.toString());
+              //0. 경고창 다시보기 체크되어있는지 체크
+              const periodUploadConfirmAlertStorKey = "@UPLOADCONFIRMALERTPERIOD";
+              var UPLOADCONFIRMALERTPERIOD = await AsyncStorage.getItem(periodUploadConfirmAlertStorKey);
+              var isShowConfirmAlert = false;
+              UPLOADCONFIRMALERTPERIOD = Number(UPLOADCONFIRMALERTPERIOD);
+              //0-1. 저장된 적이 없거나, 저장되었는데 1주일이 넘었으면 flag는 true로
+              if(!UPLOADCONFIRMALERTPERIOD || Math.abs(UPLOADCONFIRMALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7)){
+              //if(!UPLOADCONFIRMALERTPERIOD || Math.abs(UPLOADCONFIRMALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60)){
+                isShowConfirmAlert = true;
+                await AsyncStorage.removeItem(periodUploadConfirmAlertStorKey);
+              }
+              if(isShowConfirmAlert){
+                Alert.alert('분석이 끝나면 알림을 보내드릴게요.','잠시 후에 확인해주세요.',
+                [
+                  {text: '일주일간 보지않기', onPress: () => 
+                    {
+                      AsyncStorage.setItem(periodUploadConfirmAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
+                    }
+                  },
+                  {
+                    text: '확인',
+                    onPress: () => console.log('Cancel Pressed')
+                  }],
+                  { cancelable: false });
+                }
+              setTimeout(function(){ 
+                PROPS.forceRefreshMain(true);
+                PROPS.navigation.navigate("Main"); 
+              }, 100);
+            }
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+  
+  }
+  savePicture =async()=>{
+    //0. 경고창 다시보기 체크되어있는지 체크
+    const periodInbodyUploadAlertStorKey = "@INBODYUPLOADALERTPERIOD";
+    var INBODYUPLOADALERTPERIOD = await AsyncStorage.getItem(periodInbodyUploadAlertStorKey);
+    var isShowInbodyUploadAlert = false;
+    INBODYUPLOADALERTPERIOD = Number(INBODYUPLOADALERTPERIOD);
+    //0-1. 저장된 적이 없거나, 저장되었는데 1주일이 넘었으면 flag는 true로
+    if(!INBODYUPLOADALERTPERIOD || Math.abs(INBODYUPLOADALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7)){
+    //if(!INBODYUPLOADALERTPERIOD || Math.abs(INBODYUPLOADALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60)){
+      isShowInbodyUploadAlert = true;
+      await AsyncStorage.removeItem(periodInbodyUploadAlertStorKey);
+    }
+    if(isShowInbodyUploadAlert){
     Alert.alert(
       '사진을 저장합니다.',
       '사진을 업로드하면 수정/삭제할 수 없습니다.',
       [
+        {text: '일주일간 보지않기', onPress: () => 
+          {
+            AsyncStorage.setItem(periodInbodyUploadAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
+            this.uploadPictrue();
+          }
+        },
         {
           text: '취소',
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
-        {text: '저장', onPress: () => {
-          const COM = this;
-          const PROPS = this.props;
-          COM.setState({spinnerVisible:true});
-          var dateTime = new Date();
-            let image = this.state.image;
-            console.log("TakeInbodyPic.js: "+JSON.stringify(image));
-            firebase
-              .storage()
-              .ref("/inbody/" + PROPS.USER_INFO.userId + "/" + Moment(dateTime).format("YYYY-MM-DD") + "/" + image.uri.substr(image.uri.lastIndexOf("/") + 1) )
-              .putFile(image.uri)
-              .then(async(uploadedFile) => {
-                console.log(uploadedFile);
-                if (uploadedFile.state == "success") {
-                  var data = {};
-                  data.userId = PROPS.USER_INFO.userId;
-                  data.registD = Moment(dateTime).format("YYYY-MM-DD");
-                  data.registTime = Moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
-                  data.firebaseStoragePath = uploadedFile.ref;
-                  data.firebaseDownloadUrl = uploadedFile.downloadURL;
-                  data.deviceLocalFilePath = image.uri;
-                  var body = JSON.stringify(data);
-                  var isSended = false;
-                  await cFetch(APIS.POST_USER_INBODY, [], body, {
-                    responseProc: async(res) => {
-                      isSended = true;
-                      console.log("TakeInbodyPic.js(responseProc): "+JSON.stringify(res));
-                    },
-                    responseNotFound: function(res) {
-                      console.log("TakeInbodyPic.js(responseNotFound): "+JSON.stringify(res));
-                    },
-                    responseError: function(e) {
-                      console.log("TakeInbodyPic.js(responseError): "+JSON.stringify(res));
-                    }
-                  });
-                  await COM.setState({
-                    image:null,
-                    spinnerVisible:false,
-                    modalVisible: false
-                  })
-                  if(isSended){
-                    //1. 인바디타임스탬프를 가져온다.
-                    const itStorKey = "@INBODYTIMESTAMP";
-                    var currentInbodyTimestamp = await AsyncStorage.getItem(itStorKey);
-                    currentInbodyTimestamp = Number(currentInbodyTimestamp);
-                    //2. 인바디타임스탬프값이 없는 경우
-                    if(!currentInbodyTimestamp){
-                      currentInbodyTimestamp = this.props.TIMESTAMP.timestamp;
-                      await AsyncStorage.setItem(itStorKey, currentInbodyTimestamp.toString());
-                    }
-                    //3. 인바디타임스탬프 기준 인바디 카운트를 가져와서 증가시킨다.
-                    const storKey = "@"+Moment(currentInbodyTimestamp).format('YYMMDD')+"INBODY";
-                    var inbodyUpCnt = await AsyncStorage.getItem(storKey);
-                    inbodyUpCnt = Number(inbodyUpCnt);
-                    if(inbodyUpCnt){
-                      await AsyncStorage.removeItem(storKey);
-                    }else{
-                      inbodyUpCnt = 0;
-                    }
-                    inbodyUpCnt += 1;
-                    await AsyncStorage.setItem(storKey, inbodyUpCnt.toString());
-                    Alert.alert('분석이 끝나면 알림을 보내드릴게요.','잠시 후에 확인해주세요.');
-                    setTimeout(function(){ 
-                      PROPS.forceRefreshMain(true);
-                      PROPS.navigation.navigate("Main"); 
-                    }, 100);
-                  }
-                }
-              })
-              .catch(err => {
-                console.log(err);
-              });
-        }},
+        {text: '저장', onPress: () => {this.uploadPictrue()}},
       ],
       {cancelable: false},
     );
+    }else{
+      this.uploadPictrue();
+    }
   }
   takePicture = async function(camera) {
     this.setState({spinnerVisible:true});

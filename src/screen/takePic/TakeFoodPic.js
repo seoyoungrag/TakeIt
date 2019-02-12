@@ -239,90 +239,137 @@ class TakeFoodPic extends Component {
       </Container>);
     return content;
   }
-  
-  savePicture = async() =>{
+  uploadPictrue = async() =>{
     const COM = this;
     const PROPS = this.props;
+
+    COM.setState({spinnerVisible:true});
+    var dateTime = new Date();
+      let image = this.state.image;
+      //console.log("TakeInbodyPic.js: "+JSON.stringify(image));
+      firebase
+        .storage()
+        .ref("/food_diary/" + PROPS.USER_INFO.userId + "/" + Moment(dateTime).format("YYYY-MM-DD") + "/" + image.uri.substr(image.uri.lastIndexOf("/") + 1) )
+        .putFile(image.uri)
+        .then(async(uploadedFile) => {
+          console.log(uploadedFile);
+          if (uploadedFile.state == "success") {
+            var data = {};
+            data.userId = PROPS.USER_INFO.userId;
+            data.registD = Moment(dateTime).format("YYYY-MM-DD");
+            data.registTime = Moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
+            data.firebaseStoragePath = uploadedFile.ref;
+            data.firebaseDownloadUrl = uploadedFile.downloadURL;
+            data.deviceLocalFilePath = image.uri;
+            data.xCoordinate = COM.state.longitude;
+            data.yCoordinate = COM.state.latitude;
+            var body = JSON.stringify(data);
+            var isSended = false;
+            await cFetch(APIS.POST_USER_FOOD, [], body, {
+              responseProc: async(res) => {
+                isSended = true;
+                //console.log("TakeInbodyPic.js(responseProc): "+JSON.stringify(res));
+              },
+              responseNotFound: function(res) {
+                console.log("TakeInbodyPic.js(responseNotFound): "+JSON.stringify(res));
+              },
+              responseError: function(e) {
+                console.log("TakeInbodyPic.js(responseError): "+JSON.stringify(res));
+              }
+            });
+            await COM.setState({
+              image:null,
+              spinnerVisible:false,
+              modalVisible: false
+            })
+            if(isSended){
+              const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
+              var foodUpCnt = await AsyncStorage.getItem(storKey);
+              foodUpCnt = Number(foodUpCnt);
+              if(foodUpCnt){
+                await AsyncStorage.removeItem(storKey);
+              }else{
+                foodUpCnt = 0;
+              }
+              foodUpCnt += 1;
+              await AsyncStorage.setItem(storKey, foodUpCnt.toString());
+              //0. 경고창 다시보기 체크되어있는지 체크
+              const periodUploadConfirmAlertStorKey = "@UPLOADCONFIRMALERTPERIOD";
+              var UPLOADCONFIRMALERTPERIOD = await AsyncStorage.getItem(periodUploadConfirmAlertStorKey);
+              var isShowConfirmAlert = false;
+              UPLOADCONFIRMALERTPERIOD = Number(UPLOADCONFIRMALERTPERIOD);
+              //0-1. 저장된 적이 없거나, 저장되었는데 1주일이 넘었으면 flag는 true로
+              if(!UPLOADCONFIRMALERTPERIOD || Math.abs(UPLOADCONFIRMALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7)){
+              //if(!UPLOADCONFIRMALERTPERIOD || Math.abs(UPLOADCONFIRMALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60)){
+                isShowConfirmAlert = true;
+                await AsyncStorage.removeItem(periodUploadConfirmAlertStorKey);
+              }
+              if(isShowConfirmAlert){
+                Alert.alert('분석이 끝나면 알림을 보내드릴게요.','잠시 후에 확인해주세요.',
+                [
+                  {text: '일주일간 보지않기', onPress: () => 
+                    {
+                      AsyncStorage.setItem(periodUploadConfirmAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
+                    }
+                  },
+                  {
+                    text: '확인',
+                    onPress: () => console.log('Cancel Pressed')
+                  }],
+                  { cancelable: false });
+                }
+              setTimeout(function(){ 
+                PROPS.forceRefreshMain(true);
+                PROPS.navigation.navigate("Main"); 
+              }, 100);
+              
+            }
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+  
+  }
+  savePicture = async() =>{
     const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
     var cnt = await AsyncStorage.getItem(storKey);
     var macCnt = this.props.TIMESTAMP.foodupcnt?this.props.TIMESTAMP.foodupcnt: 3;
     cnt = Number(cnt);
-    Alert.alert(
-      '사진을 저장합니다.',
-      '사진을 업로드하면 수정/삭제할 수 없습니다.\n일일 저장 횟수가 '+macCnt+'를 초과하면 찍먹티켓을 사용합니다. \n(금일: '+cnt+'회 저장)',
-      [
-        {
-          text: '취소',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {text: '저장', onPress: async() => {
-          COM.setState({spinnerVisible:true});
-          var dateTime = new Date();
-            let image = this.state.image;
-            console.log("TakeInbodyPic.js: "+JSON.stringify(image));
-            firebase
-              .storage()
-              .ref("/food_diary/" + PROPS.USER_INFO.userId + "/" + Moment(dateTime).format("YYYY-MM-DD") + "/" + image.uri.substr(image.uri.lastIndexOf("/") + 1) )
-              .putFile(image.uri)
-              .then(async(uploadedFile) => {
-                console.log(uploadedFile);
-                if (uploadedFile.state == "success") {
-                  var data = {};
-                  data.userId = PROPS.USER_INFO.userId;
-                  data.registD = Moment(dateTime).format("YYYY-MM-DD");
-                  data.registTime = Moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
-                  data.firebaseStoragePath = uploadedFile.ref;
-                  data.firebaseDownloadUrl = uploadedFile.downloadURL;
-                  data.deviceLocalFilePath = image.uri;
-                  data.xCoordinate = COM.state.longitude;
-                  data.yCoordinate = COM.state.latitude;
-                  var body = JSON.stringify(data);
-                  var isSended = false;
-                  await cFetch(APIS.POST_USER_FOOD, [], body, {
-                    responseProc: async(res) => {
-                      isSended = true;
-                      console.log("TakeInbodyPic.js(responseProc): "+JSON.stringify(res));
-                    },
-                    responseNotFound: function(res) {
-                      console.log("TakeInbodyPic.js(responseNotFound): "+JSON.stringify(res));
-                    },
-                    responseError: function(e) {
-                      console.log("TakeInbodyPic.js(responseError): "+JSON.stringify(res));
-                    }
-                  });
-                  await COM.setState({
-                    image:null,
-                    spinnerVisible:false,
-                    modalVisible: false
-                  })
-                  if(isSended){
-                    const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
-                    var foodUpCnt = await AsyncStorage.getItem(storKey);
-                    foodUpCnt = Number(foodUpCnt);
-                    if(foodUpCnt){
-                      await AsyncStorage.removeItem(storKey);
-                    }else{
-                      foodUpCnt = 0;
-                    }
-                    foodUpCnt += 1;
-                    await AsyncStorage.setItem(storKey, foodUpCnt.toString());
-                    Alert.alert('분석이 끝나면 알림을 보내드릴게요.','잠시 후에 확인해주세요.');
-                    setTimeout(function(){ 
-                      PROPS.forceRefreshMain(true);
-                      PROPS.navigation.navigate("Main"); 
-                    }, 100);
-                    
-                  }
-                }
-              })
-              .catch(err => {
-                console.log(err);
-              });
-        }},
-      ],
-      {cancelable: false},
-    );
+    //0. 경고창 다시보기 체크되어있는지 체크
+    const periodFoodUploadAlertStorKey = "@FOODUPLOADALERTPERIOD";
+    var FOODUPLOADALERTPERIOD = await AsyncStorage.getItem(periodFoodUploadAlertStorKey);
+    var isShowFoodUploadAlert = false;
+    FOODUPLOADALERTPERIOD = Number(FOODUPLOADALERTPERIOD);
+    //0-1. 저장된 적이 없거나, 저장되었는데 1주일이 넘었으면 flag는 true로
+    if(!FOODUPLOADALERTPERIOD || Math.abs(FOODUPLOADALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7)){
+    //if(!FOODUPLOADALERTPERIOD || Math.abs(FOODUPLOADALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60)){
+      isShowFoodUploadAlert = true;
+      await AsyncStorage.removeItem(periodFoodUploadAlertStorKey);
+    }
+    if(isShowFoodUploadAlert){
+      Alert.alert(
+        '사진을 저장합니다.',
+        '사진을 업로드하면 수정/삭제할 수 없습니다.\n일일 저장 횟수가 '+macCnt+'를 초과하면 찍먹티켓을 사용합니다. \n(금일: '+cnt+'회 저장)',
+        [
+          {text: '일주일간 보지않기', onPress: () => 
+            {
+              AsyncStorage.setItem(periodFoodUploadAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
+              this.uploadPictrue();
+            }
+          },
+          {
+            text: '취소',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {text: '저장', onPress: async() => {this.uploadPictrue()}},
+        ],
+        {cancelable: false},
+      );
+    }else{
+      this.uploadPictrue();
+    }
   }
   takePicture = async function(camera) {
     //console.warn("TakeFoodPic.js: takePicture");
