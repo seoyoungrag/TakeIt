@@ -426,7 +426,7 @@ class Diary extends React.Component {
                                 {text: '일주일간 보지않기', onPress: () => 
                                   {
                                     AsyncStorage.setItem(periodFoodUpMainAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
-                                    this.uploadPictrue(image);
+                                    this.uploadPictrue(image, data.registD);
                                   }
                                 },
                                 {
@@ -434,12 +434,12 @@ class Diary extends React.Component {
                                   onPress: () => console.log('Cancel Pressed'),
                                   style: 'cancel',
                                 },
-                                {text: '저장', onPress: async() => {this.uploadPictrue(image)}},
+                                {text: '저장', onPress: async() => {this.uploadPictrue(image, data.registD)}},
                               ],
                               {cancelable: false},
                             );
                         }else{
-                          this.uploadPictrue(image);
+                          this.uploadPictrue(image, data.registD);
                         }
                         });
                       }
@@ -488,12 +488,12 @@ class Diary extends React.Component {
     );
   }
 
-  uploadPictrue = async(image) =>{
+  uploadPictrue = async(image, registD) =>{
     const COM = this;
     const PROPS = this.props;
     console.warn(image);
     COM.setState({spinnerDiaryVisible:true});
-    var dateTime = new Date();
+    var dateTime = registD;
       //console.log("TakeInbodyPic.js: "+JSON.stringify(image));
       
       firebase
