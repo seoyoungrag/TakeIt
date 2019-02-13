@@ -55,7 +55,7 @@ class TakeFoodPic extends Component {
         color="#000000"
         size={FONT_BACK_LABEL*1.8}
         borderWidth={0}/>,
-        dataIndex: 'foodNm',
+        dataIndex: 'food.foodNm',
         isFirst: true,
         width:width*0.3,
         textLeft:true
@@ -163,7 +163,7 @@ class TakeFoodPic extends Component {
             <View style={{flex:1,padding:width*0.05, justifyContent:"center", alignItems:"center"}}>
               <Table height={height/3-height*0.105} columns={columns}
               /* columnWidth={width*0.145} */
-              dataSource={this.state.food.foodAnalysisInfo ? this.state.food.foodAnalysisInfo: this.state.food.foodList} />
+              dataSource={this.state.food.foodList} />
             </View>
           </View>
         </View>

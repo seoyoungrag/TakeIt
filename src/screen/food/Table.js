@@ -72,11 +72,11 @@ class Table extends Component {
             //console.log(rowData.foodId);
             //console.log(col.dataIndex);
             var data = rowData[col.dataIndex];
-            if(rowData.foodId==4909&&col.dataIndex=="foodNm"){
+            if(rowData.foodId==4909&&col.dataIndex=="food.foodNm"){
               data="잘모르겠어요";
             }
             //console.log(rowData);
-            if(col.dataIndex=="foodNm"&&rowData[col.dataIndex]&&rowData[col.dataIndex]!=""){
+            if(col.dataIndex=="food.foodNm"&&rowData[col.dataIndex]&&rowData[col.dataIndex]!=""){
               if(rowData.food){
                 if(rowData.food.foodCategory&&rowData.food.foodCategory!=''&&(rowData.food.foodCategory.indexOf("음료")>-1||rowData.food.foodCategory.indexOf("우유")>-1)){
                   data +="("+rowData.food.servingSize+"ml)";
