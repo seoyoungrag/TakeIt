@@ -1,17 +1,20 @@
 import React from 'react';
 import {
+  Alert,
+  AsyncStorage, 
+  PermissionsAndroid,
   Dimensions,
   Platform,
   StyleSheet,
   Text,
-  Image,
   View,
   TouchableHighlight,
+  TouchableOpacity,
   ScrollView,
-  Button,
+  PixelRatio
 } from 'react-native';
 
-import PopupDialog, {  DialogButton,  DialogContent, } from 'react-native-popup-dialog';
+import PopupDialog from 'react-native-popup-dialog';
 import DrawerWrapped from '@drawer';
 import { connect } from 'react-redux';
 
@@ -23,23 +26,72 @@ import APIS from '@common/network/APIS';
 import Calendar from 'react-native-calendario';
 
 import FastImage from 'react-native-fast-image'
-import { SectionGrid, FlatGrid } from 'react-native-super-grid';
+import { FlatGrid } from 'react-native-super-grid';
 import Moment from 'moment/min/moment-with-locales';
-import { black } from 'ansi-colors';
 Moment.locale('ko');
 
 import Spinner from 'react-native-loading-spinner-overlay';
-import Images from '../../../assets/Images';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {BoxShadow} from 'react-native-shadow';
 import { COLOR } from 'react-native-material-ui';
+import Entypo from 'react-native-vector-icons/Entypo';
+import ImagePicker from 'react-native-image-picker';
+import Permissions from 'react-native-permissions'
+import firebase from "react-native-firebase";
 
 const { width, height } = Dimensions.get('window');
 
 
+async function requestStoragePermission(){
+  var isGranted = false;
+  try {
+    if(Platform.OS === 'ios' ){
+      const check = await Permissions.check('Storage')
+      //console.log("check is one of: 'authorized', 'denied', 'restricted', or 'undetermined'");
+      //console.log(check);
+      if(check!='authorized'){
+        //console.log('request permission');
+        const GRANTED = await Permissions.request('Storage');
+        console.log('GRANTED');
+        console.log(GRANTED);
+        if(GRANTED=='authorized'){
+          isGranted = true;
+        }else{
+          isGranted = false;
+        }
+      }else{
+        isGranted = true;
+      }
+    }else{
+      const check = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
+      if(!check){
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            'title': '갤러리 권한 필요',
+            'message': '음식 사진을 올리기 위해 갤러리 권한이 필요합니다.'
+          }
+        )
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          isGranted = true;
+          //console.log("You can use the CAMERA")
+        } else {
+          isGranted = false;
+          //console.log("CAMERA permission denied")
+        }
+      }else{
+        isGranted = true;
+      }
+    }
+  } catch (err) {
+    console.warn(err)
+  }
+  return isGranted;
+}
+
 function mapStateToProps(state) {
   return {
+    TIMESTAMP: state.REDUCER_CONSTANTS.timestamp,
     USER_INFO: state.REDUCER_USER.user,
     selectedDate: state.selectedDate,
     count: state.count,
@@ -50,6 +102,9 @@ function mapDispatchToProps(dispatch) {
   return {};
 }
 var FONT_BACK_LABEL   = 16;
+if (PixelRatio.get() <= 2) {
+  FONT_BACK_LABEL = 12;
+}
 
 class Diary extends React.Component {
   constructor(props) {
@@ -329,7 +384,78 @@ class Diary extends React.Component {
                 </View>
                   )}
               />
+            
               </View>
+                <View style={styles.underBottomPhoto}>
+                  <TouchableOpacity onPress={()=>{
+                    requestStoragePermission().then(isGranted => {
+                      if(!isGranted){
+                        Alert.alert('갤러리 권한이 없으면 찍먹의 메뉴를 이용할 수 없어요.');
+                      }else{
+                        const options = {
+                          title: '찍먹할 사진을 선택해주세요.',
+                          maxWidth:1280/2,maxHeight:1280/2,
+                          quality: 0.5,
+                          noData: true
+                        };
+                        ImagePicker.launchImageLibrary(options, async(image) => {
+                          console.log(image);
+                          if(image.didCancel||!image.uri){
+                            return;
+                          }
+                          const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
+                          var cnt = await AsyncStorage.getItem(storKey);
+                          var macCnt = this.props.TIMESTAMP.foodupcnt?this.props.TIMESTAMP.foodupcnt: 3;
+                          cnt = Number(cnt);
+                          //0. 경고창 다시보기 체크되어있는지 체크
+                          const periodFoodUpMainAlertStorKey = "@FOODUPMAINALERTPERIOD";
+                          var FOODUPMAINALERTPERIOD = await AsyncStorage.getItem(periodFoodUpMainAlertStorKey);
+                          var isShowFoodUpMainAlert = false;
+                          FOODUPMAINALERTPERIOD = Number(FOODUPMAINALERTPERIOD);
+                          //0-1. 저장된 적이 없거나, 저장되었는데 1주일이 넘었으면 flag는 true로
+                          if(!FOODUPMAINALERTPERIOD || Math.abs(FOODUPMAINALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7)){
+                          //if(!FOODUPLOADALERTPERIOD || Math.abs(FOODUPLOADALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60)){
+                            isShowFoodUpMainAlert = true;
+                            await AsyncStorage.removeItem(periodFoodUpMainAlertStorKey);
+                          }
+                          if(isShowFoodUpMainAlert){
+                            Alert.alert(
+                              '선택한 사진을 등록하시겠어요?',
+                              '사진을 업로드하면 수정/삭제할 수 없습니다.\n일일 저장 횟수가 '+macCnt+'를 초과하면 찍먹티켓을 사용합니다. \n(금일: '+cnt+'회 저장)',
+                              [
+                                {text: '일주일간 보지않기', onPress: () => 
+                                  {
+                                    AsyncStorage.setItem(periodFoodUpMainAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
+                                    this.uploadPictrue(image);
+                                  }
+                                },
+                                {
+                                  text: '취소',
+                                  onPress: () => console.log('Cancel Pressed'),
+                                  style: 'cancel',
+                                },
+                                {text: '저장', onPress: async() => {this.uploadPictrue(image)}},
+                              ],
+                              {cancelable: false},
+                            );
+                        }else{
+                          this.uploadPictrue(image);
+                        }
+                        });
+                      }
+                    });
+                  }}>
+                  <Text style={[{
+                    paddingLeft: width * 0.0225,
+                    textAlignVertical:"top",
+                    fontSize: FONT_BACK_LABEL*0.8,
+                    fontWeight: '600',
+                    color: COLOR.grey800,
+                    textAlign:"left"}]}>
+                    <Entypo name="folder-images" color="#000000" size={FONT_BACK_LABEL*0.8}/>&nbsp;&nbsp;갤러리에서 올리기
+                  </Text>
+                  </TouchableOpacity>
+                </View>
             </View>
                 )
                 }):
@@ -360,6 +486,92 @@ class Diary extends React.Component {
         parentWidth={width}
       />
     );
+  }
+
+  uploadPictrue = async(image) =>{
+    const COM = this;
+    const PROPS = this.props;
+    console.warn(image);
+    COM.setState({spinnerDiaryVisible:true});
+    var dateTime = new Date();
+      //console.log("TakeInbodyPic.js: "+JSON.stringify(image));
+      
+      firebase
+        .storage()
+        .ref("/food_diary/" + PROPS.USER_INFO.userId + "/" + Moment(dateTime).format("YYYY-MM-DD") + "/" + image.uri.substr(image.uri.lastIndexOf("/") + 1) )
+        .putFile(image.uri)
+        .then(async(uploadedFile) => {
+          console.log(uploadedFile);
+          if (uploadedFile.state == "success") {
+            var data = {};
+            data.userId = PROPS.USER_INFO.userId;
+            data.registD = Moment(dateTime).format("YYYY-MM-DD");
+            data.registTime = Moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
+            data.firebaseStoragePath = uploadedFile.ref;
+            data.firebaseDownloadUrl = uploadedFile.downloadURL;
+            data.deviceLocalFilePath = image.uri;
+            data.xCoordinate = COM.state.longitude;
+            data.yCoordinate = COM.state.latitude;
+            var body = JSON.stringify(data);
+            var isSended = false;
+            await cFetch(APIS.POST_USER_FOOD, [], body, {
+              responseProc: async(res) => {
+                isSended = true;
+                //console.log("TakeInbodyPic.js(responseProc): "+JSON.stringify(res));
+              },
+              responseNotFound: function(res) {
+                console.log("TakeInbodyPic.js(responseNotFound): "+JSON.stringify(res));
+              },
+              responseError: function(e) {
+                console.log("TakeInbodyPic.js(responseError): "+JSON.stringify(res));
+              }
+            });
+            if(isSended){
+              const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
+              var foodUpCnt = await AsyncStorage.getItem(storKey);
+              foodUpCnt = Number(foodUpCnt);
+              if(foodUpCnt){
+                await AsyncStorage.removeItem(storKey);
+              }else{
+                foodUpCnt = 0;
+              }
+              foodUpCnt += 1;
+              await AsyncStorage.setItem(storKey, foodUpCnt.toString());
+              //0. 경고창 다시보기 체크되어있는지 체크
+              const periodUploadConfirmAlertStorKey = "@UPLOADCONFIRMALERTPERIOD";
+              var UPLOADCONFIRMALERTPERIOD = await AsyncStorage.getItem(periodUploadConfirmAlertStorKey);
+              var isShowConfirmAlert = false;
+              UPLOADCONFIRMALERTPERIOD = Number(UPLOADCONFIRMALERTPERIOD);
+              //0-1. 저장된 적이 없거나, 저장되었는데 1주일이 넘었으면 flag는 true로
+              if(!UPLOADCONFIRMALERTPERIOD || Math.abs(UPLOADCONFIRMALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7)){
+              //if(!UPLOADCONFIRMALERTPERIOD || Math.abs(UPLOADCONFIRMALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60)){
+                isShowConfirmAlert = true;
+                await AsyncStorage.removeItem(periodUploadConfirmAlertStorKey);
+              }
+              if(isShowConfirmAlert){
+                Alert.alert('분석이 끝나면 알림을 보내드릴게요.','잠시 후에 확인해주세요.',
+                [
+                  {text: '일주일간 보지않기', onPress: () => 
+                    {
+                      AsyncStorage.setItem(periodUploadConfirmAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
+                    }
+                  },
+                  {
+                    text: '확인',
+                    onPress: () => console.log('Cancel Pressed')
+                  }],
+                  { cancelable: false });
+                }
+              setTimeout(function(){ 
+                COM.getFoodPhotoList();
+              }, 100);
+            }
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+  
   }
 }
 
@@ -409,14 +621,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: width*0.95,
     // backgroundColor: '#F5FCFF',
-    height: height*0.3*0.3,
+    height: height*0.3*0.2
   },
   bottomPhoto: {
     // justifyContent: 'flex-end',
     flex:1,
     width: width*0.95,
     // backgroundColor: '#7F7F7F',
-    height: height*0.3*0.7,
+    height: height*0.3*0.65
+  },
+  underBottomPhoto: {
+    width: width*0.95,
+    // backgroundColor: '#9F9F9F',
+    height: height*0.3*0.15
   },
   itemContainer: {
     // justifyContent: 'flex-end',

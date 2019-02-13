@@ -3,6 +3,7 @@ package kr.co.dwebss.takeat.android;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.imagepicker.ImagePickerPackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.horcrux.svg.SvgPackage;
 //import com.reactnative.ivpusic.imagepicker.PickerPackage;// <-- crop-picker 제거
@@ -61,6 +62,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ImagePickerPackage(),
             new RNFirebaseNotificationsPackage(), //<-- fireabse notification 추가
             //new ReactNativePushNotificationPackage(), // <---- react native noti 추가
             new RNFirebaseAdMobPackage(), // <-- admob 제거하고 firebase admob 추가

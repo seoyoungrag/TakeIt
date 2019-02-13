@@ -13,6 +13,8 @@ target 'TakeIt' do
 	pod 'GoogleSignIn'
 	pod 'Google-Mobile-Ads-SDK'
 
+  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
   target 'TakeItTests' do
     inherit! :search_paths
     # Pods for testing
