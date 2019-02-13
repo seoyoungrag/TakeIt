@@ -349,7 +349,7 @@ class TakeFoodPic extends Component {
     }
     if(isShowFoodUploadAlert){
       Alert.alert(
-        '사진을 저장합니다.',
+        '현재 사진으로 등록하시겠어요?',
         '사진을 업로드하면 수정/삭제할 수 없습니다.\n일일 저장 횟수가 '+macCnt+'를 초과하면 찍먹티켓을 사용합니다. \n(금일: '+cnt+'회 저장)',
         [
           {text: '일주일간 보지않기', onPress: () => 
