@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import {
-  Dimensions, View,
+  Dimensions, View,ScrollView,
   Text,PixelRatio
 } from "react-native";
 
@@ -9,7 +9,6 @@ import { connect } from "react-redux";
 
 import Container from '@container/Container';
 import FastImage from 'react-native-fast-image';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { COLOR } from 'react-native-material-ui';
 import {BoxShadow} from 'react-native-shadow'
@@ -43,12 +42,12 @@ class TakeFoodPic extends Component {
   }
   componentDidMount= async() => {
   }
-  componentWillUnmount() {
-    navigator.geolocation.clearWatch(this.watchId);
-  }
+  componentWillUnmount() {}
 
   render() {
     const columns = [
+      /*커스텀헤더 추가*/
+      /*
       {
         title: <MaterialCommunityIcons
         name="food"
@@ -60,35 +59,36 @@ class TakeFoodPic extends Component {
         width:width*0.3,
         textLeft:true
       },
+      */
       {
         title: '칼로리',
         dataIndex: 'kilocalorie',
         lastTxt: 'kcal',
-        width:width*0.135
+        width:width*(0.135+0.06)
       },
       {
         title: '단백질',
         dataIndex: 'protein',
         lastTxt: 'g',
-        width:width*0.135
+        width:width*(0.135+0.06)
       },
       {
         title: '지방',
         dataIndex: 'fat',
         lastTxt: 'g',
-        width:width*0.11
+        width:width*(0.11+0.06)
       },
       {
         title: '탄수화물',
         dataIndex: 'carbohydrate',
         lastTxt: 'g',
-        width:width*0.135
+        width:width*(0.135+0.06)
       },
       {
         title: '당',
         dataIndex: 'sugar',
         lastTxt: 'g',
-        width:width*0.082
+        width:width*(0.082+0.06)
       }
     ];
 
@@ -159,12 +159,26 @@ class TakeFoodPic extends Component {
                 </View>
                 </BoxShadow>
                 </View>
-                
-            <View style={{flex:1,padding:width*0.05, justifyContent:"center", alignItems:"center"}}>
-              <Table height={height/3-height*0.105} columns={columns}
-              /* columnWidth={width*0.145} */
-              dataSource={this.state.food.foodList} />
-            </View>
+                    <View style={{flex:1,padding:width*0.05, justifyContent:"center", alignItems:"center"}}>
+                    
+                    {this.state.food.foodList.length > 0  ?  
+                    (<ScrollView>
+                        {this.state.food.foodList.map(data => {
+                        var foodArray = [data];
+                          return (
+                              <Table height={85} columns={columns}
+                              key={data.photoFoodDetailId}
+                              dataSource={foodArray} />
+                            )
+                          })
+                        }
+                      </ScrollView> 
+                      ): 
+                      <Table height={height/3-height*0.105} columns={columns}
+                      /* columnWidth={width*0.145} */
+                      dataSource={this.state.food.foodList} />
+                    }
+                </View>
           </View>
         </View>
       </Container>

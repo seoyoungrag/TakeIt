@@ -56,6 +56,52 @@ class Table extends Component {
     })
   }
 
+  _renderHeaderTop(dataSource) {
+    let columns = [
+      { 
+        title: "음식이름",
+        flex: 1,
+        //isFirst: true
+      }, 
+      { 
+        dataIndex: "foodNm",
+        flex: 1,
+      }, 
+      { 
+        title: "섭식량",
+        flex:1
+      },
+      { 
+        dataIndex: "amountDish",
+        flex:1
+      }
+    ];
+    return columns.map((col, index) => {
+      let style = {flex: col.flex, borderLeftWidth: col.isFirst? 1: 0, borderLeftColor:"#dfdfdf" };
+      var title = col.title;
+      if(!title){
+        dataSource.map((rowData, index) => {
+          title = rowData[col.dataIndex];
+          if(col.dataIndex=='foodNm'){
+            var foodServingSize = rowData['foodServingSize']
+            if(foodServingSize.servingSizeNm && foodServingSize.servingSizeNm !=''){
+              title += "("+foodServingSize.servingSizeNm+")";
+            }else if(foodServingSize.grams&&foodServingSize.grams!='' &&foodServingSize.gramsUnit&&foodServingSize.gramsUnit!='' ){
+              title += "("+foodServingSize.grams+foodServingSize.gramsUnit+")";
+            }
+          }else if(col.dataIndex=='amountDish'){
+            title = String(title)+'x';
+          }
+        });
+      }
+      
+      return (
+        <View key={index} style={[!col.title? styles.cell: styles.headerItem, style]}>
+          <Text style={{textAlign:"center",fontSize:FONT_BACK_LABEL*0.7}}>{title}</Text>
+        </View>
+      )
+    })
+  }
   _renderRow(rowData, index) {
     let { columns, renderCell } = this.props;
     var isLast = false;
@@ -72,10 +118,11 @@ class Table extends Component {
             //console.log(rowData.foodId);
             //console.log(col.dataIndex);
             var data = rowData[col.dataIndex];
-            if(rowData.foodId==4909&&col.dataIndex=="food.foodNm"){
+            if(rowData.foodId==4986&&col.dataIndex=="food.foodNm"){
               data="잘모르겠어요";
             }
             //console.log(rowData);
+            /*
             if(col.dataIndex=="food.foodNm"&&rowData[col.dataIndex]&&rowData[col.dataIndex]!=""){
               if(rowData.food){
                 if(rowData.food.foodCategory&&rowData.food.foodCategory!=''&&(rowData.food.foodCategory.indexOf("음료")>-1||rowData.food.foodCategory.indexOf("우유")>-1)){
@@ -94,6 +141,7 @@ class Table extends Component {
                 data += 'x'+rowData.amountDish;
               }
             }
+            */
             return(renderCell(data, col))
           })
         }
@@ -109,7 +157,10 @@ class Table extends Component {
         contentContainerStyle={[styles.contentContainer , { height }]}
         horizontal={true}
         bounces={false} >
-        <View style={{borderTopWidth:1, borderBottomWidth:0, borderLeftWidth:0, borderTopColor:"#000000", borderBottomColor:"#000000", borderLeftColor:"#dfdfdf", borderRightColor:"#dfdfdf"}}>
+        <View style={{borderTopWidth:1, borderBottomWidth:0, borderLeftWidth:1, borderTopColor:"#000000", borderBottomColor:"#000000", borderLeftColor:"#dfdfdf", borderRightColor:"#dfdfdf"}}>
+          <View style={[styles.header,{borderBottomColor:"#dfdfdf", borderBottomWidth:1}]}>
+            { this._renderHeaderTop(dataSource) }
+          </View>
           <View style={styles.header}>
             { this._renderHeader() }
           </View>
@@ -128,7 +179,7 @@ const styles = StyleSheet.create({
   container: {
   },
   contentContainer: {
-    height: 240
+    height: 90
   },
   header: {
     flexDirection: 'row',
