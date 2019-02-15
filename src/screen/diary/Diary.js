@@ -68,8 +68,8 @@ async function requestStoragePermission(){
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
           {
-            'title': '갤러리 권한 필요',
-            'message': '음식 사진을 올리기 위해 갤러리 권한이 필요합니다.'
+            'title': '앨범 권한 필요',
+            'message': '음식 사진을 올리기 위해 앨범 권한이 필요합니다.'
           }
         )
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
@@ -390,7 +390,7 @@ class Diary extends React.Component {
                   <TouchableOpacity onPress={()=>{
                     requestStoragePermission().then(isGranted => {
                       if(!isGranted){
-                        Alert.alert('갤러리 권한이 없으면 찍먹의 메뉴를 이용할 수 없어요.');
+                        Alert.alert('앨범 권한이 없으면 찍먹의 메뉴를 이용할 수 없어요.');
                       }else{
                         const options = {
                           title: '찍먹할 사진을 선택해주세요.',

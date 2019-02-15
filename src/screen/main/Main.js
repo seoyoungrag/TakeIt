@@ -62,8 +62,8 @@ async function requestStoragePermission(){
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
           {
-            'title': '갤러리 권한 필요',
-            'message': '음식 사진을 올리기 위해 갤러리 권한이 필요합니다.'
+            'title': '앨범 권한 필요',
+            'message': '음식 사진을 올리기 위해 앨범 권한이 필요합니다.'
           }
         )
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
@@ -382,6 +382,289 @@ class Main extends Component {
           y:3
         }
         PROPS = this.props;
+        const headerView = (<View
+          style={styles.headerView}>
+
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+            }}>
+
+            <View width={height*0.15} height="100%" paddingLeft={10}>
+            {YourImage}
+            </View>
+
+            <View flex={width-height*0.15} height="100%">
+              <View flex={3} style={{padding:10, paddingBottom:0}}>
+                <Text style={styles.profileUserEmail}>{this.props.USER_INFO.userEmail}</Text>
+                <Text style={styles.profileWiseSaying}>{WiseSaying}</Text>
+              </View>
+              <View flex={2} flexDirection="row" style={{padding:10, paddingTop:20}}>
+                <View flex={2} style={{backgroundColor:'rgb(72,207,173)', paddingLeft:10, justifyContent:"center"}}><Text style={{color:"white"}}>today {this.state.calorie.stat} kcal</Text></View>
+                <View flex={1} style={{backgroundColor:'rgb(255,206,84)', paddingRight:10, justifyContent:"center", height:"70%",alignSelf:"flex-end",alignItems:"flex-end"}}><Text style={{color:"white"}}>+{this.state.calorie.guage}</Text></View>
+              </View>
+            </View>
+
+          </View>
+
+        </View>);
+        const statusView = (
+          <View style={styles.statusView}>
+            <FlatGrid
+              itemDimension={width/2.1}
+              fixed
+              spacing={0}
+              items={this.state.intakeStatuses}
+              style={styles.gridView}
+              renderItem={({ item, section, index }) => (
+                <View style={[styles.statusContainer, { /* backgroundColor: 'rgba(255,0,0,'+item.guage+')'*/}]}>
+                  <View flexDirection="row" width={width/2-width*0.1}>
+                    <View style={{flex:1, alignItems:"flex-start"}}>
+                      <Text style={[styles.itemName,{color:COLOR.grey800}]}>{item.name}</Text>
+                    </View>
+                    <View style={{flex:1, alignItems:"flex-end"}}>
+                      <Text style={[styles.itemCode,{color:"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",1)"}]}>{item.stat}g
+                      </Text>
+                    </View>
+                  </View>
+                  <ProgressBarAnimated
+                    width={width/2-width*0.1}
+                    height={height*0.005}
+                    value={100*item.guage}
+                    backgroundColor={"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",1)"}
+                    borderColor={"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",0.1)"}
+                  />
+                </View>
+              )}
+              renderSectionHeader={({ section }) => (
+                <Text style={styles.sectionHeader}>{section.title}</Text>
+              )}
+            />
+          </View>);
+
+          const foodList = (
+            <View style={styles.foodList}>
+            <ScrollView contentContainerStyle={[styles.foodListScroll]}>
+              <SectionGrid
+                itemDimension={width/2.1 *(this.state.isEmptyPhotos? 2:1)}
+                fixed
+                spacing={5}
+                sections={[
+                  {
+                    title: Moment(new Date()).format("YYYY-MM-DD"),
+                    data: this.state.photos,
+                  }
+                ]}
+                style={styles.gridView}
+                renderItem={({ item, section, index }) => (
+
+                  <TouchableHighlight onPress={()=>
+                    {this.state.isEmptyPhotos?
+                      null:
+                      this.props.navigation.navigate("Food", {
+                        food: item
+                        })
+                      }}>
+                  <BoxShadow setting={shadowOpt}>
+                  <View style={{height:width/2*(this.state.isEmptyPhotos? 2:1)}}>
+                    <View style={{
+                      position:"absolute",
+                      height:"100%",width:"100%",
+                      zIndex:1,
+                      alignItems:"center",
+                      justifyContent:"center",
+                      flexDirection:"row"
+                      }}>
+                      {item.firebaseDownloadUrl !="" ?
+                      (<Text style={{
+                          color:"white",
+                          fontSize:FONT_BACK_LABEL*1.2,
+                          textShadowRadius:10,
+                          textShadowColor:'#000000',
+                          textShadowOffset:{width:0, height:0},
+                          textAlign:"center",
+                          textAlignVertical:"center"
+                          }}>&nbsp;
+                          <Ionicons
+                            name="ios-clock"
+                            color={"#ffffff"}
+                            size={FONT_BACK_LABEL*2}
+                            borderWidth={0}/>
+                            &nbsp;
+                        </Text>
+                      ):null}
+                        {item.firebaseDownloadUrl !="" ?
+                        (<Text style={{
+                          color:"white",
+                          fontSize:FONT_BACK_LABEL*1.2,
+                          textShadowRadius:10,
+                          textShadowColor:'#000000',
+                          textShadowOffset:{width:0, height:0},
+                          textAlign:"center",
+                          textAlignVertical:"center"}}>
+                          {item.registTime.substring(0,10)}{"\n"}{item.registTime.substring(10,19)}
+                        </Text> )
+                        : null}
+                    </View>
+                    <View style={{
+                      position:"absolute",
+                      height:"100%",width:"100%",
+                      zIndex:1,
+                      alignItems:"flex-start",
+                      justifyContent:"flex-end",
+                      flexDirection:"row"
+                      }}>
+                      {item.firebaseDownloadUrl !="" ?
+                      (
+                        <TouchableHighlight onPress={()=>
+                          {Alert.alert(
+                              "찍먹 삭제",
+                              "삭제하시면 복구할 수 없어요. 정말 삭제하시겠어요?",
+                              [
+                                { text: "아니오", onPress: () => {}, style: "cancel" },
+                                {
+                                  text: "네",
+                                  onPress: () => {
+                                      const COMP = this;
+                                      cFetch(APIS.DELETE_PHOTO, [], JSON.stringify(item), {
+                                        responseProc: function(res) {
+                                          COMP.callbackFnc();
+                                        },
+                                        responseNotFound: function(res) {
+                                          console.log("포토 삭제 에러 시작");
+                                          console.log(res);
+                                          console.log("포토 삭제 에러 끝");
+                                        }
+                                      });
+                                  }
+                                }
+                              ],
+                              { cancelable: false }
+                            )
+                          ;
+                          }}>
+                          <Text style={{
+                              color:"white",
+                              fontSize:FONT_BACK_LABEL*1.2,
+                              textShadowRadius:10,
+                              textShadowColor:'#000000',
+                              textShadowOffset:{width:0, height:0},
+                              textAlign:"center",
+                              textAlignVertical:"center"
+                              }}>
+                              &nbsp;
+                              <Entypo
+                                name="trash"
+                                color={"#ffffff"}
+                                size={FONT_BACK_LABEL*1.2}
+                                borderWidth={0}/>
+                                &nbsp;
+                            </Text>
+                            </TouchableHighlight>
+                      ):null}
+                    </View>
+                    <FastImage
+                      style={{height:width/2*(this.state.isEmptyPhotos? 2:1)}}
+                      source={item.firebaseDownloadUrl !="" ?{
+                        uri: item.firebaseDownloadUrl,
+                        priority: FastImage.priority.normal,
+                      }: Images.empty}
+                      resizeMode={FastImage.resizeMode.cover}
+                    />
+                  </View>
+                  </BoxShadow>
+                  </TouchableHighlight>
+                )}
+                renderSectionHeader={({ section }) => (
+                  <View flex={1} width="100%" flexDirection="row">
+                    <Text style={styles.sectionHeader}>
+                      <Octicons name="calendar" color="#000000" size={FONT_BACK_LABEL}/>&nbsp;&nbsp;{section.title}
+                    </Text>
+
+                    <TouchableOpacity onPress={()=>{
+                      requestStoragePermission().then(isGranted => {
+                        if(!isGranted){
+                          Alert.alert('앨범 권한이 없으면 찍먹의 메뉴를 이용할 수 없어요.');
+                        }else{
+                                    const options = {
+                                      title: '찍먹할 사진을 선택해주세요.',
+                                      maxWidth:1280/2,maxHeight:1280/2,
+                                      quality: 1,
+                                      noData: true
+                                    };
+                                    ImagePicker.launchImageLibrary(options, async(image) => {
+                                      console.log(image);
+                                      if(image.didCancel||!image.uri){
+                                        return;
+                                      }
+                                      /*
+                                      fileName: "image-70dfa6a7-8709-437f-a746-13c0d411cf9e.jpg"
+                                      fileSize: 26656
+                                      height: 640
+                                      isVertical: true
+                                      originalRotation: 0
+                                      path: "/storage/emulated/0/Pictures/images/image-70dfa6a7-8709-437f-a746-13c0d411cf9e.jpg"
+                                      type: "image/jpeg"
+                                      uri: "file:///storage/emulated/0/Pictures/images/image-70dfa6a7-8709-437f-a746-13c0d411cf9e.jpg"
+                                      width: 315
+                                      */
+                                      const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
+                                      var cnt = await AsyncStorage.getItem(storKey);
+                                      var macCnt = this.props.TIMESTAMP.foodupcnt||this.props.TIMESTAMP.foodupcnt==0?this.props.TIMESTAMP.foodupcnt: 3;
+                                      cnt = Number(cnt);
+                                      //0. 경고창 다시보기 체크되어있는지 체크
+                                      const periodFoodUpMainAlertStorKey = "@FOODUPMAINALERTPERIOD";
+                                      var FOODUPMAINALERTPERIOD = await AsyncStorage.getItem(periodFoodUpMainAlertStorKey);
+                                      var isShowFoodUpMainAlert = false;
+                                      FOODUPMAINALERTPERIOD = Number(FOODUPMAINALERTPERIOD);
+                                      //0-1. 저장된 적이 없거나, 저장되었는데 1주일이 넘었으면 flag는 true로
+                                      if(!FOODUPMAINALERTPERIOD || Math.abs(FOODUPMAINALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7)){
+                                      //if(!FOODUPLOADALERTPERIOD || Math.abs(FOODUPLOADALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60)){
+                                        isShowFoodUpMainAlert = true;
+                                        await AsyncStorage.removeItem(periodFoodUpMainAlertStorKey);
+                                      }
+                                      if(isShowFoodUpMainAlert){
+                                        Alert.alert(
+                                          '선택한 사진을 등록하시겠어요?',
+                                          '사진을 업로드하면 수정/삭제할 수 없습니다.\n일일 저장 횟수가 '+macCnt+'를 초과하면 찍먹티켓을 사용합니다. \n(금일: '+cnt+'회 저장)',
+                                          [
+                                            {text: '일주일간 보지않기', onPress: () => 
+                                              {
+                                                AsyncStorage.setItem(periodFoodUpMainAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
+                                                this.uploadPictrue(image);
+                                              }
+                                            },
+                                            {
+                                              text: '취소',
+                                              onPress: () => console.log('Cancel Pressed'),
+                                              style: 'cancel',
+                                            },
+                                            {text: '저장', onPress: async() => {this.uploadPictrue(image)}},
+                                          ],
+                                          {cancelable: false},
+                                        );
+                                    }else{
+                                      this.uploadPictrue(image);
+                                    }
+                                    });
+                                  }
+                                });
+                    }}>
+                      <Text style={[styles.sectionHeader,{textAlign:"right"}]}><Entypo name="folder-images" color="#000000" size={FONT_BACK_LABEL}/>&nbsp;&nbsp;앨범</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => {
+                      this.props.navigation.navigate('Snapshot', {
+                        headerView:headerView, statusView:statusView, foodList:foodList
+                      })}
+                    }>
+                    <Text style={[styles.sectionHeader,{textAlign:"right"}]}><Entypo name="share" color="#000000" size={FONT_BACK_LABEL}/> &nbsp;&nbsp;공유하기 </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+            </ScrollView>
+            </View>);
         const content = (
           <Container navigation={this.props.navigation} adMobRewarded={AdMobRewarded}>
           <PTRView
@@ -467,282 +750,9 @@ class Main extends Component {
                 </View>
 
               </View>
-
-              <View
-                style={styles.headerView}>
-
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "center",
-                  }}>
-
-                  <View width={height*0.15} height="100%" paddingLeft={10}>
-                  {YourImage}
-                  </View>
-
-                  <View flex={width-height*0.15} height="100%">
-                    <View flex={3} style={{padding:10, paddingBottom:0}}>
-                      <Text style={styles.profileUserEmail}>{this.props.USER_INFO.userEmail}</Text>
-                      <Text style={styles.profileWiseSaying}>{WiseSaying}</Text>
-                    </View>
-                    <View flex={2} flexDirection="row" style={{padding:10, paddingTop:20}}>
-                      <View flex={2} style={{backgroundColor:'rgb(72,207,173)', paddingLeft:10, justifyContent:"center"}}><Text style={{color:"white"}}>today {this.state.calorie.stat} kcal</Text></View>
-                      <View flex={1} style={{backgroundColor:'rgb(255,206,84)', paddingRight:10, justifyContent:"center", height:"70%",alignSelf:"flex-end",alignItems:"flex-end"}}><Text style={{color:"white"}}>+{this.state.calorie.guage}</Text></View>
-                    </View>
-                  </View>
-
-                </View>
-
-              </View>
-
-              <View style={styles.statusView}>
-                <FlatGrid
-                  itemDimension={width/2.1}
-                  fixed
-                  spacing={0}
-                  items={this.state.intakeStatuses}
-                  style={styles.gridView}
-                  renderItem={({ item, section, index }) => (
-                    <View style={[styles.statusContainer, { /* backgroundColor: 'rgba(255,0,0,'+item.guage+')'*/}]}>
-                      <View flexDirection="row" width={width/2-width*0.1}>
-                        <View style={{flex:1, alignItems:"flex-start"}}>
-                          <Text style={[styles.itemName,{color:COLOR.grey800}]}>{item.name}</Text>
-                        </View>
-                        <View style={{flex:1, alignItems:"flex-end"}}>
-                          <Text style={[styles.itemCode,{color:"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",1)"}]}>{item.stat}g
-                          </Text>
-                        </View>
-                      </View>
-                      <ProgressBarAnimated
-                        width={width/2-width*0.1}
-                        height={height*0.005}
-                        value={100*item.guage}
-                        backgroundColor={"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",1)"}
-                        borderColor={"rgba("+(item.guage > 0.7 ? "255,0,0": item.guage > 0.4 ? "255,206,84" :"72,207,173" )+",0.1)"}
-                      />
-                    </View>
-                  )}
-                  renderSectionHeader={({ section }) => (
-                    <Text style={styles.sectionHeader}>{section.title}</Text>
-                  )}
-                />
-              </View>
-
-              <View style={styles.foodList}>
-              <ScrollView contentContainerStyle={[styles.foodListScroll]}>
-                <SectionGrid
-                  itemDimension={width/2.1 *(this.state.isEmptyPhotos? 2:1)}
-                  fixed
-                  spacing={5}
-                  sections={[
-                    {
-                      title: Moment(new Date()).format("YYYY-MM-DD"),
-                      data: this.state.photos,
-                    }
-                  ]}
-                  style={styles.gridView}
-                  renderItem={({ item, section, index }) => (
-
-                    <TouchableHighlight onPress={()=>
-                      {this.state.isEmptyPhotos?
-                        null:
-                        this.props.navigation.navigate("Food", {
-                          food: item
-                          })
-                        }}>
-                    <BoxShadow setting={shadowOpt}>
-                    <View style={{height:width/2*(this.state.isEmptyPhotos? 2:1)}}>
-                      <View style={{
-                        position:"absolute",
-                        height:"100%",width:"100%",
-                        zIndex:1,
-                        alignItems:"center",
-                        justifyContent:"center",
-                        flexDirection:"row"
-                        }}>
-                        {item.firebaseDownloadUrl !="" ?
-                        (<Text style={{
-                            color:"white",
-                            fontSize:FONT_BACK_LABEL*1.2,
-                            textShadowRadius:10,
-                            textShadowColor:'#000000',
-                            textShadowOffset:{width:0, height:0},
-                            textAlign:"center",
-                            textAlignVertical:"center"
-                            }}>&nbsp;
-                            <Ionicons
-                              name="ios-clock"
-                              color={"#ffffff"}
-                              size={FONT_BACK_LABEL*2}
-                              borderWidth={0}/>
-                              &nbsp;
-                          </Text>
-                        ):null}
-                          {item.firebaseDownloadUrl !="" ?
-                          (<Text style={{
-                            color:"white",
-                            fontSize:FONT_BACK_LABEL*1.2,
-                            textShadowRadius:10,
-                            textShadowColor:'#000000',
-                            textShadowOffset:{width:0, height:0},
-                            textAlign:"center",
-                            textAlignVertical:"center"}}>
-                            {item.registTime.substring(0,10)}{"\n"}{item.registTime.substring(10,19)}
-                          </Text> )
-                          : null}
-                      </View>
-                      <View style={{
-                        position:"absolute",
-                        height:"100%",width:"100%",
-                        zIndex:1,
-                        alignItems:"flex-start",
-                        justifyContent:"flex-end",
-                        flexDirection:"row"
-                        }}>
-                        {item.firebaseDownloadUrl !="" ?
-                        (
-                          <TouchableHighlight onPress={()=>
-                            {Alert.alert(
-                                "찍먹 삭제",
-                                "삭제하시면 복구할 수 없어요. 정말 삭제하시겠어요?",
-                                [
-                                  { text: "아니오", onPress: () => {}, style: "cancel" },
-                                  {
-                                    text: "네",
-                                    onPress: () => {
-                                        const COMP = this;
-                                        cFetch(APIS.DELETE_PHOTO, [], JSON.stringify(item), {
-                                          responseProc: function(res) {
-                                            COMP.callbackFnc();
-                                          },
-                                          responseNotFound: function(res) {
-                                            console.log("포토 삭제 에러 시작");
-                                            console.log(res);
-                                            console.log("포토 삭제 에러 끝");
-                                          }
-                                        });
-                                    }
-                                  }
-                                ],
-                                { cancelable: false }
-                              )
-                            ;
-                            }}>
-                            <Text style={{
-                                color:"white",
-                                fontSize:FONT_BACK_LABEL*1.2,
-                                textShadowRadius:10,
-                                textShadowColor:'#000000',
-                                textShadowOffset:{width:0, height:0},
-                                textAlign:"center",
-                                textAlignVertical:"center"
-                                }}>
-                                &nbsp;
-                                <Entypo
-                                  name="trash"
-                                  color={"#ffffff"}
-                                  size={FONT_BACK_LABEL*1.2}
-                                  borderWidth={0}/>
-                                  &nbsp;
-                              </Text>
-                              </TouchableHighlight>
-                        ):null}
-                      </View>
-                      <FastImage
-                        style={{height:width/2*(this.state.isEmptyPhotos? 2:1)}}
-                        source={item.firebaseDownloadUrl !="" ?{
-                          uri: item.firebaseDownloadUrl,
-                          priority: FastImage.priority.normal,
-                        }: Images.empty}
-                        resizeMode={FastImage.resizeMode.cover}
-                      />
-                    </View>
-			              </BoxShadow>
-                    </TouchableHighlight>
-                  )}
-                  renderSectionHeader={({ section }) => (
-                    <View flex={1} width="100%" flexDirection="row">
-                      <Text style={styles.sectionHeader}>
-                        <Octicons name="calendar" color="#000000" size={FONT_BACK_LABEL}/>&nbsp;&nbsp;{section.title}
-                      </Text>
-                      <TouchableOpacity onPress={()=>{
-                        requestStoragePermission().then(isGranted => {
-                          if(!isGranted){
-                            Alert.alert('갤러리 권한이 없으면 찍먹의 메뉴를 이용할 수 없어요.');
-                          }else{
-                                      const options = {
-                                        title: '찍먹할 사진을 선택해주세요.',
-                                        maxWidth:1280/2,maxHeight:1280/2,
-                                        quality: 1,
-                                        noData: true
-                                      };
-                                      ImagePicker.launchImageLibrary(options, async(image) => {
-                                        console.log(image);
-                                        if(image.didCancel||!image.uri){
-                                          return;
-                                        }
-                                        /*
-                                        fileName: "image-70dfa6a7-8709-437f-a746-13c0d411cf9e.jpg"
-                                        fileSize: 26656
-                                        height: 640
-                                        isVertical: true
-                                        originalRotation: 0
-                                        path: "/storage/emulated/0/Pictures/images/image-70dfa6a7-8709-437f-a746-13c0d411cf9e.jpg"
-                                        type: "image/jpeg"
-                                        uri: "file:///storage/emulated/0/Pictures/images/image-70dfa6a7-8709-437f-a746-13c0d411cf9e.jpg"
-                                        width: 315
-                                        */
-                                        const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
-                                        var cnt = await AsyncStorage.getItem(storKey);
-                                        var macCnt = this.props.TIMESTAMP.foodupcnt||this.props.TIMESTAMP.foodupcnt==0?this.props.TIMESTAMP.foodupcnt: 3;
-                                        cnt = Number(cnt);
-                                        //0. 경고창 다시보기 체크되어있는지 체크
-                                        const periodFoodUpMainAlertStorKey = "@FOODUPMAINALERTPERIOD";
-                                        var FOODUPMAINALERTPERIOD = await AsyncStorage.getItem(periodFoodUpMainAlertStorKey);
-                                        var isShowFoodUpMainAlert = false;
-                                        FOODUPMAINALERTPERIOD = Number(FOODUPMAINALERTPERIOD);
-                                        //0-1. 저장된 적이 없거나, 저장되었는데 1주일이 넘었으면 flag는 true로
-                                        if(!FOODUPMAINALERTPERIOD || Math.abs(FOODUPMAINALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7)){
-                                        //if(!FOODUPLOADALERTPERIOD || Math.abs(FOODUPLOADALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60)){
-                                          isShowFoodUpMainAlert = true;
-                                          await AsyncStorage.removeItem(periodFoodUpMainAlertStorKey);
-                                        }
-                                        if(isShowFoodUpMainAlert){
-                                          Alert.alert(
-                                            '선택한 사진을 등록하시겠어요?',
-                                            '사진을 업로드하면 수정/삭제할 수 없습니다.\n일일 저장 횟수가 '+macCnt+'를 초과하면 찍먹티켓을 사용합니다. \n(금일: '+cnt+'회 저장)',
-                                            [
-                                              {text: '일주일간 보지않기', onPress: () => 
-                                                {
-                                                  AsyncStorage.setItem(periodFoodUpMainAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
-                                                  this.uploadPictrue(image);
-                                                }
-                                              },
-                                              {
-                                                text: '취소',
-                                                onPress: () => console.log('Cancel Pressed'),
-                                                style: 'cancel',
-                                              },
-                                              {text: '저장', onPress: async() => {this.uploadPictrue(image)}},
-                                            ],
-                                            {cancelable: false},
-                                          );
-                                      }else{
-                                        this.uploadPictrue(image);
-                                      }
-                                      });
-                                    }
-                                  });
-                      }}>
-                        <Text style={[styles.sectionHeader,{textAlign:"right"}]}><Entypo name="folder-images" color="#000000" size={FONT_BACK_LABEL}/>&nbsp;&nbsp;갤러리에서 올리기</Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                />
-              </ScrollView>
-              </View>
-
+              {headerView}
+              {statusView}
+              {foodList}
             {/*
             <TouchableOpacity
               onPress={() => { Alert.alert(

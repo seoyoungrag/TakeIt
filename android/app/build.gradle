@@ -161,6 +161,13 @@ android {
 }
 
 dependencies {
+    compile project(':rn-fetch-blob')
+    compile project(':react-native-share')
+    //cause react native snapshot
+    implementation("com.android.support:support-media-compat:27.1.1")
+    implementation("com.android.support:support-v4:27.1.1")
+    //cause react native snapshot
+    compile project(':react-native-view-shot')
     compile project(':react-native-image-picker')
     implementation "com.google.firebase:firebase-ads:15.0.1"
     //implementation project(':react-native-admob')
