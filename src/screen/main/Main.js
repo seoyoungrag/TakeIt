@@ -262,7 +262,7 @@ class Main extends Component {
         const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
         var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
         viewAdCnt = Number(viewAdCnt);
-        var maxCnt = this.props.TIMESTAMP.foodupcnt?this.props.TIMESTAMP.foodupcnt: 3;
+        var maxCnt = this.props.TIMESTAMP.foodupcnt||this.props.TIMESTAMP.foodupcnt==0?this.props.TIMESTAMP.foodupcnt: 3;
         const foodList = await this.getFoodDiary();
         const statuses = await this.getMainIntakestatus();
         await this.setState({
@@ -290,6 +290,21 @@ class Main extends Component {
       }
     }
     viewAd = async() =>{
+
+      const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
+      var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
+      viewAdCnt = Number(viewAdCnt);
+      if(!viewAdCnt){
+        viewAdCnt = 0;
+      }
+      var maxViewAdCnt = this.props.TIMESTAMP.maxadviewcnt||this.props.TIMESTAMP.maxadviewcnt==0?this.props.TIMESTAMP.maxadviewcnt: 10;
+      console.warn(this.props.TIMESTAMP);
+      console.warn(viewAdCnt + ' vs '+maxViewAdCnt);
+      if(viewAdCnt >= maxViewAdCnt){
+        alert('광고보기는 하루 '+maxViewAdCnt+'회만 가능해요.');
+        return;
+      }
+
       if (AdMobRewarded.isLoaded()) {
         AdMobRewarded.show();
       } else {
@@ -680,7 +695,7 @@ class Main extends Component {
                                         */
                                         const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
                                         var cnt = await AsyncStorage.getItem(storKey);
-                                        var macCnt = this.props.TIMESTAMP.foodupcnt?this.props.TIMESTAMP.foodupcnt: 3;
+                                        var macCnt = this.props.TIMESTAMP.foodupcnt||this.props.TIMESTAMP.foodupcnt==0?this.props.TIMESTAMP.foodupcnt: 3;
                                         cnt = Number(cnt);
                                         //0. 경고창 다시보기 체크되어있는지 체크
                                         const periodFoodUpMainAlertStorKey = "@FOODUPMAINALERTPERIOD";

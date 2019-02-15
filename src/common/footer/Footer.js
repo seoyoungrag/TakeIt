@@ -211,7 +211,7 @@ class Footer extends React.Component {
     const storKey = "@"+Moment(new Date()).format('YYMMDD')+"SCREEN";
     var currentScreenViewCnt = await AsyncStorage.getItem(storKey);
     currentScreenViewCnt = Number(currentScreenViewCnt);
-    var maxSreenViewCnt = this.props.TIMESTAMP.screenViewCnt?this.props.TIMESTAMP.screenViewCnt: 10;
+    var maxSreenViewCnt = this.props.TIMESTAMP.screenViewCnt||this.props.TIMESTAMP.screenViewCnt==0?this.props.TIMESTAMP.screenViewCnt: 10;
     console.log(currentScreenViewCnt+"vs"+maxSreenViewCnt);
     if(currentScreenViewCnt>maxSreenViewCnt){
       const storKey = "@"+Moment(new Date()).format('YYMMDD')+"SCREEN";
@@ -380,7 +380,7 @@ class Footer extends React.Component {
                 }else{
                   const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
                   var cnt = await AsyncStorage.getItem(storKey);
-                  var maxCnt = this.props.TIMESTAMP.foodupcnt?this.props.TIMESTAMP.foodupcnt: 3;
+                  var maxCnt = this.props.TIMESTAMP.foodupcnt ||this.props.TIMESTAMP.foodupcnt==0?this.props.TIMESTAMP.foodupcnt: 3;
                   const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
                   var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
                   viewAdCnt = Number(viewAdCnt);
@@ -397,7 +397,17 @@ class Footer extends React.Component {
                           style: 'cancel',
                         }
                         ,
-                        {text: '광고보기', onPress: async() => {this.props.AdMobRewarded.show()}
+                        {text: '광고보기', onPress: async() => {
+                          if(!viewAdCnt){
+                            viewAdCnt = 0;
+                          }
+                          var maxViewAdCnt = this.props.TIMESTAMP.maxadviewcnt||this.props.TIMESTAMP.maxadviewcnt==0?this.props.TIMESTAMP.maxadviewcnt: 10;
+                          if(viewAdCnt >= maxViewAdCnt){
+                            alert('광고보기는 하루 '+maxViewAdCnt+'회만 가능해요.');
+                            return;
+                          }
+                          this.props.AdMobRewarded.show()
+                        }
                         }
                       ],
                       {cancelable: false},

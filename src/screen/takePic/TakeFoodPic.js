@@ -334,7 +334,7 @@ class TakeFoodPic extends Component {
   savePicture = async() =>{
     const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
     var cnt = await AsyncStorage.getItem(storKey);
-    var macCnt = this.props.TIMESTAMP.foodupcnt?this.props.TIMESTAMP.foodupcnt: 3;
+    var macCnt = this.props.TIMESTAMP.foodupcnt||this.props.TIMESTAMP.foodupcnt==0?this.props.TIMESTAMP.foodupcnt: 3;
     cnt = Number(cnt);
     //0. 경고창 다시보기 체크되어있는지 체크
     const periodFoodUploadAlertStorKey = "@FOODUPLOADALERTPERIOD";

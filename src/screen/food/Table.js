@@ -217,7 +217,7 @@ class Table extends Component {
         horizontal={true}
         bounces={false} >
         <Prompt
-            title="변경할 섭식량을 입력해주세요."
+            title="변경할 섭취량을 입력해주세요."
             placeholder="숫자만 입력해주세요"
             defaultValue="1"
             textInputProps={{keyboardType: 'numeric',autoCapitalize:'words'}}

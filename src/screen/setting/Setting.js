@@ -129,7 +129,7 @@ class Setting extends Component {
         settingUpdateCnt = 0;
         await AsyncStorage.setItem(storKey, settingUpdateCnt.toString());
       }
-      var maxSettingUpCnt = this.props.TIMESTAMP.settingupcnt?this.props.TIMESTAMP.settingupcnt: 3;
+      var maxSettingUpCnt = this.props.TIMESTAMP.settingupcnt||this.props.TIMESTAMP.settingupcnt==0?this.props.TIMESTAMP.settingupcnt: 3;
       //console.warn(settingUpdateCnt+"vs"+maxSettingUpCnt);
       if(settingUpdateCnt>=maxSettingUpCnt){
         return false;
@@ -264,7 +264,7 @@ class Setting extends Component {
     }
 
     saveBtnPressed = async() => {
-      var maxSettingUpCnt = this.props.TIMESTAMP.settingupcnt?this.props.TIMESTAMP.settingupcnt: 3;
+      var maxSettingUpCnt = this.props.TIMESTAMP.settingupcnt||this.props.TIMESTAMP.settingupcnt==0?this.props.TIMESTAMP.settingupcnt: 3;
       
       var canUpdateSetting = await this.canUpdateSetting();
       //console.warn(canUpdateSetting);
