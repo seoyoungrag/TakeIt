@@ -40,7 +40,7 @@ function mapDispatchToProps(dispatch) {
     }
   };
 }
-class TakeFoodPic extends Component {
+class TakeInbodyPic extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -373,4 +373,4 @@ const styles = StyleSheet.create({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withNavigationFocus(TakeFoodPic));
+)(withNavigationFocus(TakeInbodyPic));

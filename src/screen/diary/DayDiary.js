@@ -20,6 +20,7 @@ import Moment from "moment";
 
 import { withNavigationFocus } from 'react-navigation';
 import Spinner from 'react-native-loading-spinner-overlay';
+import Food from "@screens/food";
 
 const {width, height} = Dimensions.get("window");
 
@@ -125,7 +126,8 @@ class DayDiary extends Component {
         const content = (
           <Container 
             toolbarDisplay={true} 
-            navigation={this.props.navigation}>
+            navigation={this.props.navigation}
+            footUnDisplay={true}>
             <View style={styles.container}>
 
               <View
@@ -182,9 +184,9 @@ class DayDiary extends Component {
 
               <View style={styles.foodList}>
                 <SectionGrid
-                  itemDimension={width/2.1 *(this.state.isEmptyPhotos? 2:1)}
+                  itemDimension={width}
                   fixed
-                  spacing={5}
+                  spacing={0}
                   sections={[
                     {
                       title: this.state.inqueryDate,
@@ -193,34 +195,7 @@ class DayDiary extends Component {
                   ]}
                   style={styles.gridView}
                   renderItem={({ item, section, index }) => (
-
-                    <TouchableHighlight onPress={()=>{this.props.navigation.navigate("Food", {
-                      food: item
-                    })}}>
-                    <BoxShadow setting={shadowOpt}>
-                    <View style={{height:width/2*(this.state.isEmptyPhotos? 2:1)}}>
-                      <View style={{position:"absolute", height:"100%",width:"100%",zIndex:1,alignItems:"center",justifyContent:"center"}}>
-                        <Text style={{color:"white",fontSize:FONT_BACK_LABEL*1.2,textShadowRadius:20,textShadowColor:'#000000',textShadowOffset:{width:0, height:0},textAlign:"center",textAlignVertical:"center"}}>
-                        <Ionicons
-                          name="ios-clock"
-                          color="#ffffff"
-                          size={FONT_BACK_LABEL*1.2}
-                          borderWidth={0}/>
-                          &nbsp;
-                        {item.registTime}
-                        </Text>
-                      </View>
-                      <FastImage
-                        style={{height:width/2*(this.state.isEmptyPhotos? 2:1)}}
-                        source={{
-                          uri: item.firebaseDownloadUrl,
-                          priority: FastImage.priority.normal,
-                        }}
-                        resizeMode={FastImage.resizeMode.cover}
-                      />
-                    </View>
-			              </BoxShadow>
-                    </TouchableHighlight>
+                    <Food footUnDisplay={true} toolbarDisplay={false} food={item} navigation={this.navigation}/>
                   )}
                   renderSectionHeader={({ section }) => (
                     <Text style={styles.sectionHeader}><Octicons name="calendar" color="#000000" size={FONT_BACK_LABEL}/>&nbsp;&nbsp;{section.title}</Text>
@@ -237,14 +212,7 @@ class DayDiary extends Component {
             />
           </Container>
           );
-          return (
-            <DrawerWrapped
-                rightDisabled={true}
-                navigation={this.props.navigation}
-                content={content}
-                parentWidth={width}
-                />
-          );
+          return content
     }
 }
 
@@ -273,7 +241,7 @@ const styles = StyleSheet.create({
     },
     foodList: {
       backgroundColor:"#F4F2F3",
-      height: height*0.58
+      height: height*0.78
     },profileUserEmail: {
       fontSize: FONT_BACK_LABEL*1.2,
       color:"rgba(0,0,0,1)"
