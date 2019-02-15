@@ -48,6 +48,9 @@ function mapDispatchToProps(dispatch) {
     }
   };
 }
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
 const { width, height } = Dimensions.get("window");
 
 var FONT_BACK_LABEL   = 16;
@@ -187,55 +190,71 @@ class UserRegist extends Component {
         if('userEmail' === name && !validateEmail(value)){
             errors[name] = '올바른 이메일 형식이 아닙니다. ex) contact@dwebss.co.kr';
         }
+        if ('personHeight' == name || 'personWeight' == name) {
+          if(isNumeric(value)){
+            //console.warn(name +','+value);
+            var numberRegExp = /^\d{1,3}$/;
+            var decimalRegExp = /^\d+(\.\d{1,2})?$/;
+            //console.warn(numberRegExp.test(Number(value).toFixed(0))); // false
+            //console.warn(decimalRegExp.test(value)); // false
+            if(!numberRegExp.test(Number(value).toFixed(0)) || !decimalRegExp.test(value)){
+              errors[name] = '정수 3, 소수는 2자리까지만 가능해요.';
+            }
+          }else{
+            errors[name] = '숫자만 입력해주세요.';
+          }
+        }
       }
     });
 
     this.setState({ errors });
-    console.log("UserRegist: save btn pressed in userRegist.js start");
-    var data = this.props.USER_INFO;
-    console.log("UserRegist: before Data in userRgeist.js start--");
-    console.log(JSON.stringify(data));
-    console.log("UserRegist: before Data in userRgeist.js end --");
-    data.userNm = this.state.userNm;
-    data.userSex = this.state.personSex;
-    data.userHeight = this.state.personHeight;
-    data.userWeight = this.state.personWeight;
-    data.userEmail = this.state.userEmail;
-    data.agreePrivacy = this.state.agreePrivacy==true?"Y":"N";
-    data.agreeLocation = this.state.agreeLocation==true?"Y":"N";
+    if(Object.keys(errors).length === 0){
+      console.log("UserRegist: save btn pressed in userRegist.js start");
+      var data = this.props.USER_INFO;
+      console.log("UserRegist: before Data in userRgeist.js start--");
+      console.log(JSON.stringify(data));
+      console.log("UserRegist: before Data in userRgeist.js end --");
+      data.userNm = this.state.userNm;
+      data.userSex = this.state.personSex;
+      data.userHeight = this.state.personHeight;
+      data.userWeight = this.state.personWeight;
+      data.userEmail = this.state.userEmail;
+      data.agreePrivacy = this.state.agreePrivacy==true?"Y":"N";
+      data.agreeLocation = this.state.agreeLocation==true?"Y":"N";
 
-    let foundIndex = this.state.ageRange.findIndex(
-      x => {
-        return x.value == this.state.userAgeRange;
-      }
-    );
-
-    data.userAgeRange = this.state.ageRange[foundIndex].key
-
-    var body = JSON.stringify(data);
-    //console.warn(body);
-    const PROPS = this.props;
-    if (!data.userNm || !data.userSex || !data.userHeight || !data.userWeight || !data.userEmail) {
-      //alert("미입력된 정보가 있습니다. 확인해주세요.");
-    } else if(!data.agreePrivacy||data.agreePrivacy!="Y"||!data.agreeLocation||data.agreeLocation!="Y"){
-      Alert.alert("미입력된 항목이 있습니다.","개인정보 및 위치정보 수집에 동의해주셔야해요.");
-    } else {
-      cFetch(APIS.PUT_USER_BY_EMAIL, [this.props.USER_INFO.userEmail+"/"], body, {
-        responseProc: function(res) {
-          console.log("UserRegist.js :"+ JSON.stringify(res));
-          PROPS.setUserInfo(res);
-          PROPS.setIsFromLogin(true);
-          PROPS.navigation.navigate("Loading");
-        },
-        //입력된 회원정보가 없음.
-        responseNotFound: function(res) {
-          alert("신규 유저 생성 및 유저 업데이트가 실패했습니다.");
-          //PROPS.navigation.navigate("Login");
-          // APIS.PUT_SUER_BY_PHONE에서 사용자가 없으면 생성되어야 한다.
+      let foundIndex = this.state.ageRange.findIndex(
+        x => {
+          return x.value == this.state.userAgeRange;
         }
-      });
+      );
+
+      data.userAgeRange = this.state.ageRange[foundIndex].key
+
+      var body = JSON.stringify(data);
+      //console.warn(body);
+      const PROPS = this.props;
+      if (!data.userNm || !data.userSex || !data.userHeight || !data.userWeight || !data.userEmail) {
+        //alert("미입력된 정보가 있습니다. 확인해주세요.");
+      } else if(!data.agreePrivacy||data.agreePrivacy!="Y"||!data.agreeLocation||data.agreeLocation!="Y"){
+        Alert.alert("미입력된 항목이 있습니다.","개인정보 및 위치정보 수집에 동의해주셔야해요.");
+      } else {
+        cFetch(APIS.PUT_USER_BY_EMAIL, [this.props.USER_INFO.userEmail+"/"], body, {
+          responseProc: function(res) {
+            console.log("UserRegist.js :"+ JSON.stringify(res));
+            PROPS.setUserInfo(res);
+            PROPS.setIsFromLogin(true);
+            PROPS.navigation.navigate("Loading");
+          },
+          //입력된 회원정보가 없음.
+          responseNotFound: function(res) {
+            alert("신규 유저 생성 및 유저 업데이트가 실패했습니다.");
+            //PROPS.navigation.navigate("Login");
+            // APIS.PUT_SUER_BY_PHONE에서 사용자가 없으면 생성되어야 한다.
+          }
+        });
+      }
+      console.log("UserRegist: save btn pressed in userRegist.js end");
     }
-    console.log("UserRegist: save btn pressed in userRegist.js end");
   }
 
   updateRef(name, ref) {
@@ -442,7 +461,6 @@ class UserRegist extends Component {
                   onChangeText={this.onChangeText}
                   onSubmitEditing={this.onSubmitPersonWeight}
                   returnKeyType="next"
-                  blurOnSubmit={true}
                   label="몸무게"
                   keyboardType='numeric'
                   title='kg단위로 입력해주세요.'

@@ -30,7 +30,8 @@ const {width, height} = Dimensions.get("window");
 function mapStateToProps(state) {
   return {
     IS_FROM_LOGIN: state.REDUCER_CONSTANTS.isFromLogin,
-    USER_INFO: state.REDUCER_USER.user
+    USER_INFO: state.REDUCER_USER.user,
+    CODE: state.REDUCER_CODE.code
   };
 }
 
@@ -67,12 +68,13 @@ class Loading extends React.Component {
     this.getCode = this.getCode.bind(this);
   }
   componentDidMount() {
+
     if (__DEV__) {
       this.authProc();
     }else{
       VersionCheck.needUpdate().then(async res => {
         if (res && res.isNeeded) {
-          versionCheck();
+          this.versionCheck();
         } else {
           this.authProc();
         }
@@ -82,7 +84,7 @@ class Loading extends React.Component {
   exitApp() {
     // BackHandler.exitApp();
   }
-  async versionCheck() {
+  versionCheck = async() => {
     let url = await VersionCheck.getStoreUrl();
     Alert.alert(
       "업데이트가 필요합니다.",
@@ -162,7 +164,10 @@ class Loading extends React.Component {
     if(jsonCode&&!jsonCode.timestamp){
       await AsyncStorage.removeItem("@CODE");
     }
-    if(!this.checkCacheValid(jsonCode, CHECKMAP, "CODE")){
+
+    this.props.setCode(jsonCode);
+    //console.warn(this.props.CODE);
+    if(!this.checkCacheValid(jsonCode, CHECKMAP, "CODE") && (this.props.CODE && this.props.CODE.list && this.props.CODE.list.length!=0)){
       console.log("CODE cache remained, CHECKMAP: "+JSON.stringify(CHECKMAP));
       return;
     }
@@ -189,7 +194,7 @@ class Loading extends React.Component {
   authProc = async () => {
     const CHECKMAP = await this.getSystemTimestamp();
     console.log("loading.js: authProc in Loading.js start");
-    console.warn(CHECKMAP.isUpdating);
+    //console.warn(CHECKMAP.isUpdating);
     if(CHECKMAP.isUpdating==1){
       Alert.alert("찍먹 서비스를 업데이트 중입니다.","최대한 빨리 완료하도록 하겠습니다.");
     }

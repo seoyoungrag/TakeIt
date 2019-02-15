@@ -440,6 +440,15 @@ class Main extends Component {
                       광고보고 충전하기
                   </Text>
                   </TouchableOpacity>
+
+                  <TouchableOpacity onPress={() => this.props.navigation.navigate('Setting')} style={[styles.seePreferBtn,{/*elevation:5*/}]}>
+                  <Text style={{color:COLOR.pink500, fontSize:FONT_BACK_LABEL*0.9}}>
+                    <MaterialCommunityIcons
+                      name="settings-outline"
+                      color={COLOR.pink500}
+                      size={FONT_BACK_LABEL*1.2}/>
+                  </Text>
+                  </TouchableOpacity>
                 </View>
 
               </View>
@@ -650,7 +659,7 @@ class Main extends Component {
                                       const options = {
                                         title: '찍먹할 사진을 선택해주세요.',
                                         maxWidth:1280/2,maxHeight:1280/2,
-                                        quality: 0.5,
+                                        quality: 1,
                                         noData: true
                                       };
                                       ImagePicker.launchImageLibrary(options, async(image) => {
@@ -928,6 +937,12 @@ const styles = StyleSheet.create({
       padding:5,
       borderColor:COLOR.pink500,
       borderWidth:1
+    },
+    seePreferBtn: {
+      flex: 0,
+      alignSelf: 'center',
+      padding:5,
+      paddingRight:0
     }
   });
 

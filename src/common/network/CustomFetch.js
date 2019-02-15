@@ -5,6 +5,7 @@
 //const HOST = "http://218.147.200.173:18080";
 //const HOST = "http://14.63.106.109:18080";
 const HOST = "http://13.125.161.158:8082";
+//const HOST = "http://192.168.0.13:8080";
 const headers = new Headers({
   "x-requested-with": "XMLHttpRequest",
   accept: "application/json; charset=utf-8",

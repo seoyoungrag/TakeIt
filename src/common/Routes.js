@@ -16,9 +16,16 @@ import TakePhotoInbody from '@screens/takePic/TakeInbodyPic';
 import UserRegist from '@screens/regist';
 import Food from '@screens/food';
 import Graph from '@screens/graph';
+import Setting from '@screens/setting/Setting';
 
 const RootStack = createStackNavigator(
   {
+    Setting: {
+      screen: Setting,
+      navigationOptions: ({ navigation }) => ({
+        header: null,
+      }),
+    },
     RefreshMain: {
       screen: Main,
       navigationOptions: ({ navigation }) => ({

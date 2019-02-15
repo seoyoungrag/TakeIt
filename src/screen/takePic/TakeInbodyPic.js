@@ -329,7 +329,7 @@ class TakeFoodPic extends Component {
   }
   takePicture = async function(camera) {
     this.setState({spinnerVisible:true});
-    const options = { quality: 0.5, width:1280/2,height:720/2, exif: false, base64: false, fixOrientation: true};
+    const options = { quality: 1, width:1280/2,height:720/2, exif: false, base64: false, fixOrientation: true};
     const image = await camera.takePictureAsync(options);
     this.setState(prevState => ({
       image: { uri: image.uri, width: image.width, height: image.height },

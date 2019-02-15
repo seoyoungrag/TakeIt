@@ -166,17 +166,20 @@ class TakeFoodPic extends Component {
                         {this.state.food.foodList.map(data => {
                         var foodArray = [data];
                           return (
-                              <Table height={85} columns={columns}
+                              <Table height={85} columns={columns} parentWidth={width}
                               key={data.photoFoodDetailId}
-                              dataSource={foodArray} />
+                              dataSource={foodArray}
+                              userId ={this.props.USER_INFO.userId}
+                               />
                             )
                           })
                         }
                       </ScrollView> 
                       ): 
-                      <Table height={height/3-height*0.105} columns={columns}
+                      <Table height={height/3-height*0.105} columns={columns} parentWidth={width}
                       /* columnWidth={width*0.145} */
-                      dataSource={this.state.food.foodList} />
+                      dataSource={this.state.food.foodList} 
+                      userId ={this.props.USER_INFO.userId}/>
                     }
                 </View>
           </View>

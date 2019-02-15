@@ -44,6 +44,14 @@ const APIS = {
   DELETE_PHOTO: {
     url: "/photo",
     method: "DELETE"
+  },
+  PUT_FOOD_ANALYSIS_AMOUNTDISH: {
+    url: "/photo/food/analysisinfo/amountdish",
+    method: "PUT"
+  },
+  PUT_USER_SETTING_BY_EMAIL: {
+    url: '/user/setting/email',
+    method: 'PUT',
   }
 };
 
