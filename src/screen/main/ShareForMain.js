@@ -1,20 +1,14 @@
 import React, {Component} from 'react';
 
 import {ScrollView, Dimensions, StyleSheet, Text, View, PixelRatio, TouchableOpacity} from 'react-native';
-import { connect } from "react-redux";
-import ActionCreator from "@redux-yrseo/actions";
 import Container from '@container/Container';
 import { SectionGrid, FlatGrid } from 'react-native-super-grid';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import Octicons from 'react-native-vector-icons/Octicons';
 import { COLOR } from 'react-native-material-ui';
 
-import cFetch from "@common/network/CustomFetch";
-import APIS from "@common/network/APIS";
-
-import { withNavigationFocus } from 'react-navigation';
 import Spinner from 'react-native-loading-spinner-overlay';
-import Food from "@screens/food";
+import Food from "./ShareForFood";
 import ViewShot, {captureRef, captureScreen} from "react-native-view-shot";
 import Images from "@assets/Images";
 import Share, { ShareSheet, Button } from "react-native-share";
@@ -22,37 +16,18 @@ import RNFetchBlob from "rn-fetch-blob";
 
 const {width, height} = Dimensions.get("window");
 
-function mapStateToProps(state) {
-  return {
-    USER_INFO: state.REDUCER_USER.user,
-    WISE_SAYING: state.REDUCER_EXERCISE.wiseSaying,
-    FORCE_REFRESH_MAIN : state.REDUCER_CONSTANTS.forceRefreshMain
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    forceRefreshMain: isForce => {
-      dispatch(ActionCreator.forceRefreshMain(isForce));
-    }
-  };
-}
-
 var FONT_BACK_LABEL   = 16;
 if (PixelRatio.get() <= 2) {
   FONT_BACK_LABEL = 12;
 }
 
-class DayDiary extends Component {
+export default class ShareForMain extends Component {
     constructor(props){
         super(props);
         this.state = {
-          photos : [],
-          intakeStatuses: [],
           isEmptyPhotos : false,
           calorie: {},
           //spinnerVisible: true,
-          inqueryDate: {},
           value: {
               format: "jpg",
               quality: 0.5,
@@ -122,81 +97,16 @@ class DayDiary extends Component {
       );
     }
     componentWillMount(){
-      this.setState({
-        inqueryDate:this.props.navigation.getParam('inqueryDate', {})?this.props.navigation.getParam('inqueryDate', {}): this.props.inqueryDate
-      })
     }
     componentDidMount = async() => {
-      await this.callbackFnc();
-    }
-    callbackFnc = async() => {
-      const foodList = await this.getFoodDiary();
-      const statuses = await this.getMainIntakestatus();
-      this.setState({
-        photos:
-        foodList.length > 0
-            ? foodList
-            : [
-                {
-                  firebaseDownloadUrl:"https://firebasestorage.googleapis.com/v0/b/fitdairy-47176.appspot.com/o/food_diary%2F32%2F2018-10-14%2Fimage-6deb2ab9-8334-42c4-b38f-d889db792e42847907521.jpg?alt=media&token=f85d5f15-0cfb-4abe-ae19-9fd0501422b4",
-                  registTime: "촬영한 사진이 없네요."
-                }
-              ],
-        isEmptyPhotos: !foodList.length > 0 ,
-        intakeStatuses: statuses.intakeStats,
-        calorie: statuses.calorie
-        //spinnerVisible: false
-      });
-      COM = this;
-      setTimeout(function(){ COM.setState({spinnerVisible:false}) }, 1500);
-    }
-    getMainIntakestatus = async () => {
-      var rtn;
-      await cFetch(
-        APIS.GET_MAIN_INTAKESTATUS, [ this.props.USER_INFO.userId, "date", this.state.inqueryDate ], {},
-        {
-          responseProc: async (res) => {
-            console.log("Main.js(getMainIntakestatus): "+JSON.stringify(res));
-            rtn=res;
-          }
-        }
-      );
-      return rtn;
     }
 
-    getFoodDiary = async () => {
-      var rtn;
-      await cFetch(
-        APIS.GET_USER_FOOD, [ this.props.USER_INFO.userId, "date", this.state.inqueryDate ], {},
-        {
-          responseProc: async (res) => {
-            console.log("Main.js(getFOodDiary): "+JSON.stringify(res));
-            rtn=res;
-          }
-        }
-      );
-      return rtn;
-    }
     render() {
-      if(this.props.isFocused&&this.props.FORCE_REFRESH_MAIN){
-        this.props.forceRefreshMain(false);
-        this.callbackFnc();
-      }
-        const shadowOpt = {
-          width:width/2.1 *(this.state.isEmptyPhotos? 2:1),
-          height:width/2 *(this.state.isEmptyPhotos? 2:1),
-          color:COLOR.grey900,
-          border:2,
-          radius:0,
-          opacity:0.1,
-          x:3,
-          y:3
-        }
         const headerView = (
         <View style={styles.headerView}>
           <View flexDirection="row" style={{padding:10, paddingTop:20}} height="100%">
-            <View flex={2} style={{backgroundColor:'rgba(72,207,173,1)', paddingLeft:10, justifyContent:"center"}}><Text style={{color:"white"}}>today {this.state.calorie.stat} kcal</Text></View>
-            <View flex={1} style={{backgroundColor:'rgba(255,206,84,1)', paddingRight:10, justifyContent:"center", height:"70%",alignSelf:"flex-end",alignItems:"flex-end"}}><Text style={{color:"white"}}>+{this.state.calorie.guage}</Text></View>
+            <View flex={2} style={{backgroundColor:'rgba(72,207,173,1)', paddingLeft:10, justifyContent:"center"}}><Text style={{color:"white"}}>today {this.props.calorie.stat} kcal</Text></View>
+            <View flex={1} style={{backgroundColor:'rgba(255,206,84,1)', paddingRight:10, justifyContent:"center", height:"70%",alignSelf:"flex-end",alignItems:"flex-end"}}><Text style={{color:"white"}}>+{this.props.calorie.guage}</Text></View>
           </View>
         </View>);
         const statusView = (
@@ -205,7 +115,7 @@ class DayDiary extends Component {
             itemDimension={width/2.1}
             fixed
             spacing={0}
-            items={this.state.intakeStatuses}
+            items={this.props.intakeStatuses}
             style={styles.gridView}
             renderItem={({ item, section, index }) => (
               <View style={[styles.statusContainer, { /* backgroundColor: 'rgba(255,0,0,'+item.guage+')'*/}]}>
@@ -230,16 +140,15 @@ class DayDiary extends Component {
           />
         </View>
         )
+        const navigation = this.props.navigation;
         const foodList = (
         <View style={styles.foodList}>
-          {this.state.inqueryDate? (
           <Text style={styles.sectionHeader}>
-            <Octicons name="calendar" color="#000000" size={FONT_BACK_LABEL}/>{"  "+this.state.inqueryDate}
+            <Octicons name="calendar" color="#000000" size={FONT_BACK_LABEL}/>{"  "+this.props.inqueryDate}
           </Text>
-          ):null}
-            {this.state.photos.map(function(v,i){
+            {this.props.photos.map(function(v,i){
               return (
-                <Food key={i} footUnDisplay={true} toolbarDisplay={false} food={v} navigation={this.navigation}/>)
+                <Food key={i} footUnDisplay={true} toolbarDisplay={false} food={v} navigation={navigation}/>)
             })}
         </View>
         )
@@ -342,8 +251,3 @@ const styles = StyleSheet.create({
       paddingBottom: 15
     }
   });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withNavigationFocus(DayDiary));

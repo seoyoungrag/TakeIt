@@ -28,7 +28,8 @@ import firebase from 'react-native-firebase';
 import PTRView from "react-native-pull-to-refresh";
 import ImagePicker from 'react-native-image-picker';
 import Permissions from 'react-native-permissions'
-import DayDiary from '@screens/diary/DayDiary';
+import ShareForMain from './ShareForMain';
+import PopupDialog from 'react-native-popup-dialog';
 
 const {width, height} = Dimensions.get("window");
 
@@ -659,9 +660,16 @@ class Main extends Component {
                       /*this.props.navigation.navigate('Snapshot', {
                         headerView:headerView, statusView:statusView, foodList:foodList})
                         */
-                       this.setState({DayDiaryVisible:true})
-                       console.warn(this.refs.DayDiary);
-                       this.refs.DayDiary.snapshot("full");
+                       this.setState({DayDiaryVisible:true, spinnerVisible:true})
+                        setTimeout(async ()=>{ 
+                          console.warn(this.refs);
+                          try{
+                            await this.refs.daydiary.snapshot("full");
+                          }catch(e){
+                            console.warn(e);
+                          }
+                          this.setState({DayDiaryVisible:false, spinnerVisible:false})
+                        }, 100);
                       }}
                     >
                     <Text style={[styles.sectionHeader,{textAlign:"right"}]}><Entypo name="share" color="#000000" size={FONT_BACK_LABEL}/> &nbsp;&nbsp;공유하기 </Text>
@@ -671,6 +679,22 @@ class Main extends Component {
               />
             </ScrollView>
             </View>);
+            const popupDialog =(
+
+          <PopupDialog
+          ref={popupDialog => {
+            this.popupDialog = popupDialog;
+          }}
+          height={height}
+          visible={this.state.DayDiaryVisible}
+          containerStyle={{
+            zIndex: 1010,
+          }}
+          dialogStyle={{}}
+          >
+            <ShareForMain ref="daydiary" navigation={this.props.navigation} inqueryDate={Moment(new Date()).format("YYYY-MM-DD")} calorie={this.state.calorie} intakeStatuses={this.state.intakeStatuses} photos={this.state.photos}/>
+          </PopupDialog>
+            )
         const content = (
           <Container navigation={this.props.navigation} adMobRewarded={AdMobRewarded}>
           <PTRView
@@ -706,6 +730,7 @@ class Main extends Component {
               }/>
             </Modal>
             <View style={styles.container}>
+              {popupDialog}
               <View style={{flex:5, flexDirection:"row", padding:10, borderBottomColor:COLOR.grey900, borderBottomWidth:0.5}}>
 
                 <View style={[styles.seeAdBtn,{ flex: 1, flexDirection: 'row', justifyContent: 'flex-start', alignSelf:"center",borderWidth:0 }]}>
@@ -786,7 +811,6 @@ class Main extends Component {
             <Text style={{fontSize:20, color:"red"}}>로그아웃 테스트</Text>
             </TouchableOpacity>
             */}
-            {this.state.DayDiaryVisible ? <DayDiary ref="DayDiary" inqueryDate={Moment(new Date()).format("YYYY-MM-DD")}/>:null}
             </View>
             <Spinner
               visible={this.state.spinnerVisible}
