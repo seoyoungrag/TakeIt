@@ -205,38 +205,36 @@ class DayDiary extends Component {
           y:3
         }
         const analysisView =(
-          {/* 분석  시작 */}
-          <View style={{marginTop:70}}>
-          <Text
-            style={{
-              fontFamily: 'NotoSans-Regular',
-              fontSize: 12,
-              color: 'black',
-            }}>
-            {' '}너의 권장칼로리는 {' '}
-          <Text style={{ fontWeight: '600' }}>
-            {this.state.recommendKcal}칼로리
+          <View>
+            <Text
+              style={{
+                fontFamily: 'NotoSans-Regular',
+                fontSize: 12,
+                color: 'black',
+              }}>
+              {' '}너의 권장칼로리는 {' '}
+              <Text style={{ fontWeight: '600' }}>
+                {this.state.recommendKcal}칼로리
+              </Text>
+              인데 현재 너는{' '}
+              <Text style={{ fontWeight: '600' }}>
+                '{this.state.userGoalTxt}'
+              </Text>
+              이라는 목표를 가지고 있어. 이 목표를 이루려면{' '}
+              <Text style={{ fontWeight: '600',color:'#E91E63' }}>
+              {this.state.goalKcal}칼로리
+              </Text>
+              를 먹어야해. 그런데 너는 오늘{' '}
+              <Text style={{ fontWeight: '600' ,color:'blue'}}>
+              {this.state.userEatKcal}칼로리
+              </Text>
+              를 먹었어.{' '}
+                {'\n'}
+                <Text style={{ fontWeight: '800' }}>
+              {this.state.userComment}
+                </Text>
           </Text>
-          인데 현재 너는{' '}
-          <Text style={{ fontWeight: '600' }}>
-            '{this.state.userGoalTxt}'
-          </Text>
-          이라는 목표를 가지고 있어. 이 목표를 이루려면{' '}
-          <Text style={{ fontWeight: '600',color:'#E91E63' }}>
-          {this.state.goalKcal}칼로리
-          </Text>
-          를 먹어야해. 그런데 너는 오늘{' '}
-          <Text style={{ fontWeight: '600' ,color:'blue'}}>
-          {this.state.userEatKcal}칼로리
-          </Text>
-          를 먹었어.{' '}
-            {'\n'}
-            <Text style={{ fontWeight: '800' }}>
-          {this.state.userComment}
-            </Text>
-        </Text>
         </View>
-      {/* 분석  끝 */}
         )
         const headerView = (
         <View style={styles.headerView}>
