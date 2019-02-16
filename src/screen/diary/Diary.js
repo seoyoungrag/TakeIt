@@ -305,8 +305,10 @@ class Diary extends React.Component {
               {(this.state.resultData.length  > 0)  ?  this.state.resultData.map(data => {
                 return (
                   <View key={data.registTime} style={[styles.child]}>
+                  {/*
                   <TouchableOpacity onPress={()=>{this.props.navigation.navigate("DayDiary",
                    {inqueryDate:Moment(data.registD).format('YYYY-MM-DD')})}}>
+                   */}
                   <View style={[styles.topInfo]}>
                   <Text style={styles.day}>
                     {Moment(data.registD).format('MM.DD') }
@@ -318,7 +320,9 @@ class Diary extends React.Component {
                     {data.kilocalorie} kcal
                   </Text>
                   </View>
+                  {/*
                   </TouchableOpacity>
+                  */}
 
               <View style={[styles.bottomPhoto]}>
                 <FlatGrid
@@ -455,11 +459,9 @@ class Diary extends React.Component {
                     <Entypo name="folder-images" color="#000000" size={FONT_BACK_LABEL*0.8}/>&nbsp;&nbsp;앨범
                   </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => {
-                    this.props.navigation.navigate('Snapshot', {
-                      headerView:headerView, statusView:statusView, foodList:foodList
-                    })}
-                    }
+
+                  <TouchableOpacity onPress={()=>{this.props.navigation.navigate("DayDiary",
+                   {inqueryDate:Moment(data.registD).format('YYYY-MM-DD')})}}
                     style={{            
                       paddingRight: width * 0.0225,
                       marginLeft: 'auto',

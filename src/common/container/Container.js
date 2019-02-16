@@ -32,7 +32,6 @@ class Container extends Component {
   render() {
     const toolbarDisplay = this.props.toolbarDisplay;
     const navigation = this.props.navigation;
-    const footer = this.props.footUnDisplay ? null: <Footer adMobRewarded={this.props.adMobRewarded} navigation={this.props.navigation}/>;
     const calendarBtn = (
       <TouchableHighlight onPress={this.props.openCalendar}>
         <Image style={{ width: 22, height: 20,marginRight:7 }} source={Images.CalendarBtn} />
@@ -60,9 +59,7 @@ class Container extends Component {
             ):null}
           {this.props.children}
         </View>
-          <View style ={{flex:9, backgroundColor:"#fff"}}>
-          {footer}
-          </View>
+        {this.props.footUnDisplay ? null : <Footer adMobRewarded={this.props.adMobRewarded} navigation={this.props.navigation}/>}
       </View>
     );
   }
