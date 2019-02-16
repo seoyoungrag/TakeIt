@@ -70,6 +70,7 @@ class DayDiary extends Component {
           recommendKcal:0,
           percent:0,
           goalKcal:0,
+          userComment:"",
         }
     }
     onShare = async(url) => {
@@ -137,6 +138,7 @@ class DayDiary extends Component {
     callbackFnc = async() => {
       const foodList = await this.getFoodDiary();
       const statuses = await this.getMainIntakestatus();
+      const analysis = await this.getAnalysisDiary();
       this.setState({
         photos:
         foodList.length > 0
@@ -151,11 +153,12 @@ class DayDiary extends Component {
         intakeStatuses: statuses.intakeStats,
         calorie: statuses.calorie,
 
-        userEatKcal:statuses.userEatKcal,
-        userGoalTxt:statuses.userGoalTxt,
-        recommendKcal:statuses.recommendKcal,
-        percent:statuses.percent,
-        goalKcal:statuses.goalKcal,
+        userEatKcal:analysis.userEatKcal,
+        userGoalTxt:analysis.userGoalTxt,
+        recommendKcal:analysis.recommendKcal,
+        percent:analysis.percent,
+        goalKcal:analysis.goalKcal,
+        userComment:analysis.userComment,
         //spinnerVisible: false
       });
       COM = this;
@@ -188,6 +191,20 @@ class DayDiary extends Component {
       );
       return rtn;
     }
+
+    getAnalysisDiary = async () => {
+      var rtn;
+      await cFetch(
+        APIS.GET_ANALYSIS_DIARY, [ this.props.USER_INFO.userId, "date", this.state.inqueryDate ], {},
+        {
+          responseProc: async (res) => {
+            console.log("Main.js(getFOodDiary): "+JSON.stringify(res));
+            rtn=res;
+          }
+        }
+      );
+      return rtn;
+    }
     render() {
       if(this.props.isFocused&&this.props.FORCE_REFRESH_MAIN){
         this.props.forceRefreshMain(false);
@@ -204,19 +221,18 @@ class DayDiary extends Component {
           y:3
         }
         const analysisView =(
-          {/* 분석  시작 */}
-          <View style={{marginTop:70}}>
+          <View style={{padding:10, paddingTop:20,marginTop:-100}} >
           <Text
             style={{
               fontFamily: 'NotoSans-Regular',
               fontSize: 12,
               color: 'black',
             }}>
-            {' '}너의 권장칼로리는 {' '}
+            {''}너의 권장칼로리는 {' '}
           <Text style={{ fontWeight: '600' }}>
             {this.state.recommendKcal}칼로리
           </Text>
-          인데 현재 너는{' '}
+          인데 너는{' '}
           <Text style={{ fontWeight: '600' }}>
             '{this.state.userGoalTxt}'
           </Text>
@@ -235,7 +251,15 @@ class DayDiary extends Component {
             </Text>
         </Text>
         </View>
-      {/* 분석  끝 */}
+        <View style={{padding:10, paddingTop:20}} >
+          <Text style={{ fontWeight: '300' ,color:'#e8e8e8' }}>
+          이 이미지는{' '}
+            <Text style={{ fontWeight: '800',color:'#E91E63' }}>
+            '찍먹'
+            </Text>
+          {' '} app에서 공유한 사진입니다.
+          </Text>
+        </View>
         )
         const headerView = (
         <View style={styles.headerView}>

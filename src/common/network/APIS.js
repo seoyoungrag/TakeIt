@@ -52,6 +52,10 @@ const APIS = {
   PUT_USER_SETTING_BY_EMAIL: {
     url: '/user/setting/email',
     method: 'PUT',
+  },
+  GET_ANALYSIS_DIARY: {
+    url: "/dayDiary/analysis",
+    method: "GET"
   }
 };
 
