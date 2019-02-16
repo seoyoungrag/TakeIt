@@ -231,9 +231,11 @@ class DayDiary extends Component {
         )
         const foodList = (
         <View style={styles.foodList}>
+          {this.state.inqueryDate? (
           <Text style={styles.sectionHeader}>
-            <Octicons name="calendar" color="#000000" size={FONT_BACK_LABEL}/>&nbsp;&nbsp;{this.state.inqueryDate}
+            <Octicons name="calendar" color="#000000" size={FONT_BACK_LABEL}/>{"  "+this.state.inqueryDate}
           </Text>
+          ):null}
             {this.state.photos.map(function(v,i){
               return (
                 <Food key={i} footUnDisplay={true} toolbarDisplay={false} food={v} navigation={this.navigation}/>)

@@ -28,6 +28,7 @@ import firebase from 'react-native-firebase';
 import PTRView from "react-native-pull-to-refresh";
 import ImagePicker from 'react-native-image-picker';
 import Permissions from 'react-native-permissions'
+import DayDiary from '@screens/diary/DayDiary';
 
 const {width, height} = Dimensions.get("window");
 
@@ -128,7 +129,8 @@ class Main extends Component {
           guideYn: "Y",
           maxCnt : 0,
           viewAdCnt: 0,
-          notificationId: ""
+          notificationId: "",
+          DayDiaryVisible: false
         }
         this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
           BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
@@ -654,10 +656,14 @@ class Main extends Component {
                       <Text style={[styles.sectionHeader,{textAlign:"right"}]}><Entypo name="folder-images" color="#000000" size={FONT_BACK_LABEL}/>&nbsp;&nbsp;앨범</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => {
-                      this.props.navigation.navigate('Snapshot', {
-                        headerView:headerView, statusView:statusView, foodList:foodList
-                      })}
-                    }>
+                      /*this.props.navigation.navigate('Snapshot', {
+                        headerView:headerView, statusView:statusView, foodList:foodList})
+                        */
+                       this.setState({DayDiaryVisible:true})
+                       console.warn(this.refs.DayDiary);
+                       this.refs.DayDiary.snapshot("full");
+                      }}
+                    >
                     <Text style={[styles.sectionHeader,{textAlign:"right"}]}><Entypo name="share" color="#000000" size={FONT_BACK_LABEL}/> &nbsp;&nbsp;공유하기 </Text>
                     </TouchableOpacity>
                   </View>
@@ -780,6 +786,7 @@ class Main extends Component {
             <Text style={{fontSize:20, color:"red"}}>로그아웃 테스트</Text>
             </TouchableOpacity>
             */}
+            {this.state.DayDiaryVisible ? <DayDiary ref="DayDiary" inqueryDate={Moment(new Date()).format("YYYY-MM-DD")}/>:null}
             </View>
             <Spinner
               visible={this.state.spinnerVisible}
