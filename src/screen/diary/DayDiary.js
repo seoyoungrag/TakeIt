@@ -63,7 +63,13 @@ class DayDiary extends Component {
           error: null,
           res: null,
           visible: false,
-          onCaptureUri: null
+          onCaptureUri: null,
+          inqueryDate: this.props.navigation.getParam('inqueryDate', {}),
+          userEatKcal:0,
+          userGoalTxt:"",
+          recommendKcal:0,
+          percent:0,
+          goalKcal:0,
         }
     }
     onShare = async(url) => {
@@ -86,7 +92,7 @@ class DayDiary extends Component {
       console.log("do something with ", uri);
       this.setState({onCaptureUri: uri});
     }
-    snapshot = (refname) => 
+    snapshot = (refname) =>
     {
       this.setState({spinnerVisible:true})
       captureRef(this.refs[refname], this.state.value)
@@ -144,7 +150,13 @@ class DayDiary extends Component {
               ],
         isEmptyPhotos: !foodList.length > 0 ,
         intakeStatuses: statuses.intakeStats,
-        calorie: statuses.calorie
+        calorie: statuses.calorie,
+
+        userEatKcal:statuses.userEatKcal,
+        userGoalTxt:statuses.userGoalTxt,
+        recommendKcal:statuses.recommendKcal,
+        percent:statuses.percent,
+        goalKcal:statuses.goalKcal,
         //spinnerVisible: false
       });
       COM = this;
@@ -192,6 +204,40 @@ class DayDiary extends Component {
           x:3,
           y:3
         }
+        const analysisView =(
+          {/* 분석  시작 */}
+          <View style={{marginTop:70}}>
+          <Text
+            style={{
+              fontFamily: 'NotoSans-Regular',
+              fontSize: 12,
+              color: 'black',
+            }}>
+            {' '}너의 권장칼로리는 {' '}
+          <Text style={{ fontWeight: '600' }}>
+            {this.state.recommendKcal}칼로리
+          </Text>
+          인데 현재 너는{' '}
+          <Text style={{ fontWeight: '600' }}>
+            '{this.state.userGoalTxt}'
+          </Text>
+          이라는 목표를 가지고 있어. 이 목표를 이루려면{' '}
+          <Text style={{ fontWeight: '600',color:'#E91E63' }}>
+          {this.state.goalKcal}칼로리
+          </Text>
+          를 먹어야해. 그런데 너는 오늘{' '}
+          <Text style={{ fontWeight: '600' ,color:'blue'}}>
+          {this.state.userEatKcal}칼로리
+          </Text>
+          를 먹었어.{' '}
+            {'\n'}
+            <Text style={{ fontWeight: '800' }}>
+          {this.state.userComment}
+            </Text>
+        </Text>
+        </View>
+      {/* 분석  끝 */}
+        )
         const headerView = (
         <View style={styles.headerView}>
           <View flexDirection="row" style={{padding:10, paddingTop:20}} height="100%">
@@ -245,16 +291,16 @@ class DayDiary extends Component {
         )
         const shareView = (
           <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems:"center", position:'absolute', width:width, zIndex:10,bottom:0 }}>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => this.snapshot("full")
               //this.onShare(this.state.onCaptureUri)
-              } 
+              }
               style={[styles.analysis,
                   {elevation:5,shadowColor:COLOR.grey900,
                   shadowOffset: { width: 0, height: 0 },
                   shadowOpacity: 0.8,
                   shadowRadius: 2}]}>
-                <Text style={{ fontSize: FONT_BACK_LABEL,color:COLOR.pink500 }}> 
+                <Text style={{ fontSize: FONT_BACK_LABEL,color:COLOR.pink500 }}>
                 공유하기
                 </Text>
             </TouchableOpacity>
@@ -263,11 +309,12 @@ class DayDiary extends Component {
         const content = (
           <View flex={1}>
             {this.props.inqueryDate? null: shareView}
-            <Container 
-              toolbarDisplay={false} 
+            <Container
+              toolbarDisplay={false}
               navigation={this.props.navigation}
               footUnDisplay={true}>
               <ScrollView flex={1} collapsable={false} ref="full" style={styles.container}>
+                  {analysisView}
                   {headerView}
                   {statusView}
                   {foodList}
@@ -278,7 +325,7 @@ class DayDiary extends Component {
                 textContent={'잠시만 기다려 주세요...'}
                 textStyle={{color: '#FFF'}}
               />
-          </View> 
+          </View>
           );
           return content
     }
