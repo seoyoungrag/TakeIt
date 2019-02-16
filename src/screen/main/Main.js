@@ -661,6 +661,7 @@ class Main extends Component {
                         headerView:headerView, statusView:statusView, foodList:foodList})
                         */
                        this.setState({DayDiaryVisible:true, spinnerVisible:true})
+                       //this.setState({DayDiaryVisible:true})
                         setTimeout(async ()=>{ 
                           console.warn(this.refs);
                           try{

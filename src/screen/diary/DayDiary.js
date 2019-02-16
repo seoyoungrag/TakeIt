@@ -19,6 +19,10 @@ import ViewShot, {captureRef, captureScreen} from "react-native-view-shot";
 import Images from "@assets/Images";
 import Share, { ShareSheet, Button } from "react-native-share";
 import RNFetchBlob from "rn-fetch-blob";
+import ShareForMain from '@screens/main/ShareForMain';
+import PopupDialog from 'react-native-popup-dialog';
+import Moment from "moment";
+
 
 const {width, height} = Dimensions.get("window");
 
@@ -70,6 +74,7 @@ class DayDiary extends Component {
           recommendKcal:0,
           percent:0,
           goalKcal:0,
+          DayDiaryVisible: false
         }
     }
     onShare = async(url) => {
@@ -194,6 +199,23 @@ class DayDiary extends Component {
         this.props.forceRefreshMain(false);
         this.callbackFnc();
       }
+
+      const popupDialog =(
+
+        <PopupDialog
+        ref={popupDialog => {
+          this.popupDialog = popupDialog;
+        }}
+        height={height}
+        visible={this.state.DayDiaryVisible}
+        containerStyle={{
+          zIndex: 1010,
+        }}
+        dialogStyle={{}}
+        >
+          <ShareForMain ref="daydiary" navigation={this.props.navigation} inqueryDate={Moment(new Date()).format("YYYY-MM-DD")} calorie={this.state.calorie} intakeStatuses={this.state.intakeStatuses} photos={this.state.photos}/>
+        </PopupDialog>
+          )
         const shadowOpt = {
           width:width/2.1 *(this.state.isEmptyPhotos? 2:1),
           height:width/2 *(this.state.isEmptyPhotos? 2:1),
@@ -290,8 +312,22 @@ class DayDiary extends Component {
         const shareView = (
           <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems:"center", position:'absolute', width:width, zIndex:10,bottom:0 }}>
             <TouchableOpacity
-              onPress={() => this.snapshot("full")
+              onPress={() => {
+                //this.snapshot("full")
               //this.onShare(this.state.onCaptureUri)
+
+              this.setState({DayDiaryVisible:true, spinnerVisible:true})
+              //this.setState({DayDiaryVisible:true})
+               setTimeout(async ()=>{ 
+                 console.warn(this.refs);
+                 try{
+                   await this.refs.daydiary.snapshot("full");
+                 }catch(e){
+                   console.warn(e);
+                 }
+                 this.setState({DayDiaryVisible:false, spinnerVisible:false})
+               }, 100);
+              }
               }
               style={[styles.analysis,
                   {elevation:5,shadowColor:COLOR.grey900,
@@ -306,6 +342,7 @@ class DayDiary extends Component {
           );
         const content = (
           <View flex={1}>
+            {popupDialog}
             {this.props.inqueryDate? null: shareView}
             <Container
               toolbarDisplay={false}

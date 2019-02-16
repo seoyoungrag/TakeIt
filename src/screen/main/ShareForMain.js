@@ -32,7 +32,7 @@ export default class ShareForMain extends Component {
               format: "jpg",
               quality: 0.5,
               result: "tmpfile",
-              snapshotContentContainer: true
+              //snapshotContentContainer: true
           },
           previewSource:Images.empty,
           error: null,
@@ -141,12 +141,14 @@ export default class ShareForMain extends Component {
         </View>
         )
         const navigation = this.props.navigation;
+        const photos = this.props.photos;
         const foodList = (
         <View style={styles.foodList}>
           <Text style={styles.sectionHeader}>
             <Octicons name="calendar" color="#000000" size={FONT_BACK_LABEL}/>{"  "+this.props.inqueryDate}
           </Text>
             {this.props.photos.map(function(v,i){
+              console.warn(photos.length*width);
               return (
                 <Food key={i} footUnDisplay={true} toolbarDisplay={false} food={v} navigation={navigation}/>)
             })}
@@ -170,18 +172,13 @@ export default class ShareForMain extends Component {
           </View>
           );
         const content = (
-          <View flex={1}>
+          <View style={{height:(photos.length+2)*width}}>
             {this.props.inqueryDate? null: shareView}
-            <Container 
-              toolbarDisplay={false} 
-              navigation={this.props.navigation}
-              footUnDisplay={true}>
-              <ScrollView flex={1} collapsable={false} ref="full" style={styles.container}>
+              <ScrollView flex={1} collapsable={false} ref="full" style={[styles.container]}>
                   {headerView}
                   {statusView}
                   {foodList}
               </ScrollView>
-            </Container>
               <Spinner
                 visible={this.state.spinnerVisible}
                 textContent={'잠시만 기다려 주세요...'}
