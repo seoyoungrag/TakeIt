@@ -46,7 +46,7 @@ ext {
     minSdkVersion = 16
     compileSdkVersion = 27
     targetSdkVersion = 27
-    supportLibVersion = "26.1.0" //27.1.1 to 23.0.1 by yrseo -> undo -> 26.1.0 cause admob
+    supportLibVersion = "27.1.1" //27.1.1 to 23.0.1 by yrseo -> undo -> 26.1.0 cause admob -> 27.1.1 cause snapshot
     googlePlayServices = "15.+"
     googlePlayServicesAuthVersion = "15.+" // <--- add react-natvie-google-siginin yrseo -> 15.+ casue admob
     firebaseVersion = "17.1.0" // <--- add yrseo casue admob

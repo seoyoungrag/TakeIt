@@ -17,9 +17,16 @@ import UserRegist from '@screens/regist';
 import Food from '@screens/food';
 import Graph from '@screens/graph';
 import Setting from '@screens/setting/Setting';
+import Snapshot from '@common/snapshot';
 
 const RootStack = createStackNavigator(
   {
+    Snapshot:{
+      screen: Snapshot,
+      navigationOptions: ({ navigation }) => ({
+        header: null,
+      }),
+    },
     Setting: {
       screen: Setting,
       navigationOptions: ({ navigation }) => ({

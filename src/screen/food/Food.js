@@ -33,12 +33,17 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {};
 }
-class TakeFoodPic extends Component {
+class Food extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      food: this.props.navigation.getParam('food', {})
+      food: {}
     }
+  }
+  componentWillMount(){
+    this.setState({
+      food: this.props.food? this.props.food :this.props.navigation.getParam('food', {})| this.props.food
+    })
   }
   componentDidMount= async() => {
   }
@@ -105,7 +110,8 @@ class TakeFoodPic extends Component {
     const content = (
       <Container
         title={this.state.food.address}
-        toolbarDisplay={true}
+        toolbarDisplay={this.props.toolbarDisplay==true? this.props.toolbarDisplay:false}
+        footUnDisplay={this.props.footUnDisplay==true? this.props.footUnDisplay: false}
         navigation={this.props.navigation}>
         <View
           style={{
@@ -204,4 +210,4 @@ let styles = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(TakeFoodPic);
+)(Food);

@@ -68,8 +68,8 @@ async function requestStoragePermission(){
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
           {
-            'title': '갤러리 권한 필요',
-            'message': '음식 사진을 올리기 위해 갤러리 권한이 필요합니다.'
+            'title': '앨범 권한 필요',
+            'message': '음식 사진을 올리기 위해 앨범 권한이 필요합니다.'
           }
         )
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
@@ -305,8 +305,10 @@ class Diary extends React.Component {
               {(this.state.resultData.length  > 0)  ?  this.state.resultData.map(data => {
                 return (
                   <View key={data.registTime} style={[styles.child]}>
-                  <TouchableHighlight onPress={()=>{this.props.navigation.navigate("DayDiary",
+                  {/*
+                  <TouchableOpacity onPress={()=>{this.props.navigation.navigate("DayDiary",
                    {inqueryDate:Moment(data.registD).format('YYYY-MM-DD')})}}>
+                   */}
                   <View style={[styles.topInfo]}>
                   <Text style={styles.day}>
                     {Moment(data.registD).format('MM.DD') }
@@ -318,7 +320,9 @@ class Diary extends React.Component {
                     {data.kilocalorie} kcal
                   </Text>
                   </View>
-                  </TouchableHighlight>
+                  {/*
+                  </TouchableOpacity>
+                  */}
 
               <View style={[styles.bottomPhoto]}>
                 <FlatGrid
@@ -329,7 +333,7 @@ class Diary extends React.Component {
                 renderItem={({ item, section, index }) => (
                   <View>
                   {item.firebaseDownloadUrl!=null &&
-                    <TouchableHighlight onPress=
+                    <TouchableOpacity onPress=
                     {()=> this.props.navigation.navigate("Food", {food:item} )}
                     >
                     <View>
@@ -379,7 +383,7 @@ class Diary extends React.Component {
                     resizeMode={FastImage.resizeMode.cover}
                   />
                   </View>
-                  </TouchableHighlight>
+                  </TouchableOpacity>
                 }
                 </View>
                   )}
@@ -390,7 +394,7 @@ class Diary extends React.Component {
                   <TouchableOpacity onPress={()=>{
                     requestStoragePermission().then(isGranted => {
                       if(!isGranted){
-                        Alert.alert('갤러리 권한이 없으면 찍먹의 메뉴를 이용할 수 없어요.');
+                        Alert.alert('앨범 권한이 없으면 찍먹의 메뉴를 이용할 수 없어요.');
                       }else{
                         const options = {
                           title: '찍먹할 사진을 선택해주세요.',
@@ -452,9 +456,24 @@ class Diary extends React.Component {
                     fontWeight: '600',
                     color: COLOR.grey800,
                     textAlign:"left"}]}>
-                    <Entypo name="folder-images" color="#000000" size={FONT_BACK_LABEL*0.8}/>&nbsp;&nbsp;갤러리에서 올리기
+                    <Entypo name="folder-images" color="#000000" size={FONT_BACK_LABEL*0.8}/>&nbsp;&nbsp;앨범
                   </Text>
                   </TouchableOpacity>
+
+                  <TouchableOpacity onPress={()=>{this.props.navigation.navigate("DayDiary",
+                   {inqueryDate:Moment(data.registD).format('YYYY-MM-DD')})}}
+                    style={{            
+                      paddingRight: width * 0.0225,
+                      marginLeft: 'auto',
+                    }}
+                  >
+                    <Text style={{
+                    textAlignVertical:"top",
+                    fontSize: FONT_BACK_LABEL*0.8,
+                    fontWeight: '600',
+                    color: COLOR.grey800,
+                    textAlign:"right"}}><Entypo name="share" color="#000000" size={FONT_BACK_LABEL*0.8}/> &nbsp;&nbsp;공유하기 </Text>
+                    </TouchableOpacity>
                 </View>
             </View>
                 )
@@ -632,8 +651,9 @@ const styles = StyleSheet.create({
   },
   underBottomPhoto: {
     width: width*0.95,
-    // backgroundColor: '#9F9F9F',
-    height: height*0.3*0.15
+    //backgroundColor: '#9F9F9F',
+    height: height*0.3*0.15,
+    flexDirection:"row"
   },
   itemContainer: {
     // justifyContent: 'flex-end',

@@ -1,0 +1,4 @@
+{
+  "name": "@common/snapshot",
+  "main": "./Snapshot.js"
+}

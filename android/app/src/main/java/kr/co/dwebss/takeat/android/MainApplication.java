@@ -3,6 +3,9 @@ package kr.co.dwebss.takeat.android;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.RNFetchBlob.RNFetchBlobPackage;
+import cl.json.RNSharePackage;
+import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 import com.imagepicker.ImagePickerPackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.horcrux.svg.SvgPackage;
@@ -19,8 +22,7 @@ import io.invertase.firebase.storage.RNFirebaseStoragePackage; // <-- firebase s
 import io.invertase.firebase.admob.RNFirebaseAdMobPackage; // <-- admob 제거하고 firebase admob 추가
 //import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;  // <--- react native noti 추가
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage; // <-- firebase notification 관련 추가
-
-
+import cl.json.ShareApplication;
 
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -38,7 +40,7 @@ import com.facebook.appevents.AppEventsLogger;
 import java.util.Arrays;
 import java.util.List;
 
-public class MainApplication extends Application implements ReactApplication {
+public class MainApplication extends Application implements ShareApplication, ReactApplication {
 
   /**
     * react-native-fbsdk 관련 추가
@@ -62,6 +64,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNFetchBlobPackage(),
+            new RNSharePackage(),
+            new RNViewShotPackage(),
             new ImagePickerPackage(),
             new RNFirebaseNotificationsPackage(), //<-- fireabse notification 추가
             //new ReactNativePushNotificationPackage(), // <---- react native noti 추가
@@ -101,5 +106,10 @@ public class MainApplication extends Application implements ReactApplication {
      */
     AppEventsLogger.activateApp(this);
     SoLoader.init(this, /* native exopackage */ false);
+  }
+
+  @Override
+  public String getFileProviderAuthority() {
+        return BuildConfig.APPLICATION_ID + ".provider";
   }
 }
