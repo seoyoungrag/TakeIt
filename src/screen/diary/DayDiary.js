@@ -19,6 +19,10 @@ import ViewShot, {captureRef, captureScreen} from "react-native-view-shot";
 import Images from "@assets/Images";
 import Share, { ShareSheet, Button } from "react-native-share";
 import RNFetchBlob from "rn-fetch-blob";
+import ShareForMain from '@screens/main/ShareForMain';
+import PopupDialog from 'react-native-popup-dialog';
+import Moment from "moment";
+
 
 const {width, height} = Dimensions.get("window");
 
@@ -65,17 +69,20 @@ class DayDiary extends Component {
           visible: false,
           onCaptureUri: null,
           inqueryDate: this.props.navigation.getParam('inqueryDate', {}),
-          userEatKcal:0,
-          userGoalTxt:"",
-          recommendKcal:0,
-          percent:0,
-          goalKcal:0,
-          userComment:"",
-          analyComment1:"",
-          analyComment2:"",
-          analyComment3:"",
-          analyComment4:"",
-          analyComment5:"",
+          DayDiaryVisible: false,
+          analysises:{
+            userEatKcal:0,
+            userGoalTxt:"",
+            recommendKcal:0,
+            percent:0,
+            goalKcal:0,
+            userComment:"",
+            analyComment1:"",
+            analyComment2:"",
+            analyComment3:"",
+            analyComment4:"",
+            analyComment5:"",
+          },
         }
     }
     onShare = async(url) => {
@@ -159,17 +166,7 @@ class DayDiary extends Component {
         intakeStatuses: statuses.intakeStats,
         calorie: statuses.calorie,
 
-        userEatKcal:analysis.userEatKcal,
-        userGoalTxt:analysis.userGoalTxt,
-        recommendKcal:analysis.recommendKcal,
-        percent:analysis.percent,
-        goalKcal:analysis.goalKcal,
-        userComment:analysis.userComment,
-        analyComment1:analysis.analyComment1,
-        analyComment2:analysis.analyComment2,
-        analyComment3:analysis.analyComment3,
-        analyComment4:analysis.analyComment4,
-        analyComment5:analysis.analyComment5,
+        analysises :analysis,
         //spinnerVisible: false
       });
       COM = this;
@@ -221,6 +218,23 @@ class DayDiary extends Component {
         this.props.forceRefreshMain(false);
         this.callbackFnc();
       }
+
+      const popupDialog =(
+
+        <PopupDialog
+        ref={popupDialog => {
+          this.popupDialog = popupDialog;
+        }}
+        height={height}
+        visible={this.state.DayDiaryVisible}
+        containerStyle={{
+          zIndex: 1010,
+        }}
+        dialogStyle={{}}
+        >
+          <ShareForMain ref="daydiary" navigation={this.props.navigation} inqueryDate={Moment(new Date()).format("YYYY-MM-DD")}  analysises={this.state.analysises} calorie={this.state.calorie} intakeStatuses={this.state.intakeStatuses} photos={this.state.photos} />
+        </PopupDialog>
+          )
         const shadowOpt = {
           width:width/2.1 *(this.state.isEmptyPhotos? 2:1),
           height:width/2 *(this.state.isEmptyPhotos? 2:1),
@@ -233,9 +247,13 @@ class DayDiary extends Component {
         }
         const analysisView =(
           <View style={{
-            flex: 5,padding:10, paddingTop:20,marginTop:-10,marginBottom:10}}>
-            <View>
-            <Text style={{ fontWeight: '300' ,color:'#cccccc' }}>
+            flex: 1,padding:10, paddingTop:20,marginTop:-10,
+            marginBottom:-30
+          }}>
+            <View style={{
+              marginBottom:10
+            }}>
+            <Text style={{ fontWeight: '300' ,color:'#7a7a7a' }}>
             이 이미지는{' '}
               <Text style={{ fontWeight: '800',color:'#E91E63' }}>
               '찍먹'
@@ -249,27 +267,27 @@ class DayDiary extends Component {
                 fontSize: 12,
                 color: 'black',
               }}>
-              {' '}{this.state.analyComment1} {' '}
+              {' '}{this.state.analysises.analyComment1} {' '}
               <Text style={{ fontWeight: '600' }}>
-                {this.state.recommendKcal}
+                {this.state.analysises.recommendKcal}
               </Text>
-              {this.state.analyComment2}{' '}
+              {this.state.analysises.analyComment2}{' '}
               <Text style={{ fontWeight: '600' }}>
-                '{this.state.userGoalTxt}'
+                '{this.state.analysises.userGoalTxt}'
               </Text>
-              {this.state.analyComment3}{' '}
+              {this.state.analysises.analyComment3}{' '}
               <Text style={{ fontWeight: '600',color:'#E91E63' }}>
-              {this.state.goalKcal}
+              {this.state.analysises.goalKcal}
               </Text>
-              {this.state.analyComment4}{' '}
+              {this.state.analysises.analyComment4}{' '}
               <Text style={{ fontWeight: '600' ,color:'blue'}}>
-              {this.state.userEatKcal}
+              {this.state.analysises.userEatKcal}
               </Text>
-              {this.state.analyComment5}{' '}
+              {this.state.analysises.analyComment5}{' '}
                 {'\n'}
                 {'\n'}
                 <Text style={{ fontWeight: '800' }}>
-              {this.state.userComment}
+              {this.state.analysises.userComment}
               {'\n'}
                 </Text>
           </Text>
@@ -329,8 +347,22 @@ class DayDiary extends Component {
         const shareView = (
           <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems:"center", position:'absolute', width:width, zIndex:10,bottom:0 }}>
             <TouchableOpacity
-              onPress={() => this.snapshot("full")
+              onPress={() => {
+                //this.snapshot("full")
               //this.onShare(this.state.onCaptureUri)
+
+              this.setState({DayDiaryVisible:true, spinnerVisible:true})
+              //this.setState({DayDiaryVisible:true})
+               setTimeout(async ()=>{
+                 console.warn(this.refs);
+                 try{
+                   await this.refs.daydiary.snapshot("full");
+                 }catch(e){
+                   console.warn(e);
+                 }
+                 this.setState({DayDiaryVisible:false, spinnerVisible:false})
+               }, 100);
+              }
               }
               style={[styles.analysis,
                   {elevation:5,shadowColor:COLOR.grey900,
@@ -345,6 +377,7 @@ class DayDiary extends Component {
           );
         const content = (
           <View flex={1}>
+            {popupDialog}
             {this.props.inqueryDate? null: shareView}
             <Container
               toolbarDisplay={false}
@@ -384,7 +417,7 @@ const styles = StyleSheet.create({
       width: width,backgroundColor:'white'
     },
     headerView: {
-      flex:8,
+      flex:5,
       paddingTop:5,
       paddingBottom:5
     },

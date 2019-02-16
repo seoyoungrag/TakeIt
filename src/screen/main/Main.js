@@ -131,7 +131,20 @@ class Main extends Component {
           maxCnt : 0,
           viewAdCnt: 0,
           notificationId: "",
-          DayDiaryVisible: false
+          DayDiaryVisible: false,
+          analysises:{
+            userEatKcal:0,
+            userGoalTxt:"",
+            recommendKcal:0,
+            percent:0,
+            goalKcal:0,
+            userComment:"",
+            analyComment1:"",
+            analyComment2:"",
+            analyComment3:"",
+            analyComment4:"",
+            analyComment5:"",
+          },
         }
         this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
           BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
@@ -268,6 +281,7 @@ class Main extends Component {
         var maxCnt = this.props.TIMESTAMP.foodupcnt||this.props.TIMESTAMP.foodupcnt==0?this.props.TIMESTAMP.foodupcnt: 3;
         const foodList = await this.getFoodDiary();
         const statuses = await this.getMainIntakestatus();
+        const analysis = await this.getAnalysisDiary();
         await this.setState({
           photos:
           foodList.length > 0
@@ -285,7 +299,8 @@ class Main extends Component {
           maxCnt : maxCnt,
           viewAdCnt : viewAdCnt,
           foodUpCnt: foodUpCnt,
-          inbodyUpCnt: inbodyUpCnt
+          inbodyUpCnt: inbodyUpCnt,
+          analysises :analysis,
           //spinnerVisible: false
         });
         const COM = this;
@@ -337,6 +352,19 @@ class Main extends Component {
         {
           responseProc: async (res) => {
             //console.log("Main.js(getFOodDiary): "+JSON.stringify(res));
+            rtn=res;
+          }
+        }
+      );
+      return rtn;
+    }
+    getAnalysisDiary = async () => {
+      var rtn;
+      await cFetch(
+        APIS.GET_ANALYSIS_DIARY, [ this.props.USER_INFO.userId, "date", Moment(new Date()).format("YYYY-MM-DD") ], {},
+        {
+          responseProc: async (res) => {
+            console.log("Main.js(getFOodDiary): "+JSON.stringify(res));
             rtn=res;
           }
         }
@@ -632,7 +660,7 @@ class Main extends Component {
                                           '선택한 사진을 등록하시겠어요?',
                                           '사진을 업로드하면 수정/삭제할 수 없습니다.\n일일 저장 횟수가 '+macCnt+'를 초과하면 찍먹티켓을 사용합니다. \n(금일: '+cnt+'회 저장)',
                                           [
-                                            {text: '일주일간 보지않기', onPress: () => 
+                                            {text: '일주일간 보지않기', onPress: () =>
                                               {
                                                 AsyncStorage.setItem(periodFoodUpMainAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
                                                 this.uploadPictrue(image);
@@ -661,7 +689,8 @@ class Main extends Component {
                         headerView:headerView, statusView:statusView, foodList:foodList})
                         */
                        this.setState({DayDiaryVisible:true, spinnerVisible:true})
-                        setTimeout(async ()=>{ 
+                       //this.setState({DayDiaryVisible:true})
+                        setTimeout(async ()=>{
                           console.warn(this.refs);
                           try{
                             await this.refs.daydiary.snapshot("full");
@@ -692,7 +721,7 @@ class Main extends Component {
           }}
           dialogStyle={{}}
           >
-            <ShareForMain ref="daydiary" navigation={this.props.navigation} inqueryDate={Moment(new Date()).format("YYYY-MM-DD")} calorie={this.state.calorie} intakeStatuses={this.state.intakeStatuses} photos={this.state.photos}/>
+          <ShareForMain ref="daydiary" navigation={this.props.navigation} inqueryDate={Moment(new Date()).format("YYYY-MM-DD")}  analysises={this.state.analysises} calorie={this.state.calorie} intakeStatuses={this.state.intakeStatuses} photos={this.state.photos} />
           </PopupDialog>
             )
         const content = (
@@ -829,7 +858,7 @@ class Main extends Component {
                 />
           );
     }
-    
+
   uploadPictrue = async(image) =>{
     const COM = this;
     const PROPS = this.props;
@@ -837,7 +866,7 @@ class Main extends Component {
     COM.setState({spinnerVisible:true});
     var dateTime = new Date();
       //console.log("TakeInbodyPic.js: "+JSON.stringify(image));
-      
+
       firebase
         .storage()
         .ref("/food_diary/" + PROPS.USER_INFO.userId + "/" + Moment(dateTime).format("YYYY-MM-DD") + "/" + image.uri.substr(image.uri.lastIndexOf("/") + 1) )
@@ -896,7 +925,7 @@ class Main extends Component {
               if(isShowConfirmAlert){
                 Alert.alert('분석이 끝나면 알림을 보내드릴게요.','잠시 후에 확인해주세요.',
                 [
-                  {text: '일주일간 보지않기', onPress: () => 
+                  {text: '일주일간 보지않기', onPress: () =>
                     {
                       AsyncStorage.setItem(periodUploadConfirmAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
                     }
@@ -907,7 +936,7 @@ class Main extends Component {
                   }],
                   { cancelable: false });
                 }
-              setTimeout(function(){ 
+              setTimeout(function(){
                 COM.callbackFnc();
               }, 100);
             }
@@ -916,7 +945,7 @@ class Main extends Component {
         .catch(err => {
           console.log(err);
         });
-  
+
   }
 }
 

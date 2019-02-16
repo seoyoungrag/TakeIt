@@ -32,13 +32,26 @@ export default class ShareForMain extends Component {
               format: "jpg",
               quality: 0.5,
               result: "tmpfile",
-              snapshotContentContainer: true
+              //snapshotContentContainer: true
           },
           previewSource:Images.empty,
           error: null,
           res: null,
           visible: false,
-          onCaptureUri: null
+          onCaptureUri: null,
+          analysises:{
+            userEatKcal:0,
+            userGoalTxt:"",
+            recommendKcal:0,
+            percent:0,
+            goalKcal:0,
+            userComment:"",
+            analyComment1:"",
+            analyComment2:"",
+            analyComment3:"",
+            analyComment4:"",
+            analyComment5:"",
+          },
         }
     }
     onShare = async(url) => {
@@ -61,7 +74,7 @@ export default class ShareForMain extends Component {
       console.log("do something with ", uri);
       this.setState({onCaptureUri: uri});
     }
-    snapshot = (refname) => 
+    snapshot = (refname) =>
     {
       this.setState({spinnerVisible:true})
       captureRef(this.refs[refname], this.state.value)
@@ -102,6 +115,57 @@ export default class ShareForMain extends Component {
     }
 
     render() {
+
+      console.log("==================================================="+this.props.analysises);
+      const analysisView =(
+        <View style={{
+          flex: 1,padding:10, paddingTop:20,marginTop:-10,
+          marginBottom:-30
+        }}>
+          <View style={{
+            marginBottom:10
+          }}>
+          <Text style={{ fontWeight: '300' ,color:'#7a7a7a' }}>
+          이 이미지는{' '}
+            <Text style={{ fontWeight: '800',color:'#E91E63' }}>
+            '찍먹'
+            </Text>
+          {' '} app에서 공유한 사진입니다.
+          </Text>
+        </View>
+          <Text
+            style={{
+              fontFamily: 'NotoSans-Regular',
+              fontSize: 12,
+              color: 'black',
+            }}>
+            {' '}{this.props.analysises.analyComment1} {' '}
+            <Text style={{ fontWeight: '600' }}>
+              {this.props.analysises.recommendKcal}
+            </Text>
+            {this.props.analysises.analyComment2}{' '}
+            <Text style={{ fontWeight: '600' }}>
+              '{this.props.analysises.userGoalTxt}'
+            </Text>
+            {this.props.analysises.analyComment3}{' '}
+            <Text style={{ fontWeight: '600',color:'#E91E63' }}>
+            {this.props.analysises.goalKcal}
+            </Text>
+            {this.props.analysises.analyComment4}{' '}
+            <Text style={{ fontWeight: '600' ,color:'blue'}}>
+            {this.props.analysises.userEatKcal}
+            </Text>
+            {this.props.analysises.analyComment5}{' '}
+              {'\n'}
+              {'\n'}
+              <Text style={{ fontWeight: '800' }}>
+            {this.props.analysises.userComment}
+            {'\n'}
+              </Text>
+        </Text>
+      </View>
+      )
+
         const headerView = (
         <View style={styles.headerView}>
           <View flexDirection="row" style={{padding:10, paddingTop:20}} height="100%">
@@ -141,12 +205,14 @@ export default class ShareForMain extends Component {
         </View>
         )
         const navigation = this.props.navigation;
+        const photos = this.props.photos;
         const foodList = (
         <View style={styles.foodList}>
           <Text style={styles.sectionHeader}>
             <Octicons name="calendar" color="#000000" size={FONT_BACK_LABEL}/>{"  "+this.props.inqueryDate}
           </Text>
             {this.props.photos.map(function(v,i){
+              console.warn(photos.length*width);
               return (
                 <Food key={i} footUnDisplay={true} toolbarDisplay={false} food={v} navigation={navigation}/>)
             })}
@@ -154,40 +220,36 @@ export default class ShareForMain extends Component {
         )
         const shareView = (
           <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems:"center", position:'absolute', width:width, zIndex:10,bottom:0 }}>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => this.snapshot("full")
               //this.onShare(this.state.onCaptureUri)
-              } 
+              }
               style={[styles.analysis,
                   {elevation:5,shadowColor:COLOR.grey900,
                   shadowOffset: { width: 0, height: 0 },
                   shadowOpacity: 0.8,
                   shadowRadius: 2}]}>
-                <Text style={{ fontSize: FONT_BACK_LABEL,color:COLOR.pink500 }}> 
+                <Text style={{ fontSize: FONT_BACK_LABEL,color:COLOR.pink500 }}>
                 공유하기
                 </Text>
             </TouchableOpacity>
           </View>
           );
         const content = (
-          <View flex={1}>
+          <View style={{height:(photos.length+2)*width}}>
             {this.props.inqueryDate? null: shareView}
-            <Container 
-              toolbarDisplay={false} 
-              navigation={this.props.navigation}
-              footUnDisplay={true}>
-              <ScrollView flex={1} collapsable={false} ref="full" style={styles.container}>
+              <ScrollView flex={1} collapsable={false} ref="full" style={[styles.container]}>
+                  {analysisView}
                   {headerView}
                   {statusView}
                   {foodList}
               </ScrollView>
-            </Container>
               <Spinner
                 visible={this.state.spinnerVisible}
                 textContent={'잠시만 기다려 주세요...'}
                 textStyle={{color: '#FFF'}}
               />
-          </View> 
+          </View>
           );
           return content
     }
