@@ -53,7 +53,12 @@ class DayDiary extends Component {
           isEmptyPhotos : false,
           calorie: {},
           spinnerVisible: true,
-          inqueryDate: this.props.navigation.getParam('inqueryDate', {})
+          inqueryDate: this.props.navigation.getParam('inqueryDate', {}),
+          userEatKcal:0,
+          userGoalTxt:"",
+          recommendKcal:0,
+          percent:0,
+          goalKcal:0,
         }
     }
     componentDidMount = async() => {
@@ -74,7 +79,13 @@ class DayDiary extends Component {
               ],
         isEmptyPhotos: !foodList.length > 0 ,
         intakeStatuses: statuses.intakeStats,
-        calorie: statuses.calorie
+        calorie: statuses.calorie,
+
+        userEatKcal:statuses.userEatKcal,
+        userGoalTxt:statuses.userGoalTxt,
+        recommendKcal:statuses.recommendKcal,
+        percent:statuses.percent,
+        goalKcal:statuses.goalKcal,
         //spinnerVisible: false
       });
       COM = this;
@@ -123,13 +134,83 @@ class DayDiary extends Component {
           y:3
         }
         const content = (
-          <Container 
-            toolbarDisplay={true} 
+          <Container
+            toolbarDisplay={true}
             navigation={this.props.navigation}>
             <View style={styles.container}>
 
               <View
                 style={styles.headerView}>
+
+
+
+        {/* 분석  시작 */}
+                <View style={{marginTop:70}}>
+                <Text
+                  style={{
+                    fontFamily: 'NotoSans-Regular',
+                    fontSize: 12,
+                    color: 'black',
+                  }}>
+                  {' '}너의 권장칼로리는 {' '}
+                <Text style={{ fontWeight: '600' }}>
+                  {this.state.recommendKcal}칼로리
+                </Text>
+                인데 현재 너는{' '}
+                <Text style={{ fontWeight: '600' }}>
+                  '{this.state.userGoalTxt}'
+                </Text>
+                이라는 목표를 가지고 있어. 이 목표를 이루려면{' '}
+                <Text style={{ fontWeight: '600',color:'#E91E63' }}>
+                {this.state.goalKcal}칼로리
+                </Text>
+                를 먹어야해. 그런데 너는 오늘{' '}
+                <Text style={{ fontWeight: '600' ,color:'blue'}}>
+                {this.state.userEatKcal}칼로리
+                </Text>
+                를 먹었어.{' '}
+                  {'\n'}
+                  <Text style={{ fontWeight: '800' }}>
+                {this.state.percent > 100 && this.props.USER_INFO.dietGoalCd >900003
+                  ? '니 뱃살을 보고도 슬픈감정이 안생긴다면 넌 싸이코패스야'
+                  : this.state.percent > 15 && this.props.USER_INFO.dietGoalCd >900003
+                    ? ' 너무 먹는거아니야? 당장 밥에서 그 손 떼! 그 한숟갈 더먹는다고 매우 행복하냐 이 돼지야!'
+                    : this.state.percent > 0 && this.props.USER_INFO.dietGoalCd >900003
+                      ? ' 잘하고있어 조금더 힘내자구!'
+                      : this.state.percent > -10 && this.props.USER_INFO.dietGoalCd >900003
+                        ? ' 잘하고있는데 너무 적게 먹는거 같아 너무 급한거아닐까?'
+                        : this.props.USER_INFO.dietGoalCd >900003
+                        ?' 너무 급하게 빼면 더 악효과가 일어나 조금 더 먹을 필요가 있어':''}
+                    </Text>
+                    <Text style={{ fontWeight: '800' }}>
+                    {this.state.percent > 100 && this.props.USER_INFO.dietGoalCd ==900003
+                      ? '니 뱃살을 보고도 슬픈감정이 안생긴다면 넌 싸이코패스야'
+                      : this.state.percent > 15 && this.props.USER_INFO.dietGoalCd ==900003
+                        ? ' 너무 먹는거아니야? 당장 밥에서 그 손 떼! 그 한숟갈 더먹는다고 매우 행복하냐 이 돼지야!'
+                        : this.state.percent > 0 && this.props.USER_INFO.dietGoalCd ==900003
+                          ? ' 잘하고있어 조금더 힘내자구!'
+                          : this.state.percent > -100 && this.props.USER_INFO.dietGoalCd ==900003
+                            ? ' 이러다가 더 멸치가 되겠어 한끼에 6끼씩 먹어보는건 어때?'
+                            : this.props.USER_INFO.dietGoalCd ==900003
+                           ?' 어디서 멸치냄새가 나지않아? 거울을 보면 그 정체를 알수있을거야 좀 먹자!!':''}
+                      </Text>
+                    <Text style={{ fontWeight: '800' }}>
+                    {this.state.percent > 100 && this.props.USER_INFO.dietGoalCd <900003
+                      ? '니 뱃살을 보고도 슬픈감정이 안생긴다면 넌 싸이코패스야'
+                      : this.state.percent > 15 && this.props.USER_INFO.dietGoalCd <900003
+                        ? ' 너무 급하게 찌면 더 악효과가 일어나 조금 덜 먹을 필요가 있어'
+                        : this.state.percent > 0 && this.props.USER_INFO.dietGoalCd <900003
+                          ? ' 잘하고있어 조금더 힘내자구!'
+                          : this.state.percent > -100&& this.props.USER_INFO.dietGoalCd <900003
+                            ? ' 이러다가 더 멸치가 되겠어 한끼에 6끼씩 먹어보는건 어때?'
+                            : this.props.USER_INFO.dietGoalCd <900003
+                            ?' 어디서 멸치냄새가 나지않아? 거울을 보면 그 정체를 알수있을거야 좀 먹자!!':''}
+                      </Text>
+              </Text>
+              </View>
+
+        {/* 분석  끝 */}
+
 
                 <View
                   style={{
