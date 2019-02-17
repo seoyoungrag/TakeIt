@@ -59,7 +59,7 @@ class DayDiary extends Component {
           inqueryDate: {},
           value: {
               format: "jpg",
-              quality: 0.5,
+              quality: 0.9,
               result: "tmpfile",
               snapshotContentContainer: true
           },

@@ -56,8 +56,8 @@ export default class ShareForMain extends Component {
     }
     onShare = async(url) => {
         //console.warn(url);
+        this.setState({spinnerVisible:false});
         RNFetchBlob.fs.readFile(url, "base64").then(data => {
-            this.setState({spinnerVisible:false});
             //console.warn(data);
             Share.open({
                 title: "찍먹 - 다이어트 필수 사진앱",

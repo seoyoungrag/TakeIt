@@ -413,7 +413,7 @@ class Diary extends React.Component {
                         const options = {
                           title: '찍먹할 사진을 선택해주세요.',
                           maxWidth:1280/2,maxHeight:1280/2,
-                          quality: 1,
+                          quality: 0.9,
                           noData: true
                         };
                         ImagePicker.launchImageLibrary(options, async(image) => {

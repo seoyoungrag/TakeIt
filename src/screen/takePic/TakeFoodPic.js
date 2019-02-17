@@ -390,7 +390,7 @@ class TakeFoodPic extends Component {
     console.log("TakeFoodPic.js: this.state-"+JSON.stringify(this.state));
     console.log("TakeFoodPic.js: watchId-"+this.watchId);
     this.setState({spinnerVisible:true});
-    const options = { quality: 1, width:1280/2,height:720/2, exif: false, base64: false, fixOrientation: true,
+    const options = { quality: 0.9, width:1280/2,height:720/2, exif: false, base64: false, fixOrientation: true,
       //아래 둘다 false해야 프리뷰 나옴.
       //skipProcessing: true, 
       //doNotSave:true 
