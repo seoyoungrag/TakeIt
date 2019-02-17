@@ -42,7 +42,7 @@ class Food extends Component {
   }
   componentWillMount(){
     this.setState({
-      food: this.props.food? this.props.food :this.props.navigation.getParam('food', {})| this.props.food
+      food: this.props.food&&this.props.food!=0? this.props.food :this.props.navigation.getParam('food', {})
     })
   }
   componentDidMount= async() => {
@@ -173,7 +173,7 @@ class Food extends Component {
                         var foodArray = [data];
                           return (
                               <Table height={85} columns={columns} parentWidth={width}
-                              key={data.photoFoodDetailId}
+                              key={data.photoId+'-'+data.photoFoodDetailId}
                               dataSource={foodArray}
                               userId ={this.props.USER_INFO.userId}
                                />
