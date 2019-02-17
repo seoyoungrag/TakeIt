@@ -613,71 +613,70 @@ class Main extends Component {
                       <Octicons name="calendar" color="#000000" size={FONT_BACK_LABEL}/>&nbsp;&nbsp;{section.title}
                     </Text>
 
-                    <TouchableOpacity onPress={()=>{
-                      requestStoragePermission().then(isGranted => {
-                        if(!isGranted){
-                          Alert.alert('앨범 권한이 없으면 찍먹의 메뉴를 이용할 수 없어요.');
-                        }else{
-                                    const options = {
-                                      title: '찍먹할 사진을 선택해주세요.',
-                                      maxWidth:1280/2,maxHeight:1280/2,
-                                      quality: 1,
-                                      noData: true
-                                    };
-                                    ImagePicker.launchImageLibrary(options, async(image) => {
-                                      console.log(image);
-                                      if(image.didCancel||!image.uri){
-                                        return;
-                                      }
-                                      /*
-                                      fileName: "image-70dfa6a7-8709-437f-a746-13c0d411cf9e.jpg"
-                                      fileSize: 26656
-                                      height: 640
-                                      isVertical: true
-                                      originalRotation: 0
-                                      path: "/storage/emulated/0/Pictures/images/image-70dfa6a7-8709-437f-a746-13c0d411cf9e.jpg"
-                                      type: "image/jpeg"
-                                      uri: "file:///storage/emulated/0/Pictures/images/image-70dfa6a7-8709-437f-a746-13c0d411cf9e.jpg"
-                                      width: 315
-                                      */
+                    <TouchableOpacity onPress={async()=>{
                                       const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
                                       var cnt = await AsyncStorage.getItem(storKey);
                                       var macCnt = this.props.TIMESTAMP.foodupcnt||this.props.TIMESTAMP.foodupcnt==0?this.props.TIMESTAMP.foodupcnt: 3;
                                       cnt = Number(cnt);
-                                      //0. 경고창 다시보기 체크되어있는지 체크
-                                      const periodFoodUpMainAlertStorKey = "@FOODUPMAINALERTPERIOD";
-                                      var FOODUPMAINALERTPERIOD = await AsyncStorage.getItem(periodFoodUpMainAlertStorKey);
-                                      var isShowFoodUpMainAlert = false;
-                                      FOODUPMAINALERTPERIOD = Number(FOODUPMAINALERTPERIOD);
-                                      //0-1. 저장된 적이 없거나, 저장되었는데 1주일이 넘었으면 flag는 true로
-                                      if(!FOODUPMAINALERTPERIOD || Math.abs(FOODUPMAINALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7)){
-                                      //if(!FOODUPLOADALERTPERIOD || Math.abs(FOODUPLOADALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60)){
-                                        isShowFoodUpMainAlert = true;
-                                        await AsyncStorage.removeItem(periodFoodUpMainAlertStorKey);
+                                      if(!cnt){
+                                        cnt=0;
                                       }
-                                      if(isShowFoodUpMainAlert){
+                                      if(cnt>=macCnt){
                                         Alert.alert(
-                                          '선택한 사진을 등록하시겠어요?',
-                                          '사진을 업로드하면 수정/삭제할 수 없습니다.\n일일 저장 횟수가 '+macCnt+'를 초과하면 찍먹티켓을 사용합니다. \n(금일: '+cnt+'회 저장)',
-                                          [
-                                            {text: '일주일간 보지않기', onPress: () =>
-                                              {
-                                                AsyncStorage.setItem(periodFoodUpMainAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
-                                                this.uploadPictrue(image);
-                                              }
-                                            },
-                                            {
-                                              text: '취소',
-                                              onPress: () => console.log('Cancel Pressed'),
-                                              style: 'cancel',
-                                            },
-                                            {text: '저장', onPress: async() => {this.uploadPictrue(image)}},
-                                          ],
-                                          {cancelable: false},
-                                        );
-                                    }else{
-                                      this.uploadPictrue(image);
-                                    }
+                                          '티켓을 충전해주세요.',
+                                          '일일 저장 횟수가 '+macCnt+'를 초과했어요. 상단의 광고를 보시고 티켓을 충전해주세요.'
+                                          )
+                                          return false;
+                                      }
+                                      requestStoragePermission().then(isGranted => {
+                                        if(!isGranted){
+                                          Alert.alert('앨범 권한이 없으면 찍먹의 메뉴를 이용할 수 없어요.');
+                                        }else{
+                                          const options = {
+                                            title: '찍먹할 사진을 선택해주세요.',
+                                            maxWidth:1280/2,maxHeight:1280/2,
+                                            quality: 1,
+                                            noData: true
+                                          };
+                                          ImagePicker.launchImageLibrary(options, async(image) => {
+                                            console.log(image);
+                                            if(image.didCancel||!image.uri){
+                                              return;
+                                            }
+                                          //0. 경고창 다시보기 체크되어있는지 체크
+                                          const periodFoodUpMainAlertStorKey = "@FOODUPMAINALERTPERIOD";
+                                          var FOODUPMAINALERTPERIOD = await AsyncStorage.getItem(periodFoodUpMainAlertStorKey);
+                                          var isShowFoodUpMainAlert = false;
+                                          FOODUPMAINALERTPERIOD = Number(FOODUPMAINALERTPERIOD);
+                                          //0-1. 저장된 적이 없거나, 저장되었는데 1주일이 넘었으면 flag는 true로
+                                          if(!FOODUPMAINALERTPERIOD || Math.abs(FOODUPMAINALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7)){
+                                          //if(!FOODUPLOADALERTPERIOD || Math.abs(FOODUPLOADALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60)){
+                                            isShowFoodUpMainAlert = true;
+                                            await AsyncStorage.removeItem(periodFoodUpMainAlertStorKey);
+                                          }
+                                          if(isShowFoodUpMainAlert){
+                                            Alert.alert(
+                                              '선택한 사진을 등록하시겠어요?',
+                                              '사진을 업로드하면 수정/삭제할 수 없습니다.\n일일 저장 횟수가 '+macCnt+'를 초과하면 찍먹티켓을 사용합니다. \n(금일: '+cnt+'회 저장)',
+                                              [
+                                                {text: '일주일간 보지않기', onPress: () =>
+                                                  {
+                                                    AsyncStorage.setItem(periodFoodUpMainAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
+                                                    this.uploadPictrue(image);
+                                                  }
+                                                },
+                                                {
+                                                  text: '취소',
+                                                  onPress: () => console.log('Cancel Pressed'),
+                                                  style: 'cancel',
+                                                },
+                                                {text: '저장', onPress: async() => {this.uploadPictrue(image)}},
+                                              ],
+                                              {cancelable: false},
+                                            );
+                                        }else{
+                                          this.uploadPictrue(image);
+                                        }
                                     });
                                   }
                                 });
@@ -688,6 +687,16 @@ class Main extends Component {
                       /*this.props.navigation.navigate('Snapshot', {
                         headerView:headerView, statusView:statusView, foodList:foodList})
                         */
+                       if(!this.state.isEmptyPhotos){
+                        this.props.navigation.navigate("DayDiary", {inqueryDate:Moment(new Date()).format('YYYY-MM-DD')})
+                        }else{
+                          Alert.alert(
+                            '등록한 사진이 없네요.',
+                            '적어도 한방 이상의 사진을 등록해주세요.'
+                            )
+                            return false;
+                        }
+                      /*
                        this.setState({DayDiaryVisible:true, spinnerVisible:true})
                        //this.setState({DayDiaryVisible:true})
                         setTimeout(async ()=>{
@@ -699,6 +708,8 @@ class Main extends Component {
                           }
                           this.setState({DayDiaryVisible:false, spinnerVisible:false})
                         }, 100);
+                      }}
+                      */
                       }}
                     >
                     <Text style={[styles.sectionHeader,{textAlign:"right"}]}><Entypo name="share" color="#000000" size={FONT_BACK_LABEL}/> &nbsp;&nbsp;공유하기 </Text>

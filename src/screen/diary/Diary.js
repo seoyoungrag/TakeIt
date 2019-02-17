@@ -391,7 +391,21 @@ class Diary extends React.Component {
             
               </View>
                 <View style={styles.underBottomPhoto}>
-                  <TouchableOpacity onPress={()=>{
+                  <TouchableOpacity onPress={async()=>{
+                    const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
+                    var cnt = await AsyncStorage.getItem(storKey);
+                    var macCnt = this.props.TIMESTAMP.foodupcnt||this.props.TIMESTAMP.foodupcnt==0?this.props.TIMESTAMP.foodupcnt: 3;
+                    cnt = Number(cnt);
+                    if(!cnt){
+                      cnt=0;
+                    }
+                    if(cnt>=macCnt){
+                      Alert.alert(
+                        '티켓을 충전해주세요.',
+                        '일일 저장 횟수가 '+macCnt+'를 초과했어요. 메인 상단의 광고를 보시고 티켓을 충전해주세요.'
+                        )
+                        return false;
+                    }
                     requestStoragePermission().then(isGranted => {
                       if(!isGranted){
                         Alert.alert('앨범 권한이 없으면 찍먹의 메뉴를 이용할 수 없어요.');
