@@ -10,7 +10,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { COLOR } from 'react-native-material-ui';
 import {BoxShadow} from 'react-native-shadow'
 
-import Table from './Table'
+import Table from '@screens/food/Table'
 
 import Moment from "moment";
 

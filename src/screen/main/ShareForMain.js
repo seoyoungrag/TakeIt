@@ -27,10 +27,10 @@ export default class ShareForMain extends Component {
         this.state = {
           isEmptyPhotos : false,
           calorie: {},
-          //spinnerVisible: true,
+          spinnerVisible: true,
           value: {
               format: "jpg",
-              quality: 0.5,
+              quality: 0.9,
               result: "tmpfile",
               //snapshotContentContainer: true
           },
@@ -51,16 +51,16 @@ export default class ShareForMain extends Component {
             analyComment3:"",
             analyComment4:"",
             analyComment5:"",
-          },
+          }
         }
     }
     onShare = async(url) => {
-        this.setState({spinnerVisible:false});
-        console.warn(url);
+        //console.warn(url);
         RNFetchBlob.fs.readFile(url, "base64").then(data => {
-            console.warn(data);
+            this.setState({spinnerVisible:false});
+            //console.warn(data);
             Share.open({
-                title: "찍먹",
+                title: "찍먹 - 다이어트 필수 사진앱",
                 url: "data:image/png;base64," + data,
                 showAppsToView: true
             });
@@ -112,15 +112,14 @@ export default class ShareForMain extends Component {
     componentWillMount(){
     }
     componentDidMount = async() => {
+      this.setState({spinnerVisible:false})
     }
 
     render() {
-
       console.log("==================================================="+this.props.analysises);
       const analysisView =(
         <View style={{
-          flex: 1,padding:10, paddingTop:20,marginTop:-10,
-          marginBottom:-30
+          padding:10
         }}>
           <View style={{
             marginBottom:10
@@ -128,9 +127,9 @@ export default class ShareForMain extends Component {
           <Text style={{ fontWeight: '300' ,color:'#7a7a7a' }}>
           이 이미지는{' '}
             <Text style={{ fontWeight: '800',color:'#E91E63' }}>
-            '찍먹'
+            '찍먹 - 다이어트 필수 사진앱'
             </Text>
-          {' '} app에서 공유한 사진입니다.
+          {' '}에서 공유한 사진입니다.
           </Text>
         </View>
           <Text
@@ -160,7 +159,6 @@ export default class ShareForMain extends Component {
               {'\n'}
               <Text style={{ fontWeight: '800' }}>
             {this.props.analysises.userComment}
-            {'\n'}
               </Text>
         </Text>
       </View>
@@ -168,7 +166,7 @@ export default class ShareForMain extends Component {
 
         const headerView = (
         <View style={styles.headerView}>
-          <View flexDirection="row" style={{padding:10, paddingTop:20}} height="100%">
+          <View flexDirection="row" style={{padding:10, paddingTop:0}} height="100%">
             <View flex={2} style={{backgroundColor:'rgba(72,207,173,1)', paddingLeft:10, justifyContent:"center"}}><Text style={{color:"white"}}>today {this.props.calorie.stat} kcal</Text></View>
             <View flex={1} style={{backgroundColor:'rgba(255,206,84,1)', paddingRight:10, justifyContent:"center", height:"70%",alignSelf:"flex-end",alignItems:"flex-end"}}><Text style={{color:"white"}}>+{this.props.calorie.guage}</Text></View>
           </View>
@@ -212,7 +210,7 @@ export default class ShareForMain extends Component {
             <Octicons name="calendar" color="#000000" size={FONT_BACK_LABEL}/>{"  "+this.props.inqueryDate}
           </Text>
             {this.props.photos.map(function(v,i){
-              console.warn(photos.length*width);
+              //console.warn(photos.length*width);
               return (
                 <Food key={i} footUnDisplay={true} toolbarDisplay={false} food={v} navigation={navigation}/>)
             })}
@@ -236,9 +234,9 @@ export default class ShareForMain extends Component {
           </View>
           );
         const content = (
-          <View style={{height:(photos.length+2)*width}}>
+          <View style={{height: this.props.fullHeight}}>
             {this.props.inqueryDate? null: shareView}
-              <ScrollView flex={1} collapsable={false} ref="full" style={[styles.container]}>
+              <ScrollView flex={1} collapsable={false} ref="full" style={[styles.container]} >
                   {analysisView}
                   {headerView}
                   {statusView}

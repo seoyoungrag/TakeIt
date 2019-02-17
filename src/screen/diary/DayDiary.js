@@ -55,7 +55,7 @@ class DayDiary extends Component {
           intakeStatuses: [],
           isEmptyPhotos : false,
           calorie: {},
-          //spinnerVisible: true,
+          spinnerVisible: true,
           inqueryDate: {},
           value: {
               format: "jpg",
@@ -83,6 +83,7 @@ class DayDiary extends Component {
             analyComment4:"",
             analyComment5:"",
           },
+          fullHeight: 0
         }
     }
     onShare = async(url) => {
@@ -91,7 +92,7 @@ class DayDiary extends Component {
         RNFetchBlob.fs.readFile(url, "base64").then(data => {
             console.warn(data);
             Share.open({
-                title: "찍먹",
+                title: "찍먹 - 다이어트 필수 사진앱",
                 url: "data:image/png;base64," + data,
                 showAppsToView: true
             });
@@ -167,10 +168,10 @@ class DayDiary extends Component {
         calorie: statuses.calorie,
 
         analysises :analysis,
-        //spinnerVisible: false
+        spinnerVisible: false
       });
       COM = this;
-      setTimeout(function(){ COM.setState({spinnerVisible:false}) }, 1500);
+      //setTimeout(function(){ COM.setState({spinnerVisible:false}) }, 1500);
     }
     getMainIntakestatus = async () => {
       var rtn;
@@ -232,7 +233,7 @@ class DayDiary extends Component {
         }}
         dialogStyle={{}}
         >
-          <ShareForMain ref="daydiary" navigation={this.props.navigation} inqueryDate={Moment(new Date()).format("YYYY-MM-DD")}  analysises={this.state.analysises} calorie={this.state.calorie} intakeStatuses={this.state.intakeStatuses} photos={this.state.photos} />
+          <ShareForMain fullHeight={this.state.fullHeight} ref="daydiary" navigation={this.props.navigation} inqueryDate={Moment(new Date()).format("YYYY-MM-DD")}  analysises={this.state.analysises} calorie={this.state.calorie} intakeStatuses={this.state.intakeStatuses} photos={this.state.photos} />
         </PopupDialog>
           )
         const shadowOpt = {
@@ -247,8 +248,9 @@ class DayDiary extends Component {
         }
         const analysisView =(
           <View style={{
-            flex: 1,padding:10, paddingTop:20,marginTop:-10,
-            marginBottom:-30
+            flex: 1,
+            //padding:10, paddingTop:20,marginTop:-10,marginBottom:-30
+            padding:10
           }}>
             <View style={{
               marginBottom:10
@@ -256,12 +258,12 @@ class DayDiary extends Component {
             <Text style={{ fontWeight: '300' ,color:'#7a7a7a' }}>
             이 이미지는{' '}
               <Text style={{ fontWeight: '800',color:'#E91E63' }}>
-              '찍먹'
+              '찍먹 - 다이어트 필수 사진앱'
               </Text>
-            {' '} app에서 공유한 사진입니다.
+            {' '}에서 공유한 사진입니다.
             </Text>
           </View>
-            <Text
+            {this.state.analysises.userGoalTxt!='' ?<Text
               style={{
                 fontFamily: 'NotoSans-Regular',
                 fontSize: 12,
@@ -288,14 +290,13 @@ class DayDiary extends Component {
                 {'\n'}
                 <Text style={{ fontWeight: '800' }}>
               {this.state.analysises.userComment}
-              {'\n'}
                 </Text>
-          </Text>
+          </Text>: null}
         </View>
         )
         const headerView = (
         <View style={styles.headerView}>
-          <View flexDirection="row" style={{padding:10, paddingTop:20}} height="100%">
+          <View flexDirection="row" style={{padding:10, paddingTop:0}} height="100%">
             <View flex={2} style={{backgroundColor:'rgba(72,207,173,1)', paddingLeft:10, justifyContent:"center"}}><Text style={{color:"white"}}>today {this.state.calorie.stat} kcal</Text></View>
             <View flex={1} style={{backgroundColor:'rgba(255,206,84,1)', paddingRight:10, justifyContent:"center", height:"70%",alignSelf:"flex-end",alignItems:"flex-end"}}><Text style={{color:"white"}}>+{this.state.calorie.guage}</Text></View>
           </View>
@@ -346,6 +347,22 @@ class DayDiary extends Component {
         )
         const shareView = (
           <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems:"center", position:'absolute', width:width, zIndex:10,bottom:0 }}>
+          <TouchableOpacity
+              onPress={() => {
+                this.props.navigation.goBack()
+              }}
+              style={[styles.analysis,
+                  {/*
+                    elevation:5,shadowColor:COLOR.grey900,
+                  shadowOffset: { width: 0, height: 0 },
+                  shadowOpacity: 0.8,
+                  shadowRadius: 2*/
+                  }
+                  ]}>
+                <Text style={{ fontSize: FONT_BACK_LABEL,color:COLOR.grey500 }}>
+                뒤로가기
+                </Text>
+            </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
                 //this.snapshot("full")
@@ -365,10 +382,13 @@ class DayDiary extends Component {
               }
               }
               style={[styles.analysis,
-                  {elevation:5,shadowColor:COLOR.grey900,
-                  shadowOffset: { width: 0, height: 0 },
-                  shadowOpacity: 0.8,
-                  shadowRadius: 2}]}>
+                {/*
+                  elevation:5,shadowColor:COLOR.grey900,
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.8,
+                shadowRadius: 2*/
+                }
+                ]}>
                 <Text style={{ fontSize: FONT_BACK_LABEL,color:COLOR.pink500 }}>
                 공유하기
                 </Text>
@@ -383,7 +403,10 @@ class DayDiary extends Component {
               toolbarDisplay={false}
               navigation={this.props.navigation}
               footUnDisplay={true}>
-              <ScrollView flex={1} collapsable={false} ref="full" style={styles.container}>
+              <ScrollView flex={1} collapsable={false} ref="full" style={styles.container}
+                onContentSizeChange={(width, height) => {
+                    this.setState({fullHeight:height+30});
+                }}>
                   {analysisView}
                   {headerView}
                   {statusView}
@@ -405,7 +428,9 @@ class DayDiary extends Component {
 const styles = StyleSheet.create({
     analysis: {
       flex: 0,
-      backgroundColor: '#fff',
+      backgroundColor: "rgba(255,255,255,.8)",
+      borderColor: COLOR.grey800,
+      borderWidth:1,
       borderRadius: 5,
       padding: 15,
       paddingHorizontal: 20,
@@ -435,7 +460,7 @@ const styles = StyleSheet.create({
     statusContainer: {
       justifyContent: 'center',
       alignItems:'center',
-      height: (height*0.10)*0.5
+      //height: (height*0.10)*0.5
     },
     itemName: {
       fontSize: FONT_BACK_LABEL*0.9,
