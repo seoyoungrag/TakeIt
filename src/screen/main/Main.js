@@ -30,6 +30,32 @@ import ImagePicker from 'react-native-image-picker';
 import Permissions from 'react-native-permissions'
 import ShareForMain from './ShareForMain';
 import PopupDialog from 'react-native-popup-dialog';
+import RatingRequestor from 'react-native-rating-requestor';
+
+const RatingOptions =  {
+  title: "찍먹 - 다이어트 필수 사진앱",
+  message: "찍먹앱을 평가해주세요.",
+  actionLabels: {
+    decline: "평가 안함",
+    delay: "나중에 하기",
+    accept: '지금 하기'
+  },
+  shouldBoldLastButton: true,
+  //storeAppName: {string},
+  //storeCountry: {string},
+  timingFunction: function(currentCount){    
+    console.warn(currentCount);
+    var result = false;
+    var x = 0; while (x*x < currentCount){ x++; } 
+    if (x*x == currentCount){ 
+      result = true;
+    }
+    console.warn(result);
+    return result;
+  }
+}
+const RatingTracker = new RatingRequestor('kr.co.dwebss.takeat.android',RatingOptions);
+
 
 const {width, height} = Dimensions.get("window");
 
@@ -156,6 +182,7 @@ class Main extends Component {
       );
     }
     componentDidMount = async() => {
+      //RatingTracker.showRatingDialog();
 
       AdMobRewarded.loadAd(request.build());
       AdMobRewarded.on('onAdLoaded',
@@ -303,6 +330,20 @@ class Main extends Component {
           analysises :analysis,
           //spinnerVisible: false
         });
+        if(foodList.length>0){
+          RatingTracker.handlePositiveEvent(function(didAppear, userDecision) {
+            if (didAppear) {
+              switch(userDecision)
+              {
+                case 'decline': console.warn('User declined to rate'); break;
+                case 'delay'  : console.warn('User delayed rating, will be asked later'); break;
+                case 'accept' : console.warn('User accepted invitation to rate, redirected to app store'); break;
+              }
+            } else {
+              console.warn('Request popup did not pop up. May appear on future positive events.');
+            } 
+          });
+        }
         const COM = this;
         //await setTimeout(async()=>{ await COM.setState({spinnerVisible:false}) }, 100);
       }

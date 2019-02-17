@@ -5445,6 +5445,11 @@ react-native-pull-to-refresh@^2.1.3:
   resolved "https://registry.yarnpkg.com/react-native-pull-to-refresh/-/react-native-pull-to-refresh-2.1.3.tgz#66a02c024dc471372a80511f1f180c0bb2646819"
   integrity sha512-u/E4295psx/9RKqtz70elLdmiPoLK7PL5r6sQ7EMmM02FIBRp1GZibcWjauwgfKll9b6+QqCBez5mQOyfMF+SQ==
 
+react-native-rating-requestor@^3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-rating-requestor/-/react-native-rating-requestor-3.2.1.tgz#9b865e3d96d78b5c61033e2a33f96f8f642c8f7f"
+  integrity sha512-cjAuStiPtEgC52tsJArEHCBc2Pe0X2UHslJi2vtIhozOAqJQ84kJzarFo/XIhLOYWuVTDiVgYw0DGUO9rqLoTA==
+
 react-native-root-siblings@^3.1.7:
   version "3.1.7"
   resolved "https://registry.yarnpkg.com/react-native-root-siblings/-/react-native-root-siblings-3.1.7.tgz#9af7cf7495311db9fbe929201a3234ed114cfe77"
