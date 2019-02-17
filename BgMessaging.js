@@ -13,7 +13,7 @@ export default async (message: RemoteMessage) => {
     })
       .setNotificationId(message.messageId)
       //.setTitle(message.data.title)
-      .setTitle("찍먹")
+      .setTitle("찍먹 - 다이어트 필수 사진앱")
       // .setSubtitle(message.subtitle)
       .setBody(message.data.content)
       // .setData(message.data)
@@ -29,7 +29,7 @@ export default async (message: RemoteMessage) => {
   } else if (Platform.OS === "ios") {
     const localNotification = new firebase.notifications.Notification()
       .setNotificationId(message.messageId)
-      .setTitle("찍먹")
+      .setTitle("찍먹 - 다이어트 필수 사진앱")
       //.setTitle(message.data.title)
       .setSubtitle(message.subtitle)
       .setBody(message.data.content)

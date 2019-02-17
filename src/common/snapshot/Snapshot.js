@@ -42,7 +42,7 @@ export default class Snapshot extends Component {
         RNFetchBlob.fs.readFile(url, "base64").then(data => {
             console.warn(data);
             Share.open({
-                title: "찍먹",
+                title: "찍먹 - 다이어트 필수 사진앱",
                 url: "data:image/png;base64," + data,
                 showAppsToView: true
             });

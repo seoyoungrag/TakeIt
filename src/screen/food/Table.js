@@ -135,7 +135,7 @@ class Table extends Component {
       //console.warn(title +' '+ photoFoodDetailId);
       return title=='섭취량' && photoFoodDetailId && photoFoodDetailId!=0? 
       (
-      <TouchableOpacity onPress={() => this.setState({ promptVisible: true, photoFoodDetailId: photoFoodDetailId })} >
+      <TouchableOpacity key={photoFoodDetailId} onPress={() => this.setState({ promptVisible: true, photoFoodDetailId: photoFoodDetailId })} >
         <View key={index} style={[!col.title? styles.cell: styles.headerItem, style]}>
           <Text style={{textAlign:"center",fontSize:FONT_BACK_LABEL*0.7}}>{title}
           &nbsp;<Entypo

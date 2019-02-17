@@ -76,7 +76,7 @@ const uiTheme = {
 /*
 const channel = new firebase.notifications.Android.Channel(
   "TAKEAT",
-  "찍먹",
+  "찍먹 - 다이어트 필수 사진앱",
   firebase.notifications.Android.Importance.Max
 ).setDescription("notification channel of TAKEAT");
 firebase.notifications().android.createChannel(channel);
