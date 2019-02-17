@@ -60,6 +60,15 @@ if (PixelRatio.get() <= 2) {
 class UserRegist extends Component {
   constructor(props) {
     super(props);
+    this.dietGoal = 
+      this.props.CODE.list.filter(
+        function(item){
+          if(Number(item.codeCategory)==90000){
+            return true;
+          }
+        }).map(function(v){
+            return ({key: v.code, value:v.codeValue});
+          });
     USER_INFO = this.props.USER_INFO;
 
     this.handleBackButton = this.handleBackButton.bind(this);
@@ -71,6 +80,7 @@ class UserRegist extends Component {
     this.onSubmitPersonWeight = this.onSubmitPersonWeight.bind(this);
     this.onSubmitUserEmail = this.onSubmitUserEmail.bind(this);
     this.onSubmitUserAgeRange = this.onSubmitUserAgeRange.bind(this);
+    this.onSubmitPersonDietGoal = this.onSubmitPersonDietGoal.bind(this);
 
     this.userNmRef = this.updateRef.bind(this, "userNm");
     this.personSexRef = this.updateRef.bind(this, "personSex");
@@ -78,6 +88,7 @@ class UserRegist extends Component {
     this.personWeightRef = this.updateRef.bind(this, "personWeight");
     this.userEmailRef = this.updateRef.bind(this, "userEmail");
     this.userAgeRangeRef = this.updateRef.bind(this, "userAgeRange");
+    this.personDietGoalRef = this.updateRef.bind(this, "personDietGoal");
 
     this.state = {
       //사용자정보
@@ -139,8 +150,10 @@ class UserRegist extends Component {
           }, {
             key: '100',
             value: '100대'
-          }]
-    };
+          }],
+          personDietGoal: this.props.USER_INFO.dietGoal != undefined
+              ? this.dietGoal[this.dietGoal.findIndex(x => {return x.key == this.props.USER_INFO.dietGoal})].value: "현재 체중 유지하기"
+        }
   }
 
   onFocus() {
@@ -157,7 +170,7 @@ class UserRegist extends Component {
   }
 
   onChangeText(text) {
-    ["userNm", "personSex","userAgeRange","personHeight","personWeight","userEmail"]
+    ["userNm", "personSex","userAgeRange","personHeight","personWeight","userEmail","personDietGoal"]
       .map(name => ({ name, ref: this[name] }))
       .forEach(({ name, ref }) => {
         //let value = this[name].value();//현재 선택되기 전의 값을 가지고 옴
@@ -172,12 +185,13 @@ class UserRegist extends Component {
   onSubmitPersonSex() {this.userAgeRange.focus();}
   onSubmitUserAgeRange() {this.personHeight.focus();}
   onSubmitPersonHeight() {this.personWeight.focus();}
-  onSubmitPersonWeight() {this.userEmail.focus();}
+  onSubmitPersonWeight() {}
+  onSubmitPersonDietGoal() {this.userEmail.focus();}
   onSubmitUserEmail() {this.userEmail.blur();}
   
   saveBtnPressed() {
     let errors = {};
-    ["userNm", "personSex","userAgeRange","personHeight","personWeight","userEmail"]
+    ["userNm", "personSex","userAgeRange","personHeight","personWeight","userEmail","personDietGoal"]
     .forEach((name) => {
       let value = this[name].value();
 
@@ -229,6 +243,13 @@ class UserRegist extends Component {
       );
 
       data.userAgeRange = this.state.ageRange[foundIndex].key
+      let foundIndexDiet = this.dietGoal.findIndex(
+        x => {
+          //console.warn (x.value + ','+this.state.personDietGoal);
+          return x.value == this.state.personDietGoal;
+        }
+      );
+      data.dietGoal = this.dietGoal[foundIndexDiet].key;
 
       var body = JSON.stringify(data);
       //console.warn(body);
@@ -468,6 +489,43 @@ class UserRegist extends Component {
                 />
               </View>
 
+              <View
+                  style={{
+                    flexDirection: "row",
+                    paddingTop: 5,
+                    paddingBottom: 10,
+                    width: "95%"
+                  }}
+                >
+                  <Dropdown
+                      textColor="rgba(255,255,255,1)"
+                      baseColor="rgba(255,255,255,1)"
+                      tintColor="rgba(255,255,255,.9)"
+                      itemColor="rgba(255,255,255,.54)"
+                      selectedItemColor="rgba(255,255,255,.87)"
+                      disabledItemColor="rgba(255,255,255,.38)"
+                      pickerStyle={{backgroundColor:"black", borderWidth:1, borderColor:"white"}}
+                      fontSize={styles.textFieldFontSize}
+                      containerStyle={[styles.textFieldContainerStyle, { flex: 1 }]}
+                      labelHeight={styles.textFieldLabelHeight}
+                      ref={this.personDietGoalRef}
+                      value={data.personDietGoal}
+                      data={this.dietGoal}
+                      autoCorrect={false}
+                      enablesReturnKeyAutomatically={true}
+                      onFocus={this.onFocus}
+                      onChangeText={this.onChangeText}
+                      onSubmitEditing={this.onSubmitPersonDietGoal}
+                      returnKeyType="next"
+                      label="다이어트 목표"
+                      title='설정화면에서 수정할 수 있어요.'
+                      error={errors.personDietGoal}
+                  />
+                    {/**
+                  <Text
+                    style={styles.textText}>현재 체중 유지하기</Text>
+                     */}
+                </View>
               <View
                 style={{
                   flexDirection: "row",
