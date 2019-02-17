@@ -43,15 +43,8 @@ const RatingOptions =  {
   shouldBoldLastButton: true,
   //storeAppName: {string},
   //storeCountry: {string},
-  timingFunction: function(currentCount){    
-    console.warn(currentCount);
-    var result = false;
-    var x = 0; while (x*x < currentCount){ x++; } 
-    if (x*x == currentCount){ 
-      result = true;
-    }
-    console.warn(result);
-    return result;
+  timingFunction: function(currentCount){
+    return currentCount > 1 && (Math.log(currentCount) / Math.log(3)).toFixed(5) % 1 == 0;
   }
 }
 const RatingTracker = new RatingRequestor('kr.co.dwebss.takeat.android',RatingOptions);
