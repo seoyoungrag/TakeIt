@@ -692,7 +692,7 @@ class Main extends Component {
                         }else{
                           Alert.alert(
                             '등록한 사진이 없네요.',
-                            '적어도 한방 이상의 사진을 등록해주세요.'
+                            '적어도 한장 이상의 사진을 등록해주세요.'
                             )
                             return false;
                         }
