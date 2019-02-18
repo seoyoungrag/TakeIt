@@ -40,11 +40,11 @@ export default class ShareForMain extends Component {
           visible: false,
           onCaptureUri: null,
           analysises:{
-            userEatKcal:0,
+            userEatKcal:"",
             userGoalTxt:"",
-            recommendKcal:0,
-            percent:0,
-            goalKcal:0,
+            recommendKcal:"",
+            percent:"",
+            goalKcal:"",
             userComment:"",
             analyComment1:"",
             analyComment2:"",
@@ -144,7 +144,7 @@ export default class ShareForMain extends Component {
             </Text>
             {this.props.analysises.analyComment2}{' '}
             <Text style={{ fontWeight: '600' }}>
-              '{this.props.analysises.userGoalTxt}'
+              {this.props.analysises.userGoalTxt}
             </Text>
             {this.props.analysises.analyComment3}{' '}
             <Text style={{ fontWeight: '600',color:'#E91E63' }}>

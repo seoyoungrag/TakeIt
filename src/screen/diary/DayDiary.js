@@ -71,11 +71,11 @@ class DayDiary extends Component {
           inqueryDate: this.props.navigation.getParam('inqueryDate', {}),
           DayDiaryVisible: false,
           analysises:{
-            userEatKcal:0,
+            userEatKcal:"",
             userGoalTxt:"",
-            recommendKcal:0,
-            percent:0,
-            goalKcal:0,
+            recommendKcal:"",
+            percent:"",
+            goalKcal:"",
             userComment:"",
             analyComment1:"",
             analyComment2:"",
@@ -275,7 +275,7 @@ class DayDiary extends Component {
               </Text>
               {this.state.analysises.analyComment2}{' '}
               <Text style={{ fontWeight: '600' }}>
-                '{this.state.analysises.userGoalTxt}'
+                {this.state.analysises.userGoalTxt}
               </Text>
               {this.state.analysises.analyComment3}{' '}
               <Text style={{ fontWeight: '600',color:'#E91E63' }}>
