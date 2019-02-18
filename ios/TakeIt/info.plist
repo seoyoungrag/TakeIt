@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
+	<string>ko</string>
 	<key>CFBundleDisplayName</key>
-	<string>TakeIt</string>
+	<string>찍먹 - 다이어트 사진 필수앱</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -25,7 +25,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb523327751495799</string>
+				<string>fb291680264851892</string>
 			</array>
 		</dict>
 		<dict>
@@ -33,22 +33,24 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.1054963004334-a7sfner0270qeavmam0osvinse94brck</string>
+				<string>com.googleusercontent.apps.850330784808-g7uj8bd7l5g6gbq9kvsltgpq55th39le</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>FacebookAppID</key>
-	<string>523327751495799</string>
+	<string>291680264851892</string>
 	<key>FacebookDisplayName</key>
-	<string>TakeIt</string>
+	<string>찍먹 - 다이어트 사진 필수앱</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
 		<string>fb-messenger-api</string>
 		<string>fbauth2</string>
 		<string>fbshareextension</string>
+		<string>whatsapp</string>
+		<string>mailto</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
@@ -66,9 +68,13 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>카메라 사용이 필요합니다.</string>
+	<string>카메라 사용을 위해서 권한을 허가해주세요.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>음식 사진의 위치 제공이 필요합니다.</string>
+	<string>음식 사진의 위치 제공을 위해서 권한을 허가해 주세요.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>앨범에 사진을 저장할 수 있도록 권한을 허가해 주세요.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>앨범에서 사진을 업로드할 수 있도록 권한을 허가해 주세요.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -87,6 +93,12 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 		<string>NotoSans-Regular.ttf</string>
+		<string>Lato.ttf</string>
+		<string>Lato-Regular.ttf</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
