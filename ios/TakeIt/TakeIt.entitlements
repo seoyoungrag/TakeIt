@@ -7,6 +7,8 @@
 	<key>keychain-access-groups</key>
 	<array>
 		<string>$(AppIdentifierPrefix)(null)</string>
+		<string>$(AppIdentifierPrefix)kr.co.dwebss.takeat.ios2</string>
+		<string>$(AppIdentifierPrefix)org.reactjs.native.fcm</string>
 	</array>
 </dict>
 </plist>
