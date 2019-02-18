@@ -132,7 +132,7 @@ export default class ShareForMain extends Component {
           {' '}에서 공유한 사진입니다.
           </Text>
         </View>
-          <Text
+        {this.props.analysises.userGoalTxt!=null?<Text
             style={{
               fontFamily: 'NotoSans-Regular',
               fontSize: 12,
@@ -160,7 +160,15 @@ export default class ShareForMain extends Component {
               <Text style={{ fontWeight: '800' }}>
             {this.props.analysises.userComment}
               </Text>
-        </Text>
+        </Text>:
+          <Text
+          style={{
+            fontFamily: 'NotoSans-Regular',
+            fontSize: 12,
+            color: 'black',
+          }}>
+          {this.props.analysises.analyComment1}
+          </Text>}
       </View>
       )
 
