@@ -855,7 +855,7 @@ class Main extends Component {
                       color={COLOR.pink500}
                       size={FONT_BACK_LABEL*0.9}/>
                       &nbsp;
-                      광고보고 충전하기
+                      티켓 충전
                   </Text>
                   </TouchableOpacity>
 
