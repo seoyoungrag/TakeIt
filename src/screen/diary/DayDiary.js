@@ -263,7 +263,7 @@ class DayDiary extends Component {
             {' '}에서 공유한 사진입니다.
             </Text>
           </View>
-            {this.state.analysises.userGoalTxt!='' ?<Text
+            {this.state.analysises.userGoalTxt!=null?<Text
               style={{
                 fontFamily: 'NotoSans-Regular',
                 fontSize: 12,
@@ -291,7 +291,16 @@ class DayDiary extends Component {
                 <Text style={{ fontWeight: '800' }}>
               {this.state.analysises.userComment}
                 </Text>
-          </Text>: null}
+          </Text>:
+          <Text
+          style={{
+            fontFamily: 'NotoSans-Regular',
+            fontSize: 12,
+            color: 'black',
+          }}>
+          {this.state.analysises.analyComment1}
+          </Text>
+        }
         </View>
         )
         const headerView = (
