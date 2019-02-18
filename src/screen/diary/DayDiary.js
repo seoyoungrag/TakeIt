@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import {ScrollView, Dimensions, StyleSheet, Text, View, PixelRatio, TouchableOpacity} from 'react-native';
+import {ScrollView, Dimensions, StyleSheet, Text, View, PixelRatio, TouchableOpacity, Platform} from 'react-native';
 import { connect } from "react-redux";
 import ActionCreator from "@redux-yrseo/actions";
 import Container from '@container/Container';
@@ -482,15 +482,16 @@ const styles = StyleSheet.create({
       color: '#fff',
     },
     sectionHeader: {
-      flex: 1,
+      flex: Platform.OS === 'ios' ? 0.5 : 1,
       textAlignVertical:"bottom",
-      fontSize: FONT_BACK_LABEL,
+      fontSize: FONT_BACK_LABEL * (Platform.OS === 'ios' ? 1.2:1),
       fontWeight: '600',
       alignItems: 'center',
-      justifyContent:'flex-end',
+      justifyContent:'flex-start',
       color: COLOR.grey800,
       padding: 10,
-      paddingBottom: 15
+      paddingBottom: Platform.OS === 'ios' ? 0 : 15,
+      marginBottom: Platform.OS === 'ios' ? -20 : 0
     }
   });
 

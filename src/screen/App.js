@@ -94,24 +94,9 @@ class App extends React.Component {
   }
   componentDidMount = async() => {
     //BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-    firebase.messaging().hasPermission()
-    .then(enabled => {
-      if (enabled) {
-        console.log('User enabled authorised firebase.messaging');
-      } else {
-        firebase.messaging().requestPermission()
-        .then(() => {
-          console.log('User has authorised firebase.messaging');
-        })
-        .catch(error => {
-          console.log('User has rejected permissions firebase.messaging');
-          console.log(error);
-        });
-      }
-    });
     const notificationOpen: NotificationOpen = await firebase.notifications().getInitialNotification();
     if (notificationOpen) {
-      //console.warn(notificationOpen);
+      console.warn(notificationOpen);
         const action = notificationOpen.action;
         const notification: Notification = notificationOpen.notification;
         var seen = [];
@@ -157,7 +142,7 @@ class App extends React.Component {
         
     });
     this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen: NotificationOpen) => {
-      //console.warn(notificationOpen);
+      console.warn(notificationOpen);
         // Get the action triggered by the notification being opened
         const action = notificationOpen.action;
         // Get information about the notification that was opened

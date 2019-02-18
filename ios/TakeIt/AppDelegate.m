@@ -11,6 +11,7 @@
 #import <React/RCTRootView.h>
 #import <Firebase.h>
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <RNFirebaseNotifications.h>
 
 
 @implementation AppDelegate
@@ -22,8 +23,16 @@
                            didFinishLaunchingWithOptions:launchOptions];
   // Add any custom logic here.
   [FIRApp configure];
+  [RNFirebaseNotifications configure];
   NSURL *jsCodeLocation;
-
+  for (NSString* family in [UIFont familyNames])
+  {
+    NSLog(@"%@", family);
+    for (NSString* name in [UIFont fontNamesForFamilyName: family])
+    {
+      NSLog(@" %@", name);
+    }
+  }
   #ifdef DEBUG
     jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
   #else
@@ -31,7 +40,7 @@
   #endif
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
-                                                      moduleName:@"TakeIt"
+                                                      moduleName:@"Takeat"
                                                initialProperties:nil
                                                    launchOptions:launchOptions];
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
@@ -43,7 +52,9 @@
   [self.window makeKeyAndVisible];
   return YES;
 }
-
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+  [[RNFirebaseNotifications instance] didReceiveLocalNotification:notification];
+}
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {

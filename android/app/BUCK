@@ -45,12 +45,12 @@ android_library(
 
 android_build_config(
     name = "build_config",
-    package = "com.takeit",
+    package = "kr.co.dwebss.takeat.android",
 )
 
 android_resource(
     name = "res",
-    package = "com.takeit",
+    package = "kr.co.dwebss.takeat.android",
     res = "src/main/res",
 )
 
