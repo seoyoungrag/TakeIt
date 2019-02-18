@@ -55,12 +55,12 @@
 		549778D622193B26009B7D15 /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 549778D522193B0A009B7D15 /* libRNFetchBlob.a */; };
 		549778D922193F7C009B7D15 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 549778D822193F76009B7D15 /* Lato-Regular.ttf */; };
 		549778E0221942E2009B7D15 /* libRNViewShot.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 549778DF2219429D009B7D15 /* libRNViewShot.a */; };
-		549778E622194B2A009B7D15 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 549778E522194B2A009B7D15 /* GoogleService-Info.plist */; };
 		549778ED221950D0009B7D15 /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 549778EC221950BA009B7D15 /* libRNImagePicker.a */; };
-		5497793E2219622D009B7D15 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 549778E522194B2A009B7D15 /* GoogleService-Info.plist */; };
 		54AB9E1822021B4700CB2E39 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54AB9E1422021B4700CB2E39 /* FBSDKCoreKit.framework */; };
 		54AB9E1922021B4700CB2E39 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54AB9E1522021B4700CB2E39 /* FBSDKLoginKit.framework */; };
 		54AB9E1A22021B4700CB2E39 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54AB9E1622021B4700CB2E39 /* FBSDKShareKit.framework */; };
+		54C052B4221A471B00C161A1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 54C052B3221A471B00C161A1 /* GoogleService-Info.plist */; };
+		54C052B5221A471B00C161A1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 54C052B3221A471B00C161A1 /* GoogleService-Info.plist */; };
 		68A01597740E4E489057EA55 /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB89B13E37694BBEBCD5A8BD /* libRNFirebase.a */; };
 		6B578F96693B40CE923AC10C /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C09A9284EC4144479367A04F /* SimpleLineIcons.ttf */; };
 		72819A09522249F9A85AB434 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 29E9AD5872D44DB6A5B4198E /* MaterialCommunityIcons.ttf */; };
@@ -522,7 +522,6 @@
 		549778D022193B0A009B7D15 /* RNFetchBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNFetchBlob.xcodeproj; path = "../node_modules/rn-fetch-blob/ios/RNFetchBlob.xcodeproj"; sourceTree = "<group>"; };
 		549778D822193F76009B7D15 /* Lato-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Regular.ttf"; sourceTree = "<group>"; };
 		549778DA2219429C009B7D15 /* RNViewShot.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNViewShot.xcodeproj; path = "../node_modules/react-native-view-shot/ios/RNViewShot.xcodeproj"; sourceTree = "<group>"; };
-		549778E522194B2A009B7D15 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		549778E7221950B9009B7D15 /* RNImagePicker.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNImagePicker.xcodeproj; path = "../node_modules/react-native-image-picker/ios/RNImagePicker.xcodeproj"; sourceTree = "<group>"; };
 		54AB9E102202187300CB2E39 /* TakeIt.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = TakeIt.entitlements; path = TakeIt/TakeIt.entitlements; sourceTree = "<group>"; };
 		54AB9E1122021B0B00CB2E39 /* Documents */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Documents; path = ../../Documents; sourceTree = "<group>"; };
@@ -530,6 +529,7 @@
 		54AB9E1422021B4700CB2E39 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = ../../Documents/FacebookSDK/FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		54AB9E1522021B4700CB2E39 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = ../../Documents/FacebookSDK/FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		54AB9E1622021B4700CB2E39 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = ../../Documents/FacebookSDK/FBSDKShareKit.framework; sourceTree = "<group>"; };
+		54C052B3221A471B00C161A1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		5EF77D3E15B14BA8B4F217F5 /* libimageCropPicker.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libimageCropPicker.a; sourceTree = "<group>"; };
 		5FFE501705BE4512AE22EF75 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
@@ -727,9 +727,9 @@
 		13B07FAE1A68108700A75B9A /* TakeIt */ = {
 			isa = PBXGroup;
 			children = (
+				54C052B3221A471B00C161A1 /* GoogleService-Info.plist */,
 				54AB9E102202187300CB2E39 /* TakeIt.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
-				549778E522194B2A009B7D15 /* GoogleService-Info.plist */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -1151,7 +1151,7 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
-						DevelopmentTeam = 7XTU7SSW84;
+						DevelopmentTeam = GM77LFP558;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
@@ -1162,6 +1162,9 @@
 								enabled = 1;
 							};
 							com.apple.Keychain = {
+								enabled = 1;
+							};
+							com.apple.Push = {
 								enabled = 1;
 							};
 						};
@@ -1683,7 +1686,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5497793E2219622D009B7D15 /* GoogleService-Info.plist in Resources */,
+				54C052B5221A471B00C161A1 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1700,8 +1703,8 @@
 				E9CE12F3FA0F433EB44032CF /* FontAwesome.ttf in Resources */,
 				549778D922193F7C009B7D15 /* Lato-Regular.ttf in Resources */,
 				2BBCF705341A4195B395D24D /* FontAwesome5_Brands.ttf in Resources */,
-				549778E622194B2A009B7D15 /* GoogleService-Info.plist in Resources */,
 				D47555A04CDA4A099C03DD79 /* FontAwesome5_Regular.ttf in Resources */,
+				54C052B4221A471B00C161A1 /* GoogleService-Info.plist in Resources */,
 				3BA21EC0556540BBB68F34EA /* FontAwesome5_Solid.ttf in Resources */,
 				536BE955DFDF4DD8A5B7499D /* Foundation.ttf in Resources */,
 				A542F861419742E3963E00E5 /* Ionicons.ttf in Resources */,
@@ -1940,7 +1943,7 @@
 			baseConfigurationReference = 4D220AB081FC405F5459FFCE /* Pods-TakeItTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = 7XTU7SSW84;
+				DEVELOPMENT_TEAM = GM77LFP558;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1979,7 +1982,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = 7XTU7SSW84;
+				DEVELOPMENT_TEAM = GM77LFP558;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
@@ -2114,6 +2117,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = (
@@ -2137,7 +2141,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.TakeIt-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "kr.co.dwebss.takeat.ios2-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -2157,6 +2161,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
 				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2179,7 +2184,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.TakeIt-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "kr.co.dwebss.takeat.ios2-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
