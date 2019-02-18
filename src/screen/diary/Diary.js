@@ -46,11 +46,9 @@ async function requestStoragePermission(){
   var isGranted = false;
   try {
     if(Platform.OS === 'ios' ){
+      /*
       const check = await Permissions.check('Storage')
-      //console.log("check is one of: 'authorized', 'denied', 'restricted', or 'undetermined'");
-      //console.log(check);
       if(check!='authorized'){
-        //console.log('request permission');
         const GRANTED = await Permissions.request('Storage');
         console.log('GRANTED');
         console.log(GRANTED);
@@ -61,7 +59,8 @@ async function requestStoragePermission(){
         }
       }else{
         isGranted = true;
-      }
+      }*/
+      isGranted = true;
     }else{
       const check = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
       if(!check){
@@ -630,6 +629,10 @@ const styles = StyleSheet.create({
     //  flexDirection: 'row',
     //섀도우 android
     elevation: 2,
+    shadowColor:COLOR.grey900,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2
   },
   calandar: {
     width: '100%',

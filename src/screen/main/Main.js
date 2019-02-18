@@ -61,9 +61,8 @@ async function requestStoragePermission(){
   var isGranted = false;
   try {
     if(Platform.OS === 'ios' ){
+      /*
       const check = await Permissions.check('Storage')
-      //console.log("check is one of: 'authorized', 'denied', 'restricted', or 'undetermined'");
-      //console.log(check);
       if(check!='authorized'){
         //console.log('request permission');
         const GRANTED = await Permissions.request('Storage');
@@ -76,7 +75,8 @@ async function requestStoragePermission(){
         }
       }else{
         isGranted = true;
-      }
+      }*/
+      isGranted = true;
     }else{
       const check = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
       if(!check){
@@ -177,6 +177,21 @@ class Main extends Component {
     componentDidMount = async() => {
       //RatingTracker.showRatingDialog();
 
+      await firebase.messaging().hasPermission()
+      .then(async(enabled) => {
+        if (enabled) {
+          console.log('User enabled authorised firebase.messaging');
+        } else {
+          await firebase.messaging().requestPermission()
+          .then(() => {
+            console.log('User has authorised firebase.messaging');
+          })
+          .catch(error => {
+            console.log('User has rejected permissions firebase.messaging');
+            console.log(error);
+          });
+        }
+      });
       AdMobRewarded.loadAd(request.build());
       AdMobRewarded.on('onAdLoaded',
         () => console.log('AdMobRewarded => adLoaded')

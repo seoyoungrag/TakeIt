@@ -58,13 +58,21 @@
             {
               "client_id": "850330784808-63uerqkqf44m25c84ard50adamjsmqu4.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "850330784808-g7uj8bd7l5g6gbq9kvsltgpq55th39le.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "kr.co.dwebss.takeat.ios"
+              }
             }
           ]
         },
         "ads_service": {
           "status": 2
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-3705279151918090~6277284886"
     }
   ],
   "configuration_version": "1"
