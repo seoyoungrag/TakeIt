@@ -670,7 +670,13 @@ class Main extends Component {
                                       if(!cnt){
                                         cnt=0;
                                       }
-                                      if(cnt>=macCnt){
+                                      const viewAdStorKey = "@"+Moment(new Date()).format('YYMMDD')+"viewAD";
+                                      var viewAdCnt = await AsyncStorage.getItem(viewAdStorKey);
+                                      viewAdCnt = Number(viewAdCnt);
+                                      if(!viewAdCnt){
+                                        viewAdCnt=0;
+                                      }
+                                      if(cnt>=macCnt+viewAdCnt){
                                         Alert.alert(
                                           '티켓을 충전해주세요.',
                                           '일일 저장 횟수가 '+macCnt+'를 초과했어요. 상단의 광고를 보시고 티켓을 충전해주세요.'

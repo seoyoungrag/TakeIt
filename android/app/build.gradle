@@ -104,8 +104,8 @@ android {
         applicationId "kr.co.dwebss.takeat.android"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 7
-        versionName "1.0.4"
+        versionCode 8
+        versionName "1.0.5"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -161,6 +161,9 @@ android {
 }
 
 dependencies {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.5@aar') {
+        transitive = true
+    }
     compile project(':rn-fetch-blob')
     compile project(':react-native-share')
     //cause react native snapshot
@@ -221,3 +224,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
 
 // firbase add by yrseo
 apply plugin: 'com.google.gms.google-services'
+apply plugin: "com.android.application"
+apply plugin: "io.fabric"

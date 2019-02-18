@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { NativeModules, BackHandler} from 'react-native';
+import { NativeModules, BackHandler, Platform} from 'react-native';
 
 import { COLOR, ThemeContext, getTheme } from 'react-native-material-ui';
 import Container from '@container/Container';
@@ -130,15 +130,12 @@ class App extends React.Component {
       this.navigator._navigation.navigate("Main", { notificationId: notification._notificationId});
       //MainTabNavigator.navigation.navigate("Main")
       // Process your notification as required
-      /*
-      notification
-        .android.setChannelId('test-channel')
-        .android.setSmallIcon('ic_launcher')
-        .android.setPriority(firebase.notifications.Android.Priority.Max)
-        .setSound('default')
-      firebase.notifications()
-        .displayNotification(notification)
-        */
+      if(Platform.OS === 'ios' ){
+          notification.setSound('default');
+          notification.ios.setBadge(2);
+        firebase.notifications().displayNotification(notification);
+      }
+        
         
     });
     this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen: NotificationOpen) => {

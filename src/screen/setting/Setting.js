@@ -31,6 +31,9 @@ function mapDispatchToProps(dispatch) {
     },
     forceRefreshMain: isForce => {
       dispatch(ActionCreator.forceRefreshMain(isForce));
+    },
+    setCode: data => {
+      dispatch(ActionCreator.setCode(data));
     }
   };
 }
@@ -45,15 +48,14 @@ if (PixelRatio.get() <= 2) {
 class Setting extends Component {
     constructor(props){
       super(props)
-      this.dietGoal = 
-        this.props.CODE.list.filter(
-          function(item){
-            if(Number(item.codeCategory)==90000){
-              return true;
-            }
-          }).map(function(v){
-              return ({key: v.code, value:v.codeValue});
-            });
+      this.dietGoal = this.props.CODE.list.filter(
+        function(item){
+          if(Number(item.codeCategory)==90000){
+            return true;
+          }
+        }).map(function(v){
+            return ({key: v.code, value:v.codeValue});
+        });
       this.state ={
         personHeight:
         this.props.USER_INFO.inbodyInfo.height != undefined
@@ -66,13 +68,13 @@ class Setting extends Component {
         personFat:
         this.props.USER_INFO.inbodyInfo.fat != undefined
           ? String(this.props.USER_INFO.inbodyInfo.fat)
-          : "",
+          : "0",
         personMuscle:
         this.props.USER_INFO.inbodyInfo.muscle != undefined
           ? String(this.props.USER_INFO.inbodyInfo.muscle)
-          : "",
-        personDietGoal: this.props.USER_INFO.dietGoal != undefined
-            ? this.dietGoal[this.dietGoal.findIndex(x => {return x.key == this.props.USER_INFO.dietGoal})].value: "현재 체중 유지하기"
+          : "0",
+        dietGoal: this.dietGoal,
+        personDietGoal: this.dietGoal&&this.dietGoal.length>0? this.dietGoal[this.dietGoal.findIndex(x => {return x.key == this.props.USER_INFO.dietGoal})].value : "현재 체중 유지하기"
       }
       this.handleBackButton = this.handleBackButton.bind(this);
       this.onFocus = this.onFocus.bind(this);
@@ -117,6 +119,66 @@ class Setting extends Component {
       */
     }
 
+    componentWillMount = async() => {
+      var list =this.props.CODE.list.filter(
+        function(item){
+          if(Number(item.codeCategory)==90000){
+            return true;
+          }
+        }).map(function(v){
+            return ({key: v.code, value:v.codeValue});
+        });
+      if(list && list.length>0){
+        /*
+        this.setState({
+          dietGoal:list,
+          personDietGoal: list[list.findIndex(x => {return x.key == this.props.USER_INFO.dietGoal})].value
+        });
+        */
+      }else{
+        var code;
+        await cFetch(
+          APIS.GET_CODE, [], {},
+          {
+            responseProc: async (res) => {
+              code = res;
+            }
+          }
+        );
+        const CODE = await AsyncStorage.getItem("@CODE");
+        if(CODE){
+          await AsyncStorage.removeItem("@CODE");
+        }
+        this.props.setCode(code);
+        const strCode = JSON.stringify(code);
+        await AsyncStorage.setItem('@CODE', strCode )
+        .then( ()=>{
+          console.log('Settings.js code refresh')
+        } )
+        .catch( ()=>{
+          console.log('settings.js error')
+          console.warn(e);
+        } )
+        var tmplist = []
+        if(code && code.list && code.list.length >0){
+          tmplist = code.list.filter(
+          function(item){
+            if(Number(item.codeCategory)==90000){
+              return true;
+            }
+          }).map(function(v){
+              return ({key: v.code, value:v.codeValue});
+          });
+          this.setState({
+            dietGoal:tmplist,
+            personDietGoal: tmplist[tmplist.findIndex(x => {return x.key == this.props.USER_INFO.dietGoal})].value
+          }); 
+          //console.warn(tmplist);
+          //console.warn(tmplist[tmplist.findIndex(x => {return x.key == this.props.USER_INFO.dietGoal})].value)
+        }
+
+      }
+    }
     handleBackButton() {
       return true;
     }
@@ -141,11 +203,13 @@ class Setting extends Component {
     onFocus() {
       let { errors = {} } = this.state;
       let ref = null;
-      for (let name in errors) {
-          ref = this[name];
-      }
-      if (ref && ref.isFocused()) {
-        delete errors[name];
+      if(errors && errors.length >0){
+        for (let name in errors) {
+            ref = this[name];
+        }
+        if (ref && ref.isFocused()) {
+          delete errors[name];
+        }
       }
 
       this.setState({ errors });
@@ -211,15 +275,15 @@ class Setting extends Component {
         data.inbodyInfo.weight = this.state.personWeight;
         data.inbodyInfo.fat = this.state.personFat;
         data.inbodyInfo.muscle = this.state.personMuscle;
-        let foundIndex = this.dietGoal.findIndex(
+        let foundIndex = this.state.dietGoal.findIndex(
           x => {
             //console.warn (x.value + ','+this.state.personDietGoal);
             return x.value == this.state.personDietGoal;
           }
         );
-        console.log(this.dietGoal);
-        console.log(this.dietGoal[foundIndex]);
-        data.dietGoal = this.dietGoal[foundIndex].key;
+        console.log(this.state.dietGoal);
+        console.log(this.state.dietGoal[foundIndex]);
+        data.dietGoal = this.state.dietGoal[foundIndex].key;
         console.log("Setting: after post Data in Setting.js start--");
         console.log(data);
         console.log("Setting: after post Data in Setting.js end --");
@@ -400,7 +464,7 @@ class Setting extends Component {
                       labelHeight={styles.textFieldLabelHeight}
                       ref={this.personDietGoalRef}
                       value={data.personDietGoal}
-                      data={this.dietGoal}
+                      data={this.state.dietGoal}
                       autoCorrect={false}
                       enablesReturnKeyAutomatically={true}
                       onFocus={this.onFocus}

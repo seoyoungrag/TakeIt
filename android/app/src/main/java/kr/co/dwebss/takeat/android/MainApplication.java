@@ -23,6 +23,8 @@ import io.invertase.firebase.admob.RNFirebaseAdMobPackage; // <-- admob 제거�
 //import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;  // <--- react native noti 추가
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage; // <-- firebase notification 관련 추가
 import cl.json.ShareApplication;
+import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage; // <-- crashlytics
+
 
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -83,6 +85,7 @@ public class MainApplication extends Application implements ShareApplication, Re
             new RNFirebaseAuthPackage(),
             new RNFirebaseMessagingPackage(), // <-- firebase message 관련 추가
             new RNFirebaseStoragePackage(), // <-- firebase storage 관련 추가
+            new RNFirebaseCrashlyticsPackage(), // <-- firebase carshlystic
             new FBSDKPackage(mCallbackManager)
       );
     }
