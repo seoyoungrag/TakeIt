@@ -7,9 +7,9 @@
 	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
 	<string>ca-app-pub-3940256099942544/4411468910</string>
 	<key>CLIENT_ID</key>
-	<string>850330784808-g7uj8bd7l5g6gbq9kvsltgpq55th39le.apps.googleusercontent.com</string>
+	<string>850330784808-2l3id975vpqf2nia6q6hiv1chkodr077.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.850330784808-g7uj8bd7l5g6gbq9kvsltgpq55th39le</string>
+	<string>com.googleusercontent.apps.850330784808-2l3id975vpqf2nia6q6hiv1chkodr077</string>
 	<key>API_KEY</key>
 	<string>AIzaSyBhvN0Dyip6f9FkzcitYpKqY_4AJRnoeds</string>
 	<key>GCM_SENDER_ID</key>
@@ -17,23 +17,23 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>kr.co.dwebss.takeat.ios</string>
+	<string>kr.co.dwebss.takeat.ios2</string>
 	<key>PROJECT_ID</key>
 	<string>takeat-47e95</string>
 	<key>STORAGE_BUCKET</key>
 	<string>takeat-47e95.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false/>
+	<false></false>
 	<key>IS_APPINVITE_ENABLED</key>
-	<false/>
+	<false></false>
 	<key>IS_GCM_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:850330784808:ios:df90e855d9d9a43f</string>
+	<string>1:850330784808:ios:a523172eb82e717e</string>
 	<key>DATABASE_URL</key>
 	<string>https://takeat-47e95.firebaseio.com</string>
 </dict>
