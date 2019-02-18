@@ -7,21 +7,21 @@
 	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
 	<string>ca-app-pub-3940256099942544/4411468910</string>
 	<key>CLIENT_ID</key>
-	<string>1054963004334-a7sfner0270qeavmam0osvinse94brck.apps.googleusercontent.com</string>
+	<string>850330784808-g7uj8bd7l5g6gbq9kvsltgpq55th39le.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1054963004334-a7sfner0270qeavmam0osvinse94brck</string>
+	<string>com.googleusercontent.apps.850330784808-g7uj8bd7l5g6gbq9kvsltgpq55th39le</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDy1g8tixHMj5Ur03Foiq6JjT4dM2BRUhI</string>
+	<string>AIzaSyBhvN0Dyip6f9FkzcitYpKqY_4AJRnoeds</string>
 	<key>GCM_SENDER_ID</key>
-	<string>1054963004334</string>
+	<string>850330784808</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>kr.co.dwebss.takeit.ios</string>
+	<string>kr.co.dwebss.takeat.ios</string>
 	<key>PROJECT_ID</key>
-	<string>takeit-db2de</string>
+	<string>takeat-47e95</string>
 	<key>STORAGE_BUCKET</key>
-	<string>takeit-db2de.appspot.com</string>
+	<string>takeat-47e95.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<true></true>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -33,8 +33,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1054963004334:ios:c9e05de8aa51d31b</string>
+	<string>1:850330784808:ios:df90e855d9d9a43f</string>
 	<key>DATABASE_URL</key>
-	<string>https://takeit-db2de.firebaseio.com</string>
+	<string>https://takeat-47e95.firebaseio.com</string>
 </dict>
 </plist>
