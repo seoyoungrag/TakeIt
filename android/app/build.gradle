@@ -161,7 +161,6 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-image-resizer')
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.5@aar') {
         transitive = true
     }
