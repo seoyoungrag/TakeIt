@@ -159,11 +159,13 @@ class UserRegist extends Component {
   onFocus() {
     let { errors = {} } = this.state;
     let ref = null;
-    for (let name in errors) {
-        ref = this[name];
-    }
-    if (ref && ref.isFocused()) {
-      delete errors[name];
+    if(errors && errors.length >0){
+      for (let name in errors) {
+          ref = this[name];
+      }
+      if (ref && ref.isFocused()) {
+        delete errors[name];
+      }
     }
 
     this.setState({ errors });

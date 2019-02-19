@@ -13,7 +13,8 @@ import Container from '@container/Container';
 import cFetch from "@common/network/CustomFetch";
 import APIS from "@common/network/APIS";
 
-import { RNCamera } from 'react-native-camera';
+import Camera from 'react-native-camera';
+
 import Spinner from 'react-native-loading-spinner-overlay';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
@@ -24,6 +25,8 @@ import { COLOR } from 'react-native-material-ui';
 
 import { FlatGrid } from 'react-native-super-grid';
 import FastImage from 'react-native-fast-image'
+import ImageResizer from 'react-native-image-resizer';
+
 
 const {width, height} = Dimensions.get("window");
 
@@ -189,14 +192,20 @@ class TakeFoodPic extends Component {
           <View style={styles.container}>
           {this.state.image ? this.renderAsset(this.state.image) : this.renderEmpty()}
           {shouldRenderCamera ? (
-            <RNCamera
+            <Camera
+              ref={(ref) => {
+                this.camera = ref;
+              }}
               style={styles.preview}
-              type={RNCamera.Constants.Type.back}
-              flashMode={RNCamera.Constants.FlashMode.off}
+              captureTarget={Camera.constants.CaptureTarget.memory}
+              captureQuality={Camera.constants.CaptureQuality.high}
+              playSoundOnCapture={false}
+              //type={RNCamera.Constants.Type.back}
+              //flashMode={RNCamera.Constants.FlashMode.off}
               captureAudio={false}
-              autoFocus={true}
-              permissionDialogTitle={'카메라 사용권한이 필요합니다.'}
-              permissionDialogMessage={'음식 사진을 찍기 위해 카메라 사용 권한을 허가해 주세요.'}
+              //autoFocus={true}
+              //permissionDialogTitle={'카메라 사용권한이 필요합니다.'}
+              //permissionDialogMessage={'음식 사진을 찍기 위해 카메라 사용 권한을 허가해 주세요.'}
             >
               {({ camera, status, recordAudioPermissionStatus }) => {
                 if (status !== 'READY') return  <PendingView/>
@@ -208,7 +217,12 @@ class TakeFoodPic extends Component {
                   </View>
                 );
               }}
-            </RNCamera>
+              <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
+                    <TouchableOpacity onPress={() => this.takePicture()} style={styles.capture}>
+                      <Text style={{ fontSize: FONT_BACK_LABEL,color:COLOR.pink500 }}> 찍고! </Text>
+                    </TouchableOpacity>
+                  </View>
+            </Camera>
           ):null}
           </View>
           {this.state.image ? (
@@ -371,7 +385,8 @@ class TakeFoodPic extends Component {
       this.uploadPictrue();
     }
   }
-  takePicture = async function(camera) {
+  //takePicture = async function(camera) {
+  takePicture = async function() {
     //console.warn("TakeFoodPic.js: takePicture");
     this.watchId = await navigator.geolocation.watchPosition(
       (position) => {
@@ -390,20 +405,40 @@ class TakeFoodPic extends Component {
     console.log("TakeFoodPic.js: this.state-"+JSON.stringify(this.state));
     console.log("TakeFoodPic.js: watchId-"+this.watchId);
     this.setState({spinnerVisible:true});
-    const options = { quality: 0.9, width:1280,height:1280, exif: true, base64: false, fixOrientation: true,
+    //const options = { quality: 1, width:1280/2,height:720/2, exif: true, base64: false, fixOrientation: true,
+    const options = { 
+      //width:1280/2,height:720/2, 
+      metadata: true, audio: false
       //아래 둘다 false해야 프리뷰 나옴.
       //skipProcessing: true, 
       //doNotSave:true 
     };
     console.log('takepicture start');
-    const image = await camera.takePictureAsync(options);
+    var image = null;
+    if(this.camera){
+      //image = await this.camera.takePictureAsync(options);
+
+      let newWidth = 1280*3/4;
+      let newHeight = 720*3/4;
+      image = await this.camera.capture(options);
+      //console.warn(image);
+      image = await ImageResizer.createResizedImage('data:image/png;base64,'+image.data, newWidth, newWidth, "PNG", 90, 90);
+      //console.warn(image);
+      this.setState(prevState => ({
+        image: { uri: image.uri, width: image.width, height: image.height },
+        images: [...prevState.images, image],
+        spinnerVisible: false
+        })
+      );
+    }else{
+      this.setState(prevState => ({
+        spinnerVisible: false
+        })
+      );
+    }
     console.log('takepicture end');
-    this.setState(prevState => ({
-      image: { uri: image.uri, width: image.width, height: image.height },
-      images: [...prevState.images, image],
-      spinnerVisible: false
-      })
-    );
+    
+    
   };
 }
 

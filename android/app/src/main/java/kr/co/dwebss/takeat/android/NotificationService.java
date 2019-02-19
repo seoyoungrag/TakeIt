@@ -74,42 +74,47 @@ public class NotificationService extends FirebaseMessagingService {
       Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
       NotificationCompat.Builder notificationBuilder;
       NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+      String tmpTitle = message.getData().get("title");
+      String tmpBody = message.getData().get("body");
+      if(tmpTitle != null && !tmpTitle.equals("") && tmpBody != null && !tmpBody.equals("")){
       wakeLock.acquire();
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        notificationBuilder = new NotificationCompat.Builder(this, message.getData().get("android_channel_id"))
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(),
-                        R.mipmap.ic_launcher))
-                .setContentTitle(message.getData().get("title"))
-                .setContentText(message.getData().get("body"))
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setContentIntent(pendingIntent)
-                .setContentText(message.getData().get("body"));
-      } else {
-        notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(),
-                        R.mipmap.ic_launcher))
-                .setContentTitle(message.getData().get("title"))
-                .setContentText(message.getData().get("body"))
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setContentIntent(pendingIntent)
-                .setContentText(message.getData().get("body"));
-      }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+          notificationBuilder = new NotificationCompat.Builder(this, message.getData().get("android_channel_id"))
+                  .setSmallIcon(R.mipmap.ic_launcher)
+                  .setLargeIcon(BitmapFactory.decodeResource(getResources(),
+                          R.mipmap.ic_launcher))
+                  .setContentTitle(message.getData().get("title"))
+                  .setContentText(message.getData().get("body"))
+                  .setAutoCancel(true)
+                  .setSound(defaultSoundUri)
+                  .setPriority(NotificationCompat.PRIORITY_MAX)
+                  .setContentIntent(pendingIntent)
+                  .setContentText(message.getData().get("body"));
+        } else {
+          notificationBuilder = new NotificationCompat.Builder(this)
+                  .setSmallIcon(R.mipmap.ic_launcher)
+                  .setLargeIcon(BitmapFactory.decodeResource(getResources(),
+                          R.mipmap.ic_launcher))
+                  .setContentTitle(message.getData().get("title"))
+                  .setContentText(message.getData().get("body"))
+                  .setAutoCancel(true)
+                  .setSound(defaultSoundUri)
+                  .setPriority(NotificationCompat.PRIORITY_MAX)
+                  .setContentIntent(pendingIntent)
+                  .setContentText(message.getData().get("body"));
+        }
 
-      Notification notification = notificationBuilder.build();
-      int smallIconId = getResources().getIdentifier("right_icon", "id", android.R.class.getPackage().getName());
-      if (smallIconId != 0) { 
-          if (notification.contentView!=null)
-              notification.contentView.setViewVisibility(smallIconId, View.INVISIBLE);
+        Notification notification = notificationBuilder.build();
+        int smallIconId = getResources().getIdentifier("right_icon", "id", android.R.class.getPackage().getName());
+        if (smallIconId != 0) { 
+            if (notification.contentView!=null)
+                notification.contentView.setViewVisibility(smallIconId, View.INVISIBLE);
+        }
+        notificationManager.notify(0, notification);
+        //getApplicationContext().startActivity(intent);
+        wakeLock.release();
+
       }
-      notificationManager.notify(0, notification);
-      //getApplicationContext().startActivity(intent);
-      wakeLock.release();
     } catch (Exception e) {
       Log.d(TAG, "Error ", e);
     }

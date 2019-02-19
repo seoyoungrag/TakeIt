@@ -417,7 +417,7 @@ class Diary extends React.Component {
                       }else{
                         const options = {
                           title: '찍먹할 사진을 선택해주세요.',
-                          maxWidth:1280/2,maxHeight:1280/2,
+                          maxWidth:1280,maxHeight:1280,
                           quality: 0.9,
                           noData: true
                         };

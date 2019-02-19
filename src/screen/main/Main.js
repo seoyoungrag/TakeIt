@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import {PermissionsAndroid, Platform, AsyncStorage, Dimensions, StyleSheet, Text, View, PixelRatio, TouchableHighlight, TouchableOpacity, Modal, ScrollView, Alert,BackHandler} from 'react-native';
+import {Linking,BackAndroid,PermissionsAndroid, Platform, AsyncStorage, Dimensions, StyleSheet, Text, View, PixelRatio, TouchableHighlight, TouchableOpacity, Modal, ScrollView, Alert,BackHandler} from 'react-native';
 import DrawerWrapped from "@drawer";
 import { connect } from "react-redux";
 import ActionCreator from "@redux-yrseo/actions";
@@ -31,6 +31,7 @@ import Permissions from 'react-native-permissions'
 import ShareForMain from './ShareForMain';
 import PopupDialog from 'react-native-popup-dialog';
 import RatingRequestor from 'react-native-rating-requestor';
+import VersionCheck from "react-native-version-check";
 
 const RatingOptions =  {
   title: "찍먹 - 다이어트 필수 사진앱",
@@ -47,7 +48,10 @@ const RatingOptions =  {
     return currentCount > 1 && (Math.log(currentCount) / Math.log(3)).toFixed(5) % 1 == 0;
   }
 }
-const RatingTracker = new RatingRequestor('kr.co.dwebss.takeat.android',RatingOptions);
+const RatingTracker = new RatingRequestor(  Platform.select({
+  ios: '1453367654',
+  android: 'kr.co.dwebss.takeat.android',
+}),RatingOptions);
 
 
 const {width, height} = Dimensions.get("window");
@@ -174,7 +178,44 @@ class Main extends Component {
         BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
       );
     }
+
+  versionCheck = async() => {
+    let url = await VersionCheck.getStoreUrl();
+    Alert.alert(
+      "업데이트가 필요합니다.",
+      "업데이트를 하지 않으면 앱을 정상적으로 이용할 수 없습니다.\n업데이트를 시작 하시겠습니까?",
+      [
+        {
+          text: "아니오",
+          onPress: () => {
+            BackAndroid.exitApp();},
+          style: "cancel"
+        },
+        {
+          text: "네",
+          onPress: () => {
+            Linking.openURL(url);
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  }
+  
+
     componentDidMount = async() => {
+      if (__DEV__) {
+      
+      }else{
+        VersionCheck.needUpdate().then(async res => {
+          if (res && res.isNeeded) {
+            this.versionCheck();
+            return;
+          } else {
+
+          }
+        });
+      }
       //RatingTracker.showRatingDialog();
 
       await firebase.messaging().hasPermission()
@@ -689,7 +730,7 @@ class Main extends Component {
                                         }else{
                                           const options = {
                                             title: '찍먹할 사진을 선택해주세요.',
-                                            maxWidth:1280/2,maxHeight:1280/2,
+                                            maxWidth:1280,maxHeight:1280,
                                             quality: 0.9,
                                             noData: true
                                           };

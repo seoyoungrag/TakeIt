@@ -301,7 +301,7 @@ class Setting extends Component {
               PROPS.forceRefreshMain(true);
               isSended = true;
               alert('저장이 완료되었습니다.');
-              //PROPS.navigation.navigate("Main");
+              PROPS.navigation.navigate("Main");
             },
             //입력된 회원정보가 없음.
             responseNotFound: function(res) {

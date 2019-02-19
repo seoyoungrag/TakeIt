@@ -6,7 +6,6 @@ import {
   StyleSheet,
   ImageBackground,
   Alert,
-  Linking,
   PixelRatio,
   Dimensions,
   BackAndroid
@@ -20,7 +19,6 @@ import ActionCreator from "@redux-yrseo/actions";
 
 import cFetch from "@common/network/CustomFetch";
 import APIS from "@common/network/APIS";
-import VersionCheck from "react-native-version-check";
 import { withNavigationFocus } from 'react-navigation';
 import {AsyncStorage} from 'react-native';
 import Moment from "moment";
@@ -68,44 +66,11 @@ class Loading extends React.Component {
     this.getCode = this.getCode.bind(this);
   }
   componentDidMount() {
-
-    if (__DEV__) {
-      this.authProc();
-    }else{
-      VersionCheck.needUpdate().then(async res => {
-        if (res && res.isNeeded) {
-          this.versionCheck();
-        } else {
-          this.authProc();
-        }
-      });
-    }
+    this.authProc();
   }
   exitApp() {
     // BackHandler.exitApp();
   }
-  versionCheck = async() => {
-    let url = await VersionCheck.getStoreUrl();
-    Alert.alert(
-      "업데이트가 필요합니다.",
-      "업데이트를 하지 않으면 앱을 정상적으로 이용할 수 없습니다.\n업데이트를 시작 하시겠습니까?",
-      [
-        {
-          text: "아니오",
-          onPress: () => this.exitApp(),
-          style: "cancel"
-        },
-        {
-          text: "네",
-          onPress: () => {
-            Linking.openURL(url);
-          }
-        }
-      ],
-      { cancelable: false }
-    );
-  }
-  
   checkPushToken = async () => {
       const enabled = await firebase.messaging().hasPermission();
         //console.log("loading.js: push perm check start");
