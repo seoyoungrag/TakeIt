@@ -60,6 +60,7 @@ const RootStack = createStackNavigator(
     Main: {
       screen: Main,
       navigationOptions: ({ navigation }) => ({
+        gesturesEnabled: false,
         header: null,
       }),
     },
