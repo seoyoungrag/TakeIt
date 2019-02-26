@@ -37,7 +37,8 @@ class Food extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      food: {}
+      food: {},
+      notificationId: ""
     }
   }
   componentWillMount(){
@@ -49,6 +50,14 @@ class Food extends Component {
   }
   componentWillUnmount() {}
 
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.navigation.state&&nextProps.navigation.state.params&&nextProps.navigation.state.params.notificationId){
+      if(this.state.notificationId!=nextProps.navigation.state.params.notificationId){
+        this.setState({notificationId:nextProps.navigation.state.params.notificationId, food: nextProps.navigation.state.params.food});
+        //this.callbackFnc();
+      }
+    }
+  }
   render() {
     const columns = [
       /*커스텀헤더 추가*/

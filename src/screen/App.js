@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { NativeModules, BackHandler, Platform} from 'react-native';
+import { NativeModules, BackHandler, Platform, AppState} from 'react-native';
 
 import { COLOR, ThemeContext, getTheme } from 'react-native-material-ui';
 import Container from '@container/Container';
@@ -16,6 +16,9 @@ import { Provider } from 'react-redux';
 import reducers from '@redux-yrseo/reducers';
 import firebase from 'react-native-firebase';
 import type { Notification, NotificationOpen } from 'react-native-firebase';
+
+import cFetch from "@common/network/CustomFetch";
+import APIS from "@common/network/APIS";
 
 const UIManager = NativeModules.UIManager;
 
@@ -93,32 +96,27 @@ class App extends React.Component {
     );
   }
   componentDidMount = async() => {
-    //BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     const notificationOpen: NotificationOpen = await firebase.notifications().getInitialNotification();
     if (notificationOpen) {
-      console.warn(notificationOpen);
-        const action = notificationOpen.action;
-        const notification: Notification = notificationOpen.notification;
-        var seen = [];
-        /*
-        alert(JSON.stringify(notification.data, function(key, val) {
-            if (val != null && typeof val == "object") {
-                if (seen.indexOf(val) >= 0) {
-                    return;
-                }
-                seen.push(val);
-            }
-            return val;
-        }));
-        */
-       //MainTabNavigator.navigation.navigate("Main")
+      const action = notificationOpen.action;
+      const notification: Notification = notificationOpen.notification;
+      var seen = [];
+      alert(JSON.stringify(notification.data, function(key, val) {
+          if (val != null && typeof val == "object") {
+              if (seen.indexOf(val) >= 0) {
+                  return;
+              }
+              seen.push(val);
+          }
+          return val;
+      }));
     } 
-    const channel = new firebase.notifications.Android.Channel('takeat-channel', 'Takeat Channel', firebase.notifications.Android.Importance.Max)
-            .setDescription('My apps test channel');
-// Create the channel
+    const channel = new firebase.notifications.Android.Channel('takeat-channel', 'Takeat Channel', firebase.notifications.Android.Importance.Max).setDescription('My apps test channel');
+    // Create the channel
     firebase.notifications().android.createChannel(channel);
     try{
       this.notificationDisplayedListener = firebase.notifications().onNotificationDisplayed((notification: Notification) => {
+        console.warn('1');
           // Process your notification as required
           // ANDROID: Remote notifications do not contain the channel ID. You will have to specify this manually if you'd like to re-display the notification.
       });
@@ -126,38 +124,139 @@ class App extends React.Component {
       console.warn(e);
     }
     this.notificationListener = firebase.notifications().onNotification((notification: Notification) => {
-      console.warn(notification._notificationId);
-      this.navigator._navigation.navigate("Main", { notificationId: notification._notificationId});
-      //MainTabNavigator.navigation.navigate("Main")
-      // Process your notification as required
+      console.warn('2');
+      console.warn(notification);
+      if(Platform.OS === 'android' ){
+
+        notification.setNotificationId(notification._notificationId);
+        notification.setTitle(notification._title);
+        notification.setBody(notification._body);
+        notification
+        .android.setChannelId('takeat-channel')
+        .android.setLargeIcon('ic_launcher')
+        .android.setSmallIcon('ic_launcher')
+        .android.setPriority(firebase.notifications.Android.Priority.Max)
+        .setSound('default');
+
+        firebase.notifications().displayNotification(notification);
+        /*
+        if(AppState.currentState=='background'||AppState.currentState=='inactive'){
+        const COM = this;
+        var pData = notification._data.data;
+        console.warn(pData);
+        if(pData){
+          pData = JSON.parse(pData);
+        }
+        console.warn(pData);
+        if(pData && pData.photoId && pData.userId){
+          return cFetch(
+            APIS.GET_PHOTO_WITH_FOOD,
+            [
+              pData.photoId,
+              "user",
+              pData.userId
+            ],
+            {},
+            {
+              responseProc: function(res) {
+                console.warn(res);
+                COM.navigator._navigation.navigate("Food", {food:res} )
+              },
+              responseNotFound: function(res) {
+                console.warn(res);
+                COM.navigator._navigation.navigate("Main", { notificationId: notification._notificationId});
+              },
+              responseError: function(e) {
+                console.warn(e);
+                COM.navigator._navigation.navigate("Main", { notificationId: notification._notificationId});
+              },
+            }
+          );
+        }
+      }else{
+        
+        console.warn('11');
+        
+        notification.setNotificationId(notification._notificationId);
+        notification.setTitle(notification._title);
+        notification.setBody(notification._body);
+        notification.android.setChannelId(notification._data.android_channel_id);
+        //notification.android.setLargeIcon({icon:"ic_launcher"});
+        //notification.android.setSmallIcon({});
+        console.warn(notification);
+        firebase.notifications().displayNotification(notification);
+        
+      }*/
+      }
       if(Platform.OS === 'ios' ){
           notification.setSound('default');
-          notification.ios.setBadge(2);
+          notification.ios.setBadge(0);
         firebase.notifications().displayNotification(notification);
       }
         
         
     });
-    this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen: NotificationOpen) => {
+    this.notificationOpenedListener = firebase.notifications().onNotificationOpened(async(notificationOpen: NotificationOpen) => {
+      console.warn('3');
       console.warn(notificationOpen);
-        // Get the action triggered by the notification being opened
-        const action = notificationOpen.action;
-        // Get information about the notification that was opened
-        const notification: Notification = notificationOpen.notification;
-        var seen = [];
-        /*
-        alert(JSON.stringify(notification.data, function(key, val) {
-            if (val != null && typeof val == "object") {
-                if (seen.indexOf(val) >= 0) {
-                    return;
-                }
-                seen.push(val);
-            }
-            return val;
-        }));
-        */
-       //MainTabNavigator.navigation.navigate("Main")
-        firebase.notifications().removeDeliveredNotification(notification.notificationId);
+      // Get the action triggered by the notification being opened
+      const action = notificationOpen.action;
+      // Get information about the notification that was opened
+      const notification: Notification = notificationOpen.notification;
+      //console.warn(notification);
+      //console.warn(notification._data);
+      const COM = this;
+      var pData = notification._data;
+      if(Platform.OS === 'android' ){
+        pData = notification._data.data;
+        if(pData){
+          pData = JSON.parse(pData);
+        }
+      }
+      console.warn(pData);
+      if(pData && pData.photoId && pData.userId){
+        return cFetch(
+          APIS.GET_PHOTO_WITH_FOOD,
+          [
+            pData.photoId,
+            "user",
+            pData.userId
+          ],
+          {},
+          {
+            responseProc: function(res) {
+              console.warn(res);
+              COM.navigator._navigation.navigate("Food", {food:res, notificationId: notification._notificationId} )
+            },
+            responseNotFound: function(res) {
+              console.warn(res);
+              COM.navigator._navigation.navigate("Main", { notificationId: notification._notificationId});
+            },
+            responseError: function(e) {
+              console.warn(e);
+              COM.navigator._navigation.navigate("Main", { notificationId: notification._notificationId});
+            },
+          }
+        );
+      }else if(pData && pData.inbodyPhotoAcrossId){
+        this.navigator._navigation.navigate("Graph");
+      }else{
+        this.navigator._navigation.navigate("Main", { notificationId: notification._notificationId});
+      }
+      var seen = [];
+      /*
+      alert(JSON.stringify(notification.data, function(key, val) {
+          if (val != null && typeof val == "object") {
+              if (seen.indexOf(val) >= 0) {
+                  return;
+              }
+              seen.push(val);
+          }
+          return val;
+      }));
+      */
+      //MainTabNavigator.navigation.navigate("Main")
+      firebase.notifications().removeDeliveredNotification(notification.notificationId);
 
     });
   }
