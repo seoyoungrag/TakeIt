@@ -56,6 +56,10 @@ const APIS = {
   GET_ANALYSIS_DIARY: {
     url: "/dayDiary/analysis",
     method: "GET"
+  },
+  GET_PHOTO_WITH_FOOD: {
+    url: "/photo",
+    method: "GET"
   }
 };
 
