@@ -59,6 +59,7 @@ class TakeFoodPic extends Component {
       pending: false,
       images: []
     };
+    this.uploadPictureInactive = false;
   }
   componentDidMount() {
   }
@@ -104,7 +105,13 @@ class TakeFoodPic extends Component {
               enableSwipeDown={true} />
               <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems:"center", position:'absolute', width:width, zIndex:10,bottom:0 }}>
                 <TouchableOpacity 
-                  onPress={() => this.savePicture()} 
+                  onPress={() => {
+                    console.log(this.uploadPictureInactive);
+                    if(!this.uploadPictureInactive) {
+                      this.uploadPictureInactive = true;
+                      this.savePicture();
+                    } 
+                  }}
                   style={[styles.analysis,
                       {elevation:5,shadowColor:COLOR.grey900,
                       shadowOffset: { width: 0, height: 0 },
@@ -194,7 +201,12 @@ class TakeFoodPic extends Component {
               type={RNCamera.Constants.Type.back}
               flashMode={RNCamera.Constants.FlashMode.off}
               captureAudio={false}
-              autoFocus={true}
+              //autoFocus={RNCamera.Constants.AutoFocus.off}
+              //focusDepth={1.0}
+              autoFocusPointOfInterest = {{
+                x: 0.5,
+                y: 0.5
+              }}
               permissionDialogTitle={'카메라 사용권한이 필요합니다.'}
               permissionDialogMessage={'음식 사진을 찍기 위해 카메라 사용 권한을 허가해 주세요.'}
             >
@@ -245,90 +257,90 @@ class TakeFoodPic extends Component {
 
     COM.setState({spinnerVisible:true});
     var dateTime = new Date();
-      let image = this.state.image;
-      //console.log("TakeInbodyPic.js: "+JSON.stringify(image));
-      firebase
-        .storage()
-        .ref("/food_diary/" + PROPS.USER_INFO.userId + "/" + Moment(dateTime).format("YYYY-MM-DD") + "/" + image.uri.substr(image.uri.lastIndexOf("/") + 1) )
-        .putFile(image.uri)
-        .then(async(uploadedFile) => {
-          console.log(uploadedFile);
-          if (uploadedFile.state == "success") {
-            var data = {};
-            data.userId = PROPS.USER_INFO.userId;
-            data.registD = Moment(dateTime).format("YYYY-MM-DD");
-            data.registTime = Moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
-            data.firebaseStoragePath = uploadedFile.ref;
-            data.firebaseDownloadUrl = uploadedFile.downloadURL;
-            data.deviceLocalFilePath = image.uri;
-            data.xCoordinate = COM.state.longitude;
-            data.yCoordinate = COM.state.latitude;
-            var body = JSON.stringify(data);
-            var isSended = false;
-            await cFetch(APIS.POST_USER_FOOD, [], body, {
-              responseProc: async(res) => {
-                isSended = true;
-                //console.log("TakeInbodyPic.js(responseProc): "+JSON.stringify(res));
-              },
-              responseNotFound: function(res) {
-                console.log("TakeInbodyPic.js(responseNotFound): "+JSON.stringify(res));
-              },
-              responseError: function(e) {
-                console.log("TakeInbodyPic.js(responseError): "+JSON.stringify(res));
-              }
-            });
-            await COM.setState({
-              image:null,
-              spinnerVisible:false,
-              modalVisible: false
-            })
-            if(isSended){
-              const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
-              var foodUpCnt = await AsyncStorage.getItem(storKey);
-              foodUpCnt = Number(foodUpCnt);
-              if(foodUpCnt){
-                await AsyncStorage.removeItem(storKey);
-              }else{
-                foodUpCnt = 0;
-              }
-              foodUpCnt += 1;
-              await AsyncStorage.setItem(storKey, foodUpCnt.toString());
-              //0. 경고창 다시보기 체크되어있는지 체크
-              const periodUploadConfirmAlertStorKey = "@UPLOADCONFIRMALERTPERIOD";
-              var UPLOADCONFIRMALERTPERIOD = await AsyncStorage.getItem(periodUploadConfirmAlertStorKey);
-              var isShowConfirmAlert = false;
-              UPLOADCONFIRMALERTPERIOD = Number(UPLOADCONFIRMALERTPERIOD);
-              //0-1. 저장된 적이 없거나, 저장되었는데 1주일이 넘었으면 flag는 true로
-              if(!UPLOADCONFIRMALERTPERIOD || Math.abs(UPLOADCONFIRMALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7)){
-              //if(!UPLOADCONFIRMALERTPERIOD || Math.abs(UPLOADCONFIRMALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60)){
-                isShowConfirmAlert = true;
-                await AsyncStorage.removeItem(periodUploadConfirmAlertStorKey);
-              }
-              if(isShowConfirmAlert){
-                Alert.alert('분석이 끝나면 알림을 보내드릴게요.','잠시 후에 확인해주세요.',
-                [
-                  {text: '일주일간 보지않기', onPress: () => 
-                    {
-                      AsyncStorage.setItem(periodUploadConfirmAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
-                    }
-                  },
-                  {
-                    text: '확인',
-                    onPress: () => console.log('Cancel Pressed')
-                  }],
-                  { cancelable: false });
-                }
-              setTimeout(function(){ 
-                PROPS.forceRefreshMain(true);
-                PROPS.navigation.navigate("Main"); 
-              }, 100);
-              
+    let image = this.state.image;
+    //console.log("TakeInbodyPic.js: "+JSON.stringify(image));
+    await firebase
+      .storage()
+      .ref("/food_diary/" + PROPS.USER_INFO.userId + "/" + Moment(dateTime).format("YYYY-MM-DD") + "/" + image.uri.substr(image.uri.lastIndexOf("/") + 1) )
+      .putFile(image.uri)
+      .then(async(uploadedFile) => {
+        console.log(uploadedFile);
+        if (uploadedFile.state == "success") {
+          var data = {};
+          data.userId = PROPS.USER_INFO.userId;
+          data.registD = Moment(dateTime).format("YYYY-MM-DD");
+          data.registTime = Moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
+          data.firebaseStoragePath = uploadedFile.ref;
+          data.firebaseDownloadUrl = uploadedFile.downloadURL;
+          data.deviceLocalFilePath = image.uri;
+          data.xCoordinate = COM.state.longitude;
+          data.yCoordinate = COM.state.latitude;
+          var body = JSON.stringify(data);
+          var isSended = false;
+          await cFetch(APIS.POST_USER_FOOD, [], body, {
+            responseProc: async(res) => {
+              isSended = true;
+              //console.log("TakeInbodyPic.js(responseProc): "+JSON.stringify(res));
+            },
+            responseNotFound: function(res) {
+              console.log("TakeInbodyPic.js(responseNotFound): "+JSON.stringify(res));
+            },
+            responseError: function(e) {
+              console.log("TakeInbodyPic.js(responseError): "+JSON.stringify(res));
             }
+          });
+          await COM.setState({
+            image:null,
+            spinnerVisible:false,
+            modalVisible: false
+          })
+          if(isSended){
+            const storKey = "@"+Moment(new Date()).format('YYMMDD')+"FOOD";
+            var foodUpCnt = await AsyncStorage.getItem(storKey);
+            foodUpCnt = Number(foodUpCnt);
+            if(foodUpCnt){
+              await AsyncStorage.removeItem(storKey);
+            }else{
+              foodUpCnt = 0;
+            }
+            foodUpCnt += 1;
+            await AsyncStorage.setItem(storKey, foodUpCnt.toString());
+            //0. 경고창 다시보기 체크되어있는지 체크
+            const periodUploadConfirmAlertStorKey = "@UPLOADCONFIRMALERTPERIOD";
+            var UPLOADCONFIRMALERTPERIOD = await AsyncStorage.getItem(periodUploadConfirmAlertStorKey);
+            var isShowConfirmAlert = false;
+            UPLOADCONFIRMALERTPERIOD = Number(UPLOADCONFIRMALERTPERIOD);
+            //0-1. 저장된 적이 없거나, 저장되었는데 1주일이 넘었으면 flag는 true로
+            if(!UPLOADCONFIRMALERTPERIOD || Math.abs(UPLOADCONFIRMALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60*60*24*7)){
+            //if(!UPLOADCONFIRMALERTPERIOD || Math.abs(UPLOADCONFIRMALERTPERIOD-Number(this.props.TIMESTAMP.timestamp))>(1000*60)){
+              isShowConfirmAlert = true;
+              await AsyncStorage.removeItem(periodUploadConfirmAlertStorKey);
+            }
+            if(isShowConfirmAlert){
+              Alert.alert('분석이 끝나면 알림을 보내드릴게요.','잠시 후에 확인해주세요.',
+              [
+                {text: '일주일간 보지않기', onPress: () => 
+                  {
+                    AsyncStorage.setItem(periodUploadConfirmAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
+                  }
+                },
+                {
+                  text: '확인',
+                  onPress: () => console.log('Cancel Pressed')
+                }],
+                { cancelable: false });
+              }
+            setTimeout(function(){ 
+              PROPS.forceRefreshMain(true);
+              PROPS.navigation.navigate("Main"); 
+            }, 100);
+            
           }
-        })
-        .catch(err => {
-          console.log(err);
-        });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   
   }
   savePicture = async() =>{
@@ -352,10 +364,10 @@ class TakeFoodPic extends Component {
         '현재 사진으로 등록하시겠어요?',
         '사진을 업로드하면 수정/삭제할 수 없습니다.\n일일 저장 횟수가 '+macCnt+'를 초과하면 찍먹티켓을 사용합니다. \n(금일: '+cnt+'회 저장)',
         [
-          {text: '일주일간 보지않기', onPress: () => 
+          {text: '일주일간 보지않기', onPress: async() => 
             {
-              AsyncStorage.setItem(periodFoodUploadAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
-              this.uploadPictrue();
+              await AsyncStorage.setItem(periodFoodUploadAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
+              await this.uploadPictrue();
             }
           },
           {
@@ -363,12 +375,12 @@ class TakeFoodPic extends Component {
             onPress: () => console.log('Cancel Pressed'),
             style: 'cancel',
           },
-          {text: '저장', onPress: async() => {this.uploadPictrue()}},
+          {text: '저장', onPress: async() => {await this.uploadPictrue()}},
         ],
         {cancelable: false},
       );
     }else{
-      this.uploadPictrue();
+      await this.uploadPictrue();
     }
   }
   takePicture = async function(camera) {

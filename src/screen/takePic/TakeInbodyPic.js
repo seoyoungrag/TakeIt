@@ -50,6 +50,7 @@ class TakeInbodyPic extends Component {
       pending: false,
       images: []
     };
+    this.uploadPictureInactive = false;
   }
   componentDidMount = async() => {
     //console.warn(this.props.AdMobRewarded);
@@ -80,7 +81,13 @@ class TakeInbodyPic extends Component {
             enableSwipeDown={true} />
             <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems:"center", position:'absolute', width:width, zIndex:10,bottom:0 }}>
               <TouchableOpacity 
-                onPress={() => this.savePicture()} 
+                onPress={() => {
+                  console.log(this.uploadPictureInactive);
+                  if(!this.uploadPictureInactive) {
+                    this.uploadPictureInactive = true;
+                    this.savePicture();
+                  } 
+                }}
                 style={[styles.analysis,
                     {elevation:5,shadowColor:COLOR.grey900,
                     shadowOffset: { width: 0, height: 0 },
@@ -147,7 +154,11 @@ class TakeInbodyPic extends Component {
               type={RNCamera.Constants.Type.back}
               flashMode={RNCamera.Constants.FlashMode.off}
               captureAudio={false}
-              autoFocus={true}
+              //autoFocus={true}
+              autoFocusPointOfInterest = {{
+                x: 0.5,
+                y: 0.5
+              }}
               permissionDialogTitle={'카메라 사용권한이 필요합니다.'}
               permissionDialogMessage={'음식 사진을 찍기 위해 카메라 사용 권한을 허가해 주세요.'}
             >
@@ -308,10 +319,10 @@ class TakeInbodyPic extends Component {
       '사진을 저장합니다.',
       '사진을 업로드하면 수정/삭제할 수 없습니다.',
       [
-        {text: '일주일간 보지않기', onPress: () => 
+        {text: '일주일간 보지않기', onPress: async() => 
           {
-            AsyncStorage.setItem(periodInbodyUploadAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
-            this.uploadPictrue();
+            await AsyncStorage.setItem(periodInbodyUploadAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
+            await this.uploadPictrue();
           }
         },
         {
@@ -319,12 +330,12 @@ class TakeInbodyPic extends Component {
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
-        {text: '저장', onPress: () => {this.uploadPictrue()}},
+        {text: '저장', onPress: async() => {await this.uploadPictrue()}},
       ],
       {cancelable: false},
     );
     }else{
-      this.uploadPictrue();
+      await this.uploadPictrue();
     }
   }
   takePicture = async function(camera) {
