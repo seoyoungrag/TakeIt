@@ -192,6 +192,7 @@ class Login extends React.Component {
       <ImageBackground
         source={Images.loginBack}
         style={styles.container}
+        resizeMode="stretch"
       >
       <View
         style={[

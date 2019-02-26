@@ -24,11 +24,11 @@ const request = new AdRequest();
 const { height, width } = Dimensions.get("window");
 let styles = {
   footerIcon: {
-    height: height * 0.038*0.69,
+    height: (height * 0.038*0.69)-(Platform.OS == 'ios'? height>=812 || width>=812? 3:0 : 0),
     resizeMode: "contain"
   },
   footerText: {
-    height: height * 0.019*0.69,
+    height: (height * 0.019*0.69)-(Platform.OS == 'ios'? height>=812 || width>=812? 3:0 : 0),
     resizeMode: "contain",
     marginTop:height * 0.015*0.69
   },
@@ -249,7 +249,7 @@ class Footer extends React.Component {
         "인바디 측정지 촬영은 일주일 간격으로 3번씩만 찍을 수 있어요.", 
         "기준일: " +time +", 찍은 횟수: " +cnt,
         [
-          isForced==true ?  null:
+          isForced==true ?  {}:
           {text: '일주일간 보지않기', onPress: () => 
             {
               AsyncStorage.setItem(periodInbodyAlertStorKey, this.props.TIMESTAMP.timestamp.toString());
@@ -283,7 +283,6 @@ class Footer extends React.Component {
         }
         this.inbodyAlert();
       }else{
-        console.warn(inbodyUpCnt);
         //1-2-2. 일주일이 안넘었으면 3회초과여부 체크
         var inbodyUpCnt = await AsyncStorage.getItem(inbodyStorKey);
         if(inbodyUpCnt < 3){

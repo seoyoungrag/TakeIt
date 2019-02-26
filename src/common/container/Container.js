@@ -2,7 +2,8 @@ import {
   View,
   Image,
   TouchableHighlight,
-  Platform
+  Platform,
+  Dimensions
 } from 'react-native';
 import React, { Component } from 'react';
 import { PropTypes } from 'prop-types';
@@ -14,6 +15,7 @@ import {
 import Images from '@assets/Images';
 import Footer from "@footer";
 
+const {width, height} = Dimensions.get("window");
 const propTypes = {
   children: PropTypes.node.isRequired,
 };
@@ -47,7 +49,7 @@ class Container extends Component {
     const titleNm = this.props.title;
 
     return (
-      <View style={{flex:1,borderColor:COLOR.grey900, borderTopWidth: Platform.OS == 'ios'? 0.5: 0,marginTop: Platform.OS == 'ios'? 25: 0}}>
+      <View style={{flex:1,borderColor:COLOR.grey900, borderTopWidth: Platform.OS == 'ios'? 0.5: 0,marginTop: Platform.OS == 'ios'? height>=812 || width>=812? 40:25: 0}}>
         <View style={{flex:90,backgroundColor:"#fff"}}>
           {toolbarDisplay ? (
             <Toolbar

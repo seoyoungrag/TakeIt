@@ -8,7 +8,8 @@ import {
   Alert,
   PixelRatio,
   Dimensions,
-  BackAndroid
+  BackAndroid,
+  Platform
 } from "react-native";
 
 import Images from "@assets/Images";
@@ -88,7 +89,9 @@ class Loading extends React.Component {
           };
         } else {
           //console.log("loading.js: user doesnt have permission");
-          await firebase.messaging().requestPermission();
+          try{
+          const isGranted = await firebase.messaging().requestPermission();
+          console.warn(isGranted);
           const token = await firebase.messaging().getToken();
           //console.log("loading.js: requested permission, WHAT TOKEN: ", token);
           if (token) {
@@ -96,6 +99,10 @@ class Loading extends React.Component {
             return token;
           } else {
             console.log("loading.js: no token yet");
+          }
+          }catch (e){
+            console.warn('error');
+            console.warn(e);
           }
         }
     }
@@ -202,11 +209,11 @@ class Loading extends React.Component {
           if(user.providerData[0].phoneNumber){
             userInfo.userPhone = user.providerData[0].phoneNumber;
           }
-      var token = await this.checkPushToken();
-      //console.log("loading.js: pushToken: " + token);
-      //console.log("loading.js: push perm check end");
-      userInfo.pushToken = token;
-      pushToken = token;
+          var token = await this.checkPushToken();
+          //console.log("loading.js: pushToken: " + token);
+          //console.log("loading.js: push perm check end");
+          userInfo.pushToken = token;
+          pushToken = token;
 
       await this.getCode(CHECKMAP);
       
@@ -302,6 +309,11 @@ class Loading extends React.Component {
               userInfo.userActCntLogList = userActCntLogList;
               userInfo.newUserActCntLogList = newUserActCntLogList;
               
+              userInfo.androidYn = Platform.select({
+                ios: 'N',
+                android: 'Y',
+              })
+              //console.warn(userInfo);
               var body = JSON.stringify(userInfo);
 
               await cFetch(APIS.PUT_USER_BY_EMAIL, [userInfo.userEmail+"/"], body, {
@@ -366,6 +378,7 @@ class Loading extends React.Component {
       <ImageBackground
         source={Images.loginLoadingBack}
         style={styles.container}
+        resizeMode="stretch"
       >
       <View style={{position:"absolute",top:0,left:0,width:width,height:height,backgroundColor:'rgba(0,0,0,0.5)',zIndex:0}}/>
         <ActivityIndicator color="white" size="large" />

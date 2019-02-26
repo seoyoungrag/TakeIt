@@ -27,7 +27,6 @@ import Images from "@assets/Images";
 import firebase from 'react-native-firebase';
 import PTRView from "react-native-pull-to-refresh";
 import ImagePicker from 'react-native-image-picker';
-import Permissions from 'react-native-permissions'
 import ShareForMain from './ShareForMain';
 import PopupDialog from 'react-native-popup-dialog';
 import RatingRequestor from 'react-native-rating-requestor';
@@ -289,9 +288,9 @@ class Main extends Component {
       await this.callbackFnc();
     }
 
-  onBackButtonPressAndroid = () => {
-    BackHandler.exitApp();
-  };
+    onBackButtonPressAndroid = () => {
+      BackHandler.exitApp();
+    };
 
     componentWillReceiveProps(nextProps) {
       //console.warn(this.state.notificationId);
@@ -384,12 +383,18 @@ class Main extends Component {
             if (didAppear) {
               switch(userDecision)
               {
-                case 'decline': console.warn('User declined to rate'); break;
-                case 'delay'  : console.warn('User delayed rating, will be asked later'); break;
-                case 'accept' : console.warn('User accepted invitation to rate, redirected to app store'); break;
+                case 'decline': 
+                //console.warn('User declined to rate'); 
+                break;
+                case 'delay'  : 
+                //console.warn('User delayed rating, will be asked later'); 
+                break;
+                case 'accept' : 
+                //console.warn('User accepted invitation to rate, redirected to app store'); 
+                break;
               }
             } else {
-              console.warn('Request popup did not pop up. May appear on future positive events.');
+              //console.warn('Request popup did not pop up. May appear on future positive events.');
             } 
           });
         }
@@ -634,7 +639,8 @@ class Main extends Component {
                       zIndex:1,
                       alignItems:"flex-start",
                       justifyContent:"flex-end",
-                      flexDirection:"row"
+                      flexDirection:"row",
+                      paddingTop:5,
                       }}>
                       {item.firebaseDownloadUrl !="" ?
                       (
