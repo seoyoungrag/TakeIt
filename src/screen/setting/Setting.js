@@ -258,9 +258,16 @@ class Setting extends Component {
             errors[name] = '숫자만 입력해주세요.';
           }
         }
+        if(name!='personWeight'){
+          console.warn(Number(this["personWeight"].value()));
+          console.warn((Number(this["personFat"].value())+Number(this["personMuscle"].value())));
+          if(Number(this["personWeight"].value())<(Number(this["personFat"].value())+Number(this["personMuscle"].value()))){
+            errors['personFat'] = '근육량과 체지방량의 합계가 몸무게를 넘을 수 없어요.';
+            errors['personMuscle'] = '근육량과 체지방량의 합계가 몸무게를 넘을 수 없어요.';
+          }
+        }
         //personHeight,personWeight,personFat,personMuscle
       });
-
       this.setState({ errors });
       
       if(Object.keys(errors).length === 0){
