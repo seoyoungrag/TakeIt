@@ -110,6 +110,10 @@ public class NotificationService extends FirebaseMessagingService {
             if (notification.contentView!=null)
                 notification.contentView.setViewVisibility(smallIconId, View.INVISIBLE);
         }
+        System.out.println("---------------------");
+        if(message.getData().get("data")!=null) {
+          System.out.println( String.valueOf( message.getData().get("data") ) );
+        }
         notificationManager.notify(0, notification);
         //getApplicationContext().startActivity(intent);
         wakeLock.release();
