@@ -111,11 +111,13 @@ class Table extends Component {
       let style = {width: col.width, borderLeftWidth: col.isFirst? 1: 0, borderLeftColor:"#dfdfdf" };
       var title = col.title;
       var photoFoodDetailId = 0;
+      var amountDish = 0;
         dataSource.map((rowData, index) => {
           title = title? title : rowData[col.dataIndex] ;
           if(title=='섭취량'){
             //console.warn(photoFoodDetailId);
             photoFoodDetailId = rowData['photoFoodDetailId'];
+            amountDish = rowData['amountDish'];
           }
           if(col.dataIndex=='foodNm'){
             title = title=="확인불가"?"잘모르겠어요":title;
@@ -135,7 +137,7 @@ class Table extends Component {
       //console.warn(title +' '+ photoFoodDetailId);
       return title=='섭취량' && photoFoodDetailId && photoFoodDetailId!=0? 
       (
-      <TouchableOpacity key={photoFoodDetailId} onPress={() => this.setState({ promptVisible: true, photoFoodDetailId: photoFoodDetailId })} >
+      <TouchableOpacity key={photoFoodDetailId} onPress={() => this.setState({ amountDish :amountDish, promptVisible: true, photoFoodDetailId: photoFoodDetailId })} >
         <View key={index} style={[!col.title? styles.cell: styles.headerItem, style]}>
           <Text style={{textAlign:"center",fontSize:FONT_BACK_LABEL*0.7}}>{title}
           &nbsp;<Entypo
@@ -219,7 +221,7 @@ class Table extends Component {
         <Prompt
             title="변경할 섭취량을 입력해주세요."
             placeholder="숫자만 입력해주세요"
-            defaultValue="1"
+            defaultValue={String(this.state.amountDish)}
             textInputProps={{keyboardType: 'numeric',autoCapitalize:'words'}}
             
             visible={this.state.promptVisible}
