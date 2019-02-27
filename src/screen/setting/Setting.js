@@ -156,6 +156,15 @@ class Setting extends Component {
           return;
         }
       }
+      
+      //현재 on이고 앞으로 off한다면? 나머지도 다 false
+      if (this.state.analysisPushGranted==true) {
+        this.setState({
+          fasting8PushGranted: false,
+          fasting16PushGranted: false,
+          fasting24PushGranted: false,
+        }) 
+      }
       this.setState({
         analysisPushGranted: !this.state.analysisPushGranted
       })
@@ -437,9 +446,9 @@ class Setting extends Component {
       
       var canUpdateSetting = await this.canUpdateSetting();
       //console.warn(canUpdateSetting);
-      //if(!canUpdateSetting){
-      if(false){
-        Alert.alert("업로드 횟수를 초과하였습니다.","인바디입력은 하루 "+maxSettingUpCnt+"회만 가능합니다.");
+      if(!canUpdateSetting){
+      //if(false){
+        Alert.alert("업로드 횟수를 초과하였습니다.","사용자정보 변경은 하루 "+maxSettingUpCnt+"회만 가능합니다.");
         return false;
       }
       
@@ -457,7 +466,7 @@ class Setting extends Component {
       var settingUpdateCnt = await AsyncStorage.getItem(storKey);
       settingUpdateCnt = Number(settingUpdateCnt);
       if(isShowConfirmAlert){
-        Alert.alert('저장하시겠습니까?','인바디 입력은 하루 '+maxSettingUpCnt+'회 가능합니다.\n현재: '+(settingUpdateCnt? String(settingUpdateCnt): '0')+'회',
+        Alert.alert('저장하시겠습니까?','사용자정보 변경은 하루 '+maxSettingUpCnt+'회 가능합니다.\n현재: '+(settingUpdateCnt? String(settingUpdateCnt): '0')+'회',
         [
           {text: '일주일간 보지않기', onPress: () => 
             {
@@ -793,7 +802,7 @@ class Setting extends Component {
                   value="Y"
                   label = "8시간"
                   checked={this.state.fasting8PushGranted}
-                  onCheck={() => this.setState({ fasting8PushGranted: !this.state.fasting8PushGranted })}
+                  onCheck={() => this.state.analysisPushGranted == false ? Alert.alert("알림 설정", "알림수신 여부를 ON해주셔야 가능해요.") : this.setState({ fasting8PushGranted: !this.state.fasting8PushGranted })}
                 />
                 <Checkbox
                   style={{
@@ -804,7 +813,7 @@ class Setting extends Component {
                   value="Y"
                   label = "16시간"
                   checked={this.state.fasting16PushGranted}
-                  onCheck={() => this.setState({ fasting16PushGranted: !this.state.fasting16PushGranted })}
+                  onCheck={() => this.state.analysisPushGranted == false ? Alert.alert("알림 설정", "알림수신 여부를 ON해주셔야 가능해요.") : this.setState({ fasting16PushGranted: !this.state.fasting16PushGranted })}
                 />
                 <Checkbox
                   style={{
@@ -815,7 +824,7 @@ class Setting extends Component {
                   value="Y"
                   label = "24시간"
                   checked={this.state.fasting24PushGranted}
-                  onCheck={() => this.setState({ fasting24PushGranted: !this.state.fasting24PushGranted })}
+                  onCheck={() => this.state.analysisPushGranted == false ? Alert.alert("알림 설정", "알림수신 여부를 ON해주셔야 가능해요.") : this.setState({ fasting24PushGranted: !this.state.fasting24PushGranted })}
                 />
               </View>
             <View
@@ -877,7 +886,7 @@ class Setting extends Component {
       backgroundColor: 'rgba(0, 0, 0, 0.0)',
       marginTop: 19,
       height: height,
-      alignItems: "stretch", marginBottom: 10
+      alignItems: "stretch", marginBottom: Platform.OS == 'ios' ? 10: 40
     },
     group7View: {
       backgroundColor: 'rgba(0, 0, 0, 0.0)',
