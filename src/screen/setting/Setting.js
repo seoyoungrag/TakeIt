@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import ActionCreator from "@redux-yrseo/actions";
 import { withNavigationFocus } from 'react-navigation';
 import { Button,COLOR } from 'react-native-material-ui';
-import { PixelRatio, Text, View, StyleSheet, Dimensions, ScrollView, Alert, AsyncStorage} from "react-native"
+import { Platform, Linking, PixelRatio, Text, View, StyleSheet, Dimensions, ScrollView, Alert, AsyncStorage, Switch} from "react-native"
 
 import {BoxShadow} from 'react-native-shadow';
 import FastImage from 'react-native-fast-image';
@@ -14,6 +14,7 @@ import { TextField } from "react-native-material-textfield";
 import { Dropdown } from 'react-native-material-dropdown';
 import cFetch from "@common/network/CustomFetch";
 import APIS from "@common/network/APIS";
+import firebase from "react-native-firebase";
 
 const {width, height} = Dimensions.get("window");
 function mapStateToProps(state) {
@@ -57,6 +58,7 @@ class Setting extends Component {
             return ({key: v.code, value:v.codeValue});
         });
       this.state ={
+        analysisPushGranted: false,
         personHeight:
         this.props.USER_INFO.inbodyInfo.height != undefined
           ? String(this.props.USER_INFO.inbodyInfo.height)
@@ -118,8 +120,90 @@ class Setting extends Component {
       ];
       */
     }
-
+    analysisPushSwitchChange = async () =>{
+      var apsFinallyGranted = false;
+      //기존 권한이 off에서 on으로 바뀌는 경우에만 권한을 체크하고 권한을 요청한다.
+      if(!this.state.analysisPushGranted){
+        apsFinallyGranted = await firebase.messaging().hasPermission();
+        console.warn(apsFinallyGranted);
+        if (!apsFinallyGranted) {
+            //ANDROID는 requestPermission이 다시 동작하지 않는다. 설명을 보면 위험한 권한이 아니기 때문에 권한을 물어볼 필요가 없다고 한다. 즉, 기본값이 ON이며 사용자가 굳이 끈 경우 설정화면으로 이동시켜줘야 한다. 
+            //https://stackoverflow.com/questions/44305206/ask-permission-for-push-notification?rq=1
+            //IOS에서는 권한을 두번 물어볼 수가 없어 OS설정화면으로 이동시켜줘야 한다.
+            //apsFinallyGranted = await firebase.messaging().requestPermission();
+          if(Platform.OS === 'android' ){
+            await Alert.alert("앱의 환경설정에서 알림 권한을 허용해주세요.","설정 > 애플리케이션 관리자 > 찍먹 - .. > 알림 > 알림 허용 [체크]");
+          }else{
+            await Alert.alert(
+              "앱의 환경설정에서 알림 권한을 허가해 주세요.", 
+              "앱 환경설정 화면으로 이동할까요?",
+              [
+                {text: '아니오', onPress: () =>  {alert("앱 알림 권한을 허가해 주셔야 스위치를 킬 수 있어요.");}},
+                {text: '네', onPress: async () =>  { await Linking.openURL('app-settings://'); }
+                }
+              ]
+            );
+            
+            
+          }
+          
+        }
+        apsFinallyGranted = await firebase.messaging().hasPermission();
+        if(!apsFinallyGranted){
+          return;
+        }
+      }
+      this.setState({
+        analysisPushGranted: !this.state.analysisPushGranted
+      })
+    }
+    checkPushToken = async () => {
+      const enabled = await firebase.messaging().hasPermission();
+        if (enabled) {
+          this.setState({
+            analysisPushGranted : true
+          })
+          try{
+            const token = await firebase.messaging().getToken()
+            if (token) {
+              return token;
+            } else {
+            }
+          }catch(error){
+          console.log("settings.js: have permission, but failed to get token:", error)
+          };
+        } else {
+          try{
+            console.warn("settings.js: isGranted:", error)
+          const isGranted = await firebase.messaging().requestPermission();
+          console.warn(isGranted);
+          const token = await firebase.messaging().getToken();
+          if (token) {
+            return token;
+          } else {
+            console.log("settings.js: no token yet");
+          }
+          }catch (e){
+            console.warn('error');
+            console.warn(e);
+          }
+        }
+    }
     componentWillMount = async() => {
+      const enabled = await firebase.messaging().hasPermission();
+      console.warn("settings.js: push perm check start");
+      console.warn(enabled);
+      const dbEnabled = this.props.USER_INFO.analysisPushYn ? this.props.USER_INFO.analysisPushYn : "Y";
+        if (enabled && dbEnabled=="Y") {
+          this.setState({
+            analysisPushGranted : true
+          })
+        }else{
+          //앱에 권한이 없거나, 사용자가 알림 수신을 원치 않으 경우 off상태로 보이게 함.
+          this.setState({
+            analysisPushGranted : false
+          })
+        }
       var list =this.props.CODE.list.filter(
         function(item){
           if(Number(item.codeCategory)==90000){
@@ -262,8 +346,8 @@ class Setting extends Component {
           console.warn(Number(this["personWeight"].value()));
           console.warn((Number(this["personFat"].value())+Number(this["personMuscle"].value())));
           if(Number(this["personWeight"].value())<(Number(this["personFat"].value())+Number(this["personMuscle"].value()))){
-            errors['personFat'] = '근육량과 체지방량의 합계가 몸무게를 넘을 수 없어요.';
-            errors['personMuscle'] = '근육량과 체지방량의 합계가 몸무게를 넘을 수 없어요.';
+            errors['personFat'] = '몸무게를 넘을 수 없어요.';
+            errors['personMuscle'] = '몸무게를 넘을 수 없어요.';
           }
         }
         //personHeight,personWeight,personFat,personMuscle
@@ -271,7 +355,9 @@ class Setting extends Component {
       this.setState({ errors });
       
       if(Object.keys(errors).length === 0){
+        var analysisPushYn = this.state.analysisPushGranted == true ? "Y" : "N";
         var data = this.props.USER_INFO;
+        data.analysisPushYn = analysisPushYn;
         console.log("Setting: before post Data in Setting.js start--");
         console.log(data);
         console.log("Setting: before post Data in Setting.js end --");
@@ -307,12 +393,12 @@ class Setting extends Component {
               PROPS.setUserInfo(res);
               PROPS.forceRefreshMain(true);
               isSended = true;
-              alert('저장이 완료되었습니다.');
+              Alert.alert("저장 완료",'저장이 완료되었습니다.');
               PROPS.navigation.navigate("Main");
             },
             //입력된 회원정보가 없음.
             responseNotFound: function(res) {
-              alert("유저 업데이트가 실패했습니다.");
+              Alert.alert("저장 완료","유저 업데이트가 실패했습니다.");
               //PROPS.navigation.navigate("Login");
               // APIS.PUT_SUER_BY_PHONE에서 사용자가 없으면 생성되어야 한다.
             }
@@ -339,7 +425,8 @@ class Setting extends Component {
       
       var canUpdateSetting = await this.canUpdateSetting();
       //console.warn(canUpdateSetting);
-      if(!canUpdateSetting){
+      //if(!canUpdateSetting){
+      if(false){
         Alert.alert("업로드 횟수를 초과하였습니다.","인바디입력은 하루 "+maxSettingUpCnt+"회만 가능합니다.");
         return false;
       }
@@ -413,6 +500,50 @@ class Setting extends Component {
         x:1,
         y:1
       }
+      const dietGoalView = (
+        <View
+          style={styles.group6View}>
+          <View
+            style={styles.uiSettingsCellView}>
+            <Text
+              style={styles.labelText}>다이어트 목표</Text>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                alignItems: "center",
+              }}>
+              <Dropdown
+                  textColor={COLOR.pink500}
+                  baseColor={COLOR.pink500}
+                  tintColor={COLOR.pink900}
+                  itemColor={COLOR.pink500}
+                  selectedItemColor={COLOR.pink800}
+                  disabledItemColor={COLOR.pink300}
+                  pickerStyle={{backgroundColor:"white", borderWidth:1, borderColor:"silver"}}
+                  fontSize={styles.textFieldFontSize}
+                  containerStyle={[styles.textFieldContainerStyle]}
+                  labelHeight={styles.textFieldLabelHeight}
+                  ref={this.personDietGoalRef}
+                  value={data.personDietGoal}
+                  data={this.state.dietGoal}
+                  autoCorrect={false}
+                  enablesReturnKeyAutomatically={true}
+                  onFocus={this.onFocus}
+                  onChangeText={this.onChangeText}
+                  onSubmitEditing={this.onSubmitPersonDietGoal}
+                  returnKeyType="next"
+                  label=''
+                  error={errors.personDietGoal}
+              />
+                {/**
+              <Text
+                style={styles.textText}>현재 체중 유지하기</Text>
+                 */}
+            </View>
+          </View>
+        </View>);
       return  (
       <Container 
         title={this.props.USER_INFO.userEmail+"님의 설정"}
@@ -420,9 +551,9 @@ class Setting extends Component {
         navigation={this.props.navigation}
         footUnDisplay={true}>
           <ScrollView
-            contentContainerStyle={{ flexGrow: 1 }}
-            scrollDisabled
-            style={{ width: "100%" }}
+            //contentContainerStyle={{ flexGrow: 1 }}
+            //scrollDisabled
+            //style={{ width: width,height:height*0.5 }}
           >
           {/**
         <View
@@ -445,50 +576,7 @@ class Setting extends Component {
               <Text
                 style={styles.detailsText}>목표설정</Text>
             </View>
-            <View
-              style={styles.group6View}>
-              <View
-                style={styles.uiSettingsCellView}>
-                <Text
-                  style={styles.labelText}>다이어트 목표</Text>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    justifyContent: "flex-end",
-                    alignItems: "center",
-                  }}>
-                  <Dropdown
-                      textColor={COLOR.pink500}
-                      baseColor={COLOR.pink500}
-                      tintColor={COLOR.pink900}
-                      itemColor={COLOR.pink500}
-                      selectedItemColor={COLOR.pink800}
-                      disabledItemColor={COLOR.pink300}
-                      pickerStyle={{backgroundColor:"white", borderWidth:1, borderColor:"silver"}}
-                      fontSize={styles.textFieldFontSize}
-                      containerStyle={[styles.textFieldContainerStyle]}
-                      labelHeight={styles.textFieldLabelHeight}
-                      ref={this.personDietGoalRef}
-                      value={data.personDietGoal}
-                      data={this.state.dietGoal}
-                      autoCorrect={false}
-                      enablesReturnKeyAutomatically={true}
-                      onFocus={this.onFocus}
-                      onChangeText={this.onChangeText}
-                      onSubmitEditing={this.onSubmitPersonDietGoal}
-                      returnKeyType="next"
-                      label=''
-                      error={errors.personDietGoal}
-                  />
-                    {/**
-                  <Text
-                    style={styles.textText}>현재 체중 유지하기</Text>
-                     */}
-                </View>
-              </View>
-            </View>
-
+            {dietGoalView}
             <View
               style={styles.group4View}>
               <Text
@@ -652,16 +740,55 @@ class Setting extends Component {
               </View>
             </View>
              */}
-          </View>
+
             <View
-              style={{
-                width: "100%"
-              }}
-            >
+              style={styles.group4View}>
+              <Text
+                style={styles.detailsText}>알림 설정</Text>
+            </View>
+            
+            <View
+              style={styles.group2View}>
+              <Text
+                style={styles.labelSixText}>분석결과 알림수신 여부</Text>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                }}>
+                <Switch
+                  style={styles.slideSwitch}
+                  value={this.state.analysisPushGranted}
+                  onValueChange={this.analysisPushSwitchChange}
+                  />
+              </View>
+            </View>
+            {/**
+            <View
+              style={styles.group2View}>
+              <Text
+                style={styles.labelSixText}>간헐적 단식 알림수신 여부</Text>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                }}>
+                <Switch
+                  style={styles.slideSwitch}/>
+              </View>
+            </View>
+             */}
+            <View
+              style={[styles.group2View,{width:"100%", justifyContent:"center", alignItems:"center"}]}>
               <Button
                 style={{
                   container:{
                       height:height*0.08,
+                      width: width*0.9,
                       marginLeft:10, marginRight:10,
                       marginTop:20,
                       //backgroundColor: "rgba(0,0,0,0.1)",
@@ -673,10 +800,11 @@ class Setting extends Component {
                 }}
                 icon="check"
                 raised
-                text=""
+                text="저장"
                 onPress={this.saveBtnPressed}
               />
             </View>
+          </View>
           </ScrollView>
         {/*</View>*/}
         </Container>)
@@ -712,7 +840,7 @@ class Setting extends Component {
     informationView: {
       backgroundColor: 'rgba(0, 0, 0, 0.0)',
       marginTop: 19,
-      height: 380,
+      height: height,
       alignItems: "stretch",
     },
     group7View: {
@@ -942,7 +1070,11 @@ class Setting extends Component {
       paddingTop: 0
     },
     textFieldFontSize: FONT_BACK_LABEL,
-    textFieldLabelHeight: 10
+    textFieldLabelHeight: 10,
+    slideSwitch: {
+      backgroundColor: 'rgba(0, 0, 0, 0.0)',
+      marginRight: 20,
+    },
   })
   
 
