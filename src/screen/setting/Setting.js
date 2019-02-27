@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import { connect } from "react-redux";
 import ActionCreator from "@redux-yrseo/actions";
 import { withNavigationFocus } from 'react-navigation';
-import { Button,COLOR } from 'react-native-material-ui';
+import { Button,COLOR,Checkbox } from 'react-native-material-ui';
 import { Platform, Linking, PixelRatio, Text, View, StyleSheet, Dimensions, ScrollView, Alert, AsyncStorage, Switch} from "react-native"
 
 import {BoxShadow} from 'react-native-shadow';
@@ -59,6 +59,9 @@ class Setting extends Component {
         });
       this.state ={
         analysisPushGranted: false,
+        fasting8PushGranted: false,
+        fasting16PushGranted: false,
+        fasting24PushGranted: false,
         personHeight:
         this.props.USER_INFO.inbodyInfo.height != undefined
           ? String(this.props.USER_INFO.inbodyInfo.height)
@@ -193,6 +196,12 @@ class Setting extends Component {
       const enabled = await firebase.messaging().hasPermission();
       console.warn("settings.js: push perm check start");
       console.warn(enabled);
+      var fasting8PushGranted = this.props.USER_INFO.fasting8PushYn && this.props.USER_INFO.fasting8PushYn=="Y" ? true: false;
+      var fasting16PushGranted = this.props.USER_INFO.fasting16PushYn&& this.props.USER_INFO.fasting16PushYn=="Y" ? true: false;
+      var fasting24PushGranted = this.props.USER_INFO.fasting24PushYn&& this.props.USER_INFO.fasting24PushYn=="Y" ? true: false;
+      this.setState({
+        fasting8PushGranted, fasting16PushGranted, fasting24PushGranted
+      })
       const dbEnabled = this.props.USER_INFO.analysisPushYn ? this.props.USER_INFO.analysisPushYn : "Y";
         if (enabled && dbEnabled=="Y") {
           this.setState({
@@ -358,6 +367,9 @@ class Setting extends Component {
         var analysisPushYn = this.state.analysisPushGranted == true ? "Y" : "N";
         var data = this.props.USER_INFO;
         data.analysisPushYn = analysisPushYn;
+        data.fasting8PushYn = this.state.fasting8PushGranted==true?"Y":"N";
+        data.fasting16PushYn = this.state.fasting16PushGranted==true?"Y":"N";
+        data.fasting24PushYn = this.state.fasting24PushGranted==true?"Y":"N";
         console.log("Setting: before post Data in Setting.js start--");
         console.log(data);
         console.log("Setting: before post Data in Setting.js end --");
@@ -389,7 +401,7 @@ class Setting extends Component {
           var isSended = false;
           await cFetch(APIS.PUT_USER_SETTING_BY_EMAIL, [this.props.USER_INFO.userEmail+"/"], body, {
             responseProc: function(res) {
-              console.log("Setting.js :"+ JSON.stringify(res));
+              console.warn("Setting.js :"+ JSON.stringify(res));
               PROPS.setUserInfo(res);
               PROPS.forceRefreshMain(true);
               isSended = true;
@@ -750,7 +762,7 @@ class Setting extends Component {
             <View
               style={styles.group2View}>
               <Text
-                style={styles.labelSixText}>분석결과 알림수신 여부</Text>
+                style={styles.labelSixText}>알림수신 여부</Text>
               <View
                 style={{
                   flex: 1,
@@ -765,23 +777,47 @@ class Setting extends Component {
                   />
               </View>
             </View>
-            {/**
             <View
-              style={styles.group2View}>
+              style={styles.group4View}>
               <Text
-                style={styles.labelSixText}>간헐적 단식 알림수신 여부</Text>
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                }}>
-                <Switch
-                  style={styles.slideSwitch}/>
-              </View>
+                style={styles.detailsText}>간헐적 단식 알림 주기 설정</Text>
             </View>
-             */}
+              <View
+              style={styles.group2View}>
+                <Checkbox
+                  style={{
+                    container:{padding:0},
+                    icon:{color:"rgba(0,0,0,1)"}, 
+                    label:{color:"rgba(0,0,0,1)",fontSize:FONT_BACK_LABEL*0.8, marginLeft:-10}
+                  }}
+                  value="Y"
+                  label = "8시간"
+                  checked={this.state.fasting8PushGranted}
+                  onCheck={() => this.setState({ fasting8PushGranted: !this.state.fasting8PushGranted })}
+                />
+                <Checkbox
+                  style={{
+                    container:{padding:0},
+                    icon:{color:"rgba(0,0,0,1)"}, 
+                    label:{color:"rgba(0,0,0,1)",fontSize:FONT_BACK_LABEL*0.8, marginLeft:-10}
+                  }}
+                  value="Y"
+                  label = "16시간"
+                  checked={this.state.fasting16PushGranted}
+                  onCheck={() => this.setState({ fasting16PushGranted: !this.state.fasting16PushGranted })}
+                />
+                <Checkbox
+                  style={{
+                    container:{padding:0},
+                    icon:{color:"rgba(0,0,0,1)"}, 
+                    label:{color:"rgba(0,0,0,1)",fontSize:FONT_BACK_LABEL*0.8, marginLeft:-10}
+                  }}
+                  value="Y"
+                  label = "24시간"
+                  checked={this.state.fasting24PushGranted}
+                  onCheck={() => this.setState({ fasting24PushGranted: !this.state.fasting24PushGranted })}
+                />
+              </View>
             <View
               style={[styles.group2View,{width:"100%", justifyContent:"center", alignItems:"center"}]}>
               <Button
@@ -841,7 +877,7 @@ class Setting extends Component {
       backgroundColor: 'rgba(0, 0, 0, 0.0)',
       marginTop: 19,
       height: height,
-      alignItems: "stretch",
+      alignItems: "stretch", marginBottom: 10
     },
     group7View: {
       backgroundColor: 'rgba(0, 0, 0, 0.0)',
@@ -854,7 +890,7 @@ class Setting extends Component {
     },
     detailsText: {
       backgroundColor: 'rgba(0, 0, 0, 0.0)',
-      opacity: 0.4,
+      opacity: 0.6,
       color: 'rgb(0, 0, 0)',
       fontFamily: ".AppleSystemUIFont",
       fontSize: 12,
@@ -958,7 +994,7 @@ class Setting extends Component {
     },
     informationText: {
       backgroundColor: 'rgba(0, 0, 0, 0.0)',
-      opacity: 0.4,
+      opacity: 0.6,
       color: 'rgb(0, 0, 0)',
       fontFamily: ".AppleSystemUIFont",
       fontSize: 12,
