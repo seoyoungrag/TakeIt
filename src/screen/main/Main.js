@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import {Linking,BackAndroid,PermissionsAndroid, Platform, AsyncStorage, Dimensions, StyleSheet, Text, View, PixelRatio, TouchableHighlight, TouchableOpacity, Modal, ScrollView, Alert,BackHandler} from 'react-native';
+import {Linking,BackHandler,PermissionsAndroid, Platform, AsyncStorage, Dimensions, StyleSheet, Text, View, PixelRatio, TouchableHighlight, TouchableOpacity, Modal, ScrollView, Alert} from 'react-native';
 import DrawerWrapped from "@drawer";
 import { connect } from "react-redux";
 import ActionCreator from "@redux-yrseo/actions";
@@ -180,42 +180,56 @@ class Main extends Component {
     }
 
   versionCheck = async() => {
-    let url = await VersionCheck.getStoreUrl();
-    Alert.alert(
-      "업데이트가 필요합니다.",
-      "업데이트를 하지 않으면 앱을 정상적으로 이용할 수 없습니다.\n업데이트를 시작 하시겠습니까?",
-      [
-        {
-          text: "아니오",
-          onPress: () => {
-            BackAndroid.exitApp();},
-          style: "cancel"
-        },
-        {
-          text: "네",
-          onPress: () => {
-            Linking.openURL(url);
+    if(Platform.OS === 'ios' ){
+      var url = await VersionCheck.getStoreUrl({
+        appID : '1453367654',
+        appName: '찍먹'
+      });
+      Alert.alert(
+        "업데이트가 필요합니다.",
+        "업데이트를 하지 않으면 앱을 정상적으로 이용할 수 없습니다.\n업데이트를 시작 하시겠습니까?",
+        [
+          {
+            text: "아니오",
+            onPress: () => {
+              BackHandler.exitApp();},
+            style: "cancel"
+          },
+          {
+            text: "네",
+            onPress: () => {
+              Linking.openURL(url);
+            }
           }
-        }
-      ],
-      { cancelable: false }
-    );
+        ],
+        { cancelable: false }
+      );
+    }else{
+      var url = await VersionCheck.getStoreUrl();
+      Alert.alert(
+        "업데이트가 필요합니다.",
+        "업데이트를 하지 않으면 앱을 정상적으로 이용할 수 없습니다.\n업데이트를 시작 하시겠습니까?",
+        [
+          {
+            text: "아니오",
+            onPress: () => {
+              BackHandler.exitApp();},
+            style: "cancel"
+          },
+          {
+            text: "네",
+            onPress: () => {
+              Linking.openURL(url);
+            }
+          }
+        ],
+        { cancelable: false }
+      );
+    }
   }
   
 
     componentDidMount = async() => {
-      if (__DEV__) {
-      
-      }else{
-        VersionCheck.needUpdate().then(async res => {
-          if (res && res.isNeeded) {
-            this.versionCheck();
-            return;
-          } else {
-
-          }
-        });
-      }
       //RatingTracker.showRatingDialog();
 
       await firebase.messaging().hasPermission()
@@ -328,6 +342,28 @@ class Main extends Component {
     }
 
     callbackFnc = async() => {
+
+      if (__DEV__) {
+      
+        VersionCheck.needUpdate().then(async res => {
+          if (res && res.isNeeded) {
+            this.versionCheck();
+            return;
+          } else {
+
+          }
+        });
+      }else{
+        VersionCheck.needUpdate().then(async res => {
+          if (res && res.isNeeded) {
+            this.versionCheck();
+            return;
+          } else {
+
+          }
+        });
+      }
+      
       if(Number(this.props.USER_INFO.authCd)==400004){
         Alert.alert(
           "블랙리스트 사용자입니다.",
@@ -336,7 +372,7 @@ class Main extends Component {
             {
               text: "확인",
               onPress: () => {
-                BackAndroid.exitApp();
+                BackHandler.exitApp();
               }
             }
           ],
