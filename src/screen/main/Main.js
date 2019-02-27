@@ -363,7 +363,7 @@ class Main extends Component {
           }
         });
       }
-      
+
       if(Number(this.props.USER_INFO.authCd)==400004){
         Alert.alert(
           "블랙리스트 사용자입니다.",
@@ -559,7 +559,7 @@ class Main extends Component {
           if(gapHour == 0){
             timeGapText=timeGapText+gapMinutes+"분이 지났어요.";
           }else if(gapHour >= 24){
-            timeGapText=timeGapText+"24시간 이상 지났어요.";
+            timeGapText=timeGapText+"24시간이상 지났어요.";
           }else{
             timeGapText=timeGapText+gapHour +"시간 "+gapMinutes+"분이 지났어요.";
           }
@@ -1152,7 +1152,8 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between'
     },
     profileUserEmail: {
-      fontSize: FONT_BACK_LABEL*1.2,
+      //fontSize: FONT_BACK_LABEL*1.2,
+      fontSize: FONT_BACK_LABEL*0.8,
       color:"rgba(0,0,0,1)"
     },
     profileWiseSaying: {
