@@ -546,25 +546,9 @@ class Main extends Component {
           y:3
         }
         PROPS = this.props;
-        var curTime = new Date();
-        var lastFoodTime = new Date(this.state.userFastingInfo.lastFoodTime);
-        var gapHour = Math.abs(((curTime.getTime()-lastFoodTime.getTime())/(60*60*1000)).toFixed(0));
-        var gapMinutes = curTime.getMinutes()-lastFoodTime.getMinutes();
-        if(gapMinutes < 0){
-          gapMinutes = gapMinutes+60;
-        }
         var timeGapText = "";
-        if(this.state.userFastingInfo && this.state.userFastingInfo.lastFoodTime ){
-          timeGapText = "찍먹하신지 ";
-          if(gapHour == 0){
-            timeGapText=timeGapText+gapMinutes+"분이 지났어요.";
-          }else if(gapHour >= 24){
-            timeGapText=timeGapText+"24시간이상 지났어요.";
-          }else{
-            timeGapText=timeGapText+gapHour +"시간 "+gapMinutes+"분이 지났어요.";
-          }
-        }else{
-          timeGapText = "찍먹!하시면 찍먹한 경과 시간을 알려드릴께요.";
+        if(this.state.userFastingInfo && this.state.userFastingInfo.timeGapText){
+          timeGapText = this.state.userFastingInfo.timeGapText;
         }
         const headerView = (<View
           style={styles.headerView}>

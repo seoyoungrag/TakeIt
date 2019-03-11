@@ -251,7 +251,11 @@ class UserRegist extends Component {
           return x.value == this.state.personDietGoal;
         }
       );
-      data.dietGoal = this.dietGoal[foundIndexDiet].key;
+      if(this.dietGoal && this.dietGoal.length>0 &&foundIndex){
+        data.dietGoal = this.dietGoal[foundIndexDiet].key;
+      }else{
+        data.dietGoal = 900003
+      }
 
       var body = JSON.stringify(data);
       //console.warn(body);

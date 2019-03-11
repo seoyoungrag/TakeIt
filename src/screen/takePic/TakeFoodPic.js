@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { Alert, PixelRatio, Dimensions, StyleSheet, Text, TouchableOpacity, View, Image, Modal} from 'react-native';
+import { AsyncStorage, Platform, Alert, PixelRatio, Dimensions, StyleSheet, Text, TouchableOpacity, View, Modal, NativeModules} from 'react-native';
 
 import Moment from "moment";
 
@@ -18,7 +18,6 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
 import Entypo from 'react-native-vector-icons/Entypo'
-import {AsyncStorage} from 'react-native';
 import { withNavigationFocus } from 'react-navigation';
 import { COLOR } from 'react-native-material-ui';
 
@@ -257,7 +256,15 @@ class TakeFoodPic extends Component {
 
     COM.setState({spinnerVisible:true});
     var dateTime = new Date();
+    var dateTimezoneOffset = dateTime.getTimezoneOffset();
     let image = this.state.image;
+    var deviceLocale = "";
+    if(Platform.OS === 'android'){
+      deviceLocale = NativeModules.I18nManager.localeIdentifier;
+    }else{
+      deviceLocale = NativeModules.SettingsManager.settings.AppleLocale;
+    }
+
     //console.log("TakeInbodyPic.js: "+JSON.stringify(image));
     await firebase
       .storage()
@@ -270,6 +277,8 @@ class TakeFoodPic extends Component {
           data.userId = PROPS.USER_INFO.userId;
           data.registD = Moment(dateTime).format("YYYY-MM-DD");
           data.registTime = Moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
+          data.registTimezoneOffset = dateTimezoneOffset;
+          data.registDeviceLocale = deviceLocale;
           data.firebaseStoragePath = uploadedFile.ref;
           data.firebaseDownloadUrl = uploadedFile.downloadURL;
           data.deviceLocalFilePath = image.uri;

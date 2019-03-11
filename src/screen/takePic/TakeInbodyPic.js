@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Alert, PixelRatio, Dimensions, StyleSheet, Text, TouchableOpacity, View, Image, AsyncStorage} from 'react-native';
+import { Modal, Alert, PixelRatio, Dimensions, StyleSheet, Text, TouchableOpacity, View, AsyncStorage, Platform, NativeModules} from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { connect } from "react-redux";
 import ActionCreator from "@redux-yrseo/actions";
@@ -209,6 +209,13 @@ class TakeInbodyPic extends Component {
     const PROPS = this.props;
     COM.setState({spinnerVisible:true});
     var dateTime = new Date();
+    var dateTimezoneOffset = dateTime.getTimezoneOffset();
+    var deviceLocale = "";
+    if(Platform.OS === 'android'){
+      deviceLocale = NativeModules.I18nManager.localeIdentifier;
+    }else{
+      deviceLocale = NativeModules.SettingsManager.settings.AppleLocale;
+    }
       let image = this.state.image;
       //console.log("TakeInbodyPic.js: "+JSON.stringify(image));
       firebase
@@ -222,6 +229,8 @@ class TakeInbodyPic extends Component {
             data.userId = PROPS.USER_INFO.userId;
             data.registD = Moment(dateTime).format("YYYY-MM-DD");
             data.registTime = Moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
+            data.registTimezoneOffset = dateTimezoneOffset;
+            data.registDeviceLocale = deviceLocale;
             data.firebaseStoragePath = uploadedFile.ref;
             data.firebaseDownloadUrl = uploadedFile.downloadURL;
             data.deviceLocalFilePath = image.uri;
